@@ -1,9 +1,12 @@
-import React, { createContext, useState, useCallback } from 'react';
+import React, { createContext, useState, useCallback,useEffect } from 'react';
+
+
 import { APICore } from '../../helpers/api/apiCore';
 const api = new APICore();
 const MenuContext = createContext();
 
 const MenuProvider = ({ children }) => {
+
     const [MENU_ITEMS_CONTEXT, setmenu] = useState([{}]);
 
     const onItemMenu = useCallback(() => {
@@ -25,9 +28,12 @@ const MenuProvider = ({ children }) => {
         }, 1000);
     }, []);
 
+    useEffect(() => {
+      onItemMenu();
+  }, [onItemMenu]);
+
     const data = {
-        MENU_ITEMS_CONTEXT,
-        onItemMenu,
+        MENU_ITEMS_CONTEXT
     };
 
     // eslint-disable-next-line react/jsx-no-undef

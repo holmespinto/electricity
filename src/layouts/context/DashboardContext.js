@@ -19,23 +19,26 @@ const DashboardProvider = ({ children }) => {
 
 
     const itemsMenuCallBack = useCallback((e) => {
-        let itemsurls = e?.lastIndexOf('estadisticas_');
+        let itemsurls = e?.lastIndexOf('dashboard');
 
         let n = e?.lastIndexOf('/');
         let totalcletras = e?.length;
-        const items_sub = e?.substring(0, Number(n)).replace('/estadisticas_programas/', '').replace('/', '');
+        const items_sub = e?.substring(0, Number(n)).replace('/dashboard/', '').replace('/', '');
         const items = e
             ?.substring(Number(n), Number(totalcletras))
-            .replace('/estadisticas_programas/', '')
+            .replace('/dashboard/', '')
             .replace('/', '');
 
         if (itemsurls === 1) {
-            const str1 = e?.replace('estadisticas_programas', 'nivel_uno').replace('estadisticas_fecha', 'nivel_dos');
+            const str1 = e?.replace('dashboard', '');
             setitemsUrl(str1?.substring(1, 10));
         }
         //
         if (items_sub) {
-            setitemsMenuPrincipal(items_sub);
+           let userInfo = JSON.parse(sessionStorage.getItem('ITEM_SELECT'))
+           if(userInfo?.memorizer.length>0){
+            setitemsMenuPrincipal(userInfo?.memorizer);
+           }
             // eslint-disable-next-line no-undef
         }
         if (items) {

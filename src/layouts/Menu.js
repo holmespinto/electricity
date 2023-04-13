@@ -116,10 +116,7 @@ type AppMenuProps = {
 };
 
 const AppMenu = ({ menuItems, location }: AppMenuProps) => {
-
-  console.log(menuItems);
   const {itemsMenuCallBack,clearALL,setInfo}=useContext(DashboardContext)
-
     const menuRef = useRef(null);
 
     const [activeMenuItems, setActiveMenuItems] = useState([]);
@@ -152,16 +149,20 @@ const AppMenu = ({ menuItems, location }: AppMenuProps) => {
                 }
             }
             //CLEAR ITESMS
-            let itemsurls = location.pathname?.lastIndexOf('estadisticas_');
+            let itemsurls = location.pathname?.lastIndexOf('dashboard');
             let userInfo = JSON.parse(sessionStorage.getItem('ITEM_SELECT'))
             if(userInfo?.memorizer.length>0){
             clearALL(userInfo?.memorizer)
             setInfo([])
             }
             if(itemsurls===1){
-              const str1=location.pathname?.replace('estadisticas_programas','');
-              const menuitems=str1.replace('//nivel_uno/','').replace('/pregrado','').replace('/general','').replace('//','');
-              sessionStorage.setItem('ITEM_SELECT',JSON.stringify({memorizer: menuitems}));
+              const str1=location.pathname?.replace('dashboard','');
+
+              const menuitems=str1.replace('//dashboard/','').replace('/dashboard','').replace('//','');
+              const num = menuitems.indexOf("/");
+              const menu=menuitems.substring(0,Number(num));
+              const menuitem=menuitems.replace(menu,'').replace('/','');
+              sessionStorage.setItem('ITEM_SELECT',JSON.stringify({memorizer: menuitem}));
             }
             //END
             if (matchingMenuItem) {

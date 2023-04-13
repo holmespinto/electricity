@@ -7,8 +7,7 @@ import { MenuContext } from '../layouts/context/MenuContext';
 
 const getMenuItems = () => {
 // eslint-disable-next-line react-hooks/rules-of-hooks
-const {MENU_ITEMS_CONTEXT,onItemMenu} = useContext(MenuContext);
-   onItemMenu();
+const {MENU_ITEMS_CONTEXT} = useContext(MenuContext);
     return MENU_ITEMS_CONTEXT;
 };
 
