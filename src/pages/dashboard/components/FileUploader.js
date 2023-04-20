@@ -23,7 +23,7 @@ const FileUploader = (props: FileUploaderProps): React$Element<any> => {
         var allFiles = files;
 
         if (props.showPreview) {
-            files.map((file) =>
+            files?.map((file) =>
                 Object.assign(file, {
                     preview: file['type'].split('/')[0] === 'image' ? URL.createObjectURL(file) : null,
                     formattedSize: formatBytes(file.size),

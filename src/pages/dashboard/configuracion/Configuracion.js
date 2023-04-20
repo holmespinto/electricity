@@ -31,7 +31,7 @@ const Configuracion = () => {
           <Card.Body>
             <Tab.Container defaultActiveKey="Profile">
               <Nav variant="tabs" className="nav-bordered" as="ul">
-                {tabContents.map((tab, index) => {
+                {tabContents?.map((tab, index) => {
                   return (
                     <Nav.Item as="li" key={index}>
                       <Nav.Link href="#" eventKey={tab.title} >
@@ -43,7 +43,7 @@ const Configuracion = () => {
                 })}
               </Nav>
               <Tab.Content className="px-4 pb-4 pt-0 mx-auto">
-                {tabContents.map((tab, index) => {
+                {tabContents?.map((tab, index) => {
                   return (
                       <Tab.Pane eventKey={tab.title} id={tab.id} key={index}>
                         <Row>

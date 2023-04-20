@@ -1,18 +1,17 @@
 // @flow
-import React, { useContext} from 'react';
+import React, { useContext,Suspense} from 'react';
 import { Row, Col, Card, Button, Modal } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
-import { DashboardContext } from '../../../../layouts/context/DashboardContext';
+import { DashboardContext } from '../../../../../layouts/context/DashboardContext';
 //import { GestionBasicaContext } from '../../../../layouts/context/GestionBasicaContext';
 import FormAdd from './FormAdd';
 import FormUpdate from './FormUpdate';
-import Table from '../../../../components/Table';
-
+import Table from '../../../../../components/Table';
+const loading = () => <div className="text-center"></div>;
 const ActionColumn = ({ row }) => {
 
   const {
     eliminar,
-    update,
     validated,
     signUpModal,
     setSignUpModal,
@@ -24,11 +23,13 @@ const ActionColumn = ({ row }) => {
     setSignUpModal(!signUpModal);
     setItems([{
       id: row.cells[0].value ? row.cells[0].value : row.cells[0].value,
-      Nombre: row.cells[1].value ? row.cells[1].value : row.cells[1].value,
-      Unidad: row.cells[2].value ? row.cells[2].value : row.cells[2].value,
-      ValorUnitario: row.cells[3].value ? row.cells[3].value : row.cells[3].value,
+      Codigo: row.cells[1].value ? row.cells[1].value : row.cells[1].value,
+      Empresa:row.cells[2].value ? row.cells[2].value : row.cells[2].value,
+      Fecha: row.cells[3].value ? row.cells[3].value : row.cells[3].value,
       Descripcion: row.cells[4].value ? row.cells[4].value : row.cells[4].value,
-      status: row.cells[5].value ? row.cells[5].value : row.cells[5].value,
+      Cantidad: row.cells[5].value ? row.cells[5].value : row.cells[5].value,
+      ValorUnitario: row.cells[6].value ? row.cells[6].value : row.cells[6].value,
+      status: row.cells[7].value ? row.cells[7].value : row.cells[7].value,
     }])
 };
 
@@ -38,11 +39,10 @@ const ActionColumn = ({ row }) => {
         <Modal.Body>
         {(() => {
               switch (itemsmenuprincipal) {
-                case "Material": case "ManoObra": case "Herramientas":
+                case "OrdenCompra":
                   return (<><FormUpdate
                     title={`ACTUALIZAR ${itemsmenuprincipal?.toUpperCase()}`}
                     validated={validated}
-                    accion={update}
                   /></>);
                 default:
                   return (
@@ -63,11 +63,10 @@ const ActionColumn = ({ row }) => {
         </React.Fragment>
   );
 };
-const Material = (props) => {
+const OrdenCompra = (props) => {
   const {
     validated,
     signUpModalAdd, setSignUpModalAdd,
-    items,add,
     setItems,sizePerPageList,StatusColumn,isLoading
   } = useContext(DashboardContext);
   const columns = [
@@ -77,28 +76,37 @@ const Material = (props) => {
       sort: true,
     },
     {
-      Header: 'Nombre',
-      accessor: 'Nombre',
+      Header: 'Codigo',
+      accessor: 'Codigo',
       sort: true,
     },
     {
-      Header: 'Unidad',
-      accessor: 'Unidad',
+      Header: 'Empresa',
+      accessor: 'Empresa',
       sort: true,
-    }, {
-      Header: 'Valor',
-      accessor: 'ValorUnitario',
+    },
+    {
+      Header: 'Fecha',
+      accessor: 'Fecha',
       sort: true,
-    }, {
+    },{
       Header: 'Descripción',
       accessor: 'Descripcion',
+      sort: true,
+    }
+    ,{
+      Header: 'Cantidad',
+      accessor: 'Cantidad',
+      sort: false,
+    },{
+      Header: 'Valor',
+      accessor: 'ValorUnitario',
       sort: false,
     },
     {
       Header: 'Status',
       accessor: 'status',
       sort: true,
-      // eslint-disable-next-line no-undef
       Cell: StatusColumn,
     },
     {
@@ -113,10 +121,12 @@ const Material = (props) => {
     setSignUpModalAdd(!signUpModalAdd);
     setItems([{
       id: 1,
-      Nombre: '',
-      Unidad: '',
-      ValorUnitario: '',
+      Codigo: '',
+      Empresa: '',
+      Fecha: '',
       Descripcion:'',
+      Cantidad:'',
+      ValorUnitario:'',
       status:'',
     }])
  };
@@ -136,13 +146,10 @@ const Material = (props) => {
           <Modal.Body>
             {(() => {
               switch (props?.tipo) {
-                case "Material": case "ManoObra": case "Herramientas":
+                case "OrdenCompra":
                   return (<><FormAdd
                     title={`GESTIONAR ${props?.tipo?.toUpperCase()}`}
-                    setItems={setItems}
-                    items={items}
                     validated={validated}
-                    accion={add}
                   /></>);
                 default:
                   return (
@@ -169,7 +176,7 @@ const Material = (props) => {
               </Row>
               {!isLoading? (<Table
                 columns={columns}
-                data={props.materias}
+                data={props.datos}
                 pageSize={5}
                 sizePerPageList={sizePerPageList}
                 isSortable={true}
@@ -178,13 +185,13 @@ const Material = (props) => {
                 searchBoxClass="mt-2 mb-3"
                 isSearchable={true}
                 nametable={props.accion}
-              />):'Esperando...'}
+              />):<Suspense fallback={loading()}>Esperando...</Suspense>}
             </Card.Body>
           </Card>
         </Col>
-      </Row>
+       </Row>
     </>
   );
 };
 
-export default Material;
+export default OrdenCompra;

@@ -51,7 +51,7 @@ const MenuItemWithChildren = ({
 
             {item.children ? (
                 <div className={classNames(subMenuClassNames, { show: open })} aria-labelledby={item.key}>
-                    {item.children.map((child, i) => {
+                    {item?.children?.map((child, i) => {
                         return (
                             <React.Fragment key={i}>
                                 {child.children ? (

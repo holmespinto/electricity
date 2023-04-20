@@ -1,12 +1,31 @@
-import React,{useContext,useState} from 'react';
+import React from 'react';
 import classNames from 'classnames';
 import { Button, Form, Row, Col } from 'react-bootstrap';
-import FormInput from '../../components/FormInput';
-import { DashboardContext } from '../../../../layouts/context/DashboardContext';
+import Select from 'react-select';
+import FormInput from '../../../components/FormInput';
 
-const FormProyectoAdd = (props) => {
-  const {add} = useContext(DashboardContext);
-  const [items, setItems] = useState({});
+
+const Fields = (props) => {
+  const clientes=[]
+  const children = props.itemsClientes || [];
+
+
+  const array= children ? (
+           // eslint-disable-next-line array-callback-return
+          children.map((child, i) => {
+            const obj={
+              value: child.id,
+              label:child.Nombre
+            }
+            clientes.push(obj)
+           })
+
+  ):[{
+    value:'No Existen clientes',
+    label:'No Existen clientes'
+  }]
+
+console.log(array)
   return (
   <React.Fragment>
     <div className="text-center mt-2 mb-4 btn-success">
@@ -26,8 +45,8 @@ const FormProyectoAdd = (props) => {
               containerClass={'mb-3'}
               key="Nombre"
               placeholder="Digite el Nombre"
-              value={items.Nombre}
-              onChange={(e) => setItems({ ...items, Nombre: e.target.value })}
+              value={props.items[0]?.Nombre}
+              onChange={(e) => props.setItems([{ ...props.items[0], Nombre: e.target.value }])}
             />
             <Form.Control.Feedback type="invalid">
               Por favor, digite la Nombre.
@@ -36,17 +55,20 @@ const FormProyectoAdd = (props) => {
         </Col>
         <Col sm={6}>
           <Form.Group className="mb-3" controlId="Tipo">
-              <FormInput
-                name="Tipo"
-                label="Tipo"
+              <Select
                 type="select"
-                containerClass="mb-3"
-                className="form-select"
-                onChange={(e) => setItems({ ...items, Tipo: e.target.value })}
-                key="Tipo">
-                <option>Externo</option>
-                <option>Interno</option>
-              </FormInput>
+                name="Tipo"
+                className="react-select"
+                classNamePrefix="react-select"
+                onChange={(e) => props.setItems([{ ...props.items[0], Tipo: e.value}])}
+                options={[
+                  { value: props.items[0]?.Tipo, Tipo: '' + props.items[0]?.Tipo + '' },
+                  { value: 'Interno', label: 'Interno' },
+                  { value: 'Externo', label: 'Externo' },
+                ]}
+                placeholder="Selecione el Tipo..."
+                selected={props.items[0]?.Tipo}
+              />
               <Form.Control.Feedback type="invalid">
               Por favor, digite el Tipo.
             </Form.Control.Feedback>
@@ -62,8 +84,8 @@ const FormProyectoAdd = (props) => {
               type="text"
               name="Direccion"
               placeholder="Digite la Direccion"
-              value={items.Direccion}
-              onChange={(e) => setItems({ ...items, Direccion: e.target.value })}
+              value={props.items[0]?.Direccion}
+              onChange={(e) => props.setItems([{ ...props.items[0], Direccion: e.target.value }])}
             />
             <Form.Control.Feedback type="invalid">
               Por favor, digite la Direccion.
@@ -72,17 +94,16 @@ const FormProyectoAdd = (props) => {
         </Col>
         <Col sm={6}>
           <Form.Group className="mb-3" controlId="Cliente">
-            <FormInput
-                name="Cliente"
-                label="Cliente"
+          <Select
                 type="select"
-                containerClass="mb-3"
-                className="form-select"
-                onChange={(e) => setItems({ ...items, Cliente: e.target.value })}
-                key="Cliente">
-                <option>Holmes</option>
-                <option>Pinto</option>
-              </FormInput>
+                name="Cliente"
+                className="react-select"
+                classNamePrefix="react-select"
+                onChange={(e) => props.setItems([{ ...props.items[0], Cliente: e.value}])}
+                options={clientes}
+                placeholder="Selecione el Cliente..."
+                selected={props.items[0]?.Cliente}
+              />
             <Form.Control.Feedback type="invalid">
               Por favor, digite el Cliente.
             </Form.Control.Feedback>
@@ -100,7 +121,7 @@ const FormProyectoAdd = (props) => {
                 type="select"
                 containerClass="mb-3"
                 className="form-select"
-                onChange={(e) => setItems({ ...items, Estado: e.target.value })}
+                onChange={(e) => props.setItems([{ ...props.items[0], Estado: e.target.value }])}
                 key="Estado">
                 <option>Inicial</option>
                 <option>Liquidado</option>
@@ -112,7 +133,7 @@ const FormProyectoAdd = (props) => {
         </Col>
       </Row>
       <div className="button-list">
-        <Button type="button" disabled={items.message ? 'true' : ''} onClick={(e) => add(e,items)}>
+        <Button type="button" disabled={props.items[0]?.message ? 'true' : ''}  onClick={(e) => {props.accion(e,props.items)}}>
           +
         </Button>
         {props.items.message && (
@@ -125,4 +146,4 @@ const FormProyectoAdd = (props) => {
     </React.Fragment>
     );
 }
-export default FormProyectoAdd;
+export default Fields;

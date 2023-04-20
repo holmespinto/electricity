@@ -1,12 +1,7 @@
-import React,{useState,useContext} from 'react';
+import React from 'react';
 import { Button, Form, Row, Col } from 'react-bootstrap';
-import FormInput from '../../components/FormInput';
-import { DashboardContext } from '../../../../layouts/context/DashboardContext';
-const FormAdd = (props) => {
-  const {add} = useContext(DashboardContext);
-  const [items, setItems] = useState({});
-
-
+import FormInput from '../../../components/FormInput';
+const Fields = (props) => {
 
   return (
 
@@ -26,8 +21,8 @@ const FormAdd = (props) => {
               type="text"
               name="Nombre"
               placeholder="Digite el Nombre"
-              value={items?.Nombre}
-              onChange={(e) => setItems({ ...items, Nombre: e.target.value })}
+              value={props.items[0]?.Nombre}
+              onChange={(e) => props.setItems([{ ...props.items[0], Nombre: e.target.value }])}
             />
 
             <Form.Control.Feedback type="invalid">
@@ -44,8 +39,8 @@ const FormAdd = (props) => {
               containerClass={'mb-3'}
               name="Unidad"
               placeholder="Digite la Unidad de Medida"
-              value={items?.Unidad}
-              onChange={(e) => setItems({ ...items, Unidad: e.target.value })}
+              value={props.items[0]?.Unidad}
+              onChange={(e) => props.setItems([{ ...props.items[0], Unidad: e.target.value }])}
             />
             <Form.Control.Feedback type="invalid">
               Por favor, digite la Unidad.
@@ -64,8 +59,8 @@ const FormAdd = (props) => {
               containerClass={'mb-3'}
               key="Descripcion"
               placeholder="Digite la Descripcion"
-              value={items?.Descripcion}
-              onChange={(e) => setItems({ ...items, Descripcion: e.target.value })}
+              value={props.items[0]?.Descripcion}
+              onChange={(e) => props.setItems([{ ...props.items[0], Descripcion: e.target.value }])}
             />
 
             <Form.Control.Feedback type="invalid">
@@ -81,8 +76,8 @@ const FormAdd = (props) => {
               type="number"
               name="ValorUnitario"
               placeholder="Digite el Valor Unitario"
-              value={items?.ValorUnitario}
-              onChange={(e) => setItems({ ...items, ValorUnitario: e.target.value })}
+              value={props.items[0]?.ValorUnitario}
+              onChange={(e) => props.setItems([{ ...props.items[0], ValorUnitario: e.target.value }])}
             />
             <Form.Control.Feedback type="invalid">
               Por favor, digite el Valor Unitario.
@@ -91,18 +86,12 @@ const FormAdd = (props) => {
         </Col>
       </Row>
       <div className="button-list">
-        <Button type="button" disabled={props?.items?.message?.length<0 ? 'true' : ''} onClick={(e) => {add(e,items)}}>
+        <Button type="button" disabled={props.items[0]?.message?.length<0 ? 'true' : ''} onClick={(e) => {props.accion(e,props.items)}}>
           +
         </Button>
-
-        {/*props.items.message?.length<0 && (
-          <Button type="button" className="btn-icon" onClick={props.Close}>
-            <i className={classNames('mdi', ['mdi-window-close'], 'ms-1', 'me-1')}></i>
-          </Button>
-        )*/}
       </div>
     </Form>
     </React.Fragment>
     );
 }
-export default FormAdd;
+export default Fields;

@@ -1,18 +1,17 @@
 // @flow
-import React, { useContext} from 'react';
+import React, { useContext,Suspense} from 'react';
 import { Row, Col, Card, Button, Modal } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
-import { DashboardContext } from '../../../../layouts/context/DashboardContext';
+import { DashboardContext } from '../../../../../layouts/context/DashboardContext';
 //import { GestionBasicaContext } from '../../../../layouts/context/GestionBasicaContext';
-import FormProyectoAdd from './FormProyectoAdd';
-import FormProyectoUpdate from './FormProyectoUpdate';
-import Table from '../../../../components/Table';
-
+import FormAdd from './FormAdd';
+import FormUpdate from './FormUpdate';
+import Table from '../../../../../components/Table';
+const loading = () => <div className="text-center"></div>;
 const ActionColumn = ({ row }) => {
 
   const {
     eliminar,
-    update,
     validated,
     signUpModal,
     setSignUpModal,
@@ -25,11 +24,10 @@ const ActionColumn = ({ row }) => {
     setItems([{
       id: row.cells[0].value ? row.cells[0].value : row.cells[0].value,
       Nombre: row.cells[1].value ? row.cells[1].value : row.cells[1].value,
-      Tipo: row.cells[2].value ? row.cells[2].value : row.cells[2].value,
-      Direccion: row.cells[3].value ? row.cells[3].value : row.cells[3].value,
-      Cliente: row.cells[4].value ? row.cells[4].value : row.cells[4].value,
-      Estado:row.cells[5].value ? row.cells[5].value : row.cells[5].value,
-      status: row.cells[6].value ? row.cells[6].value : row.cells[6].value,
+      Unidad: row.cells[2].value ? row.cells[2].value : row.cells[2].value,
+      ValorUnitario: row.cells[3].value ? row.cells[3].value : row.cells[3].value,
+      Descripcion: row.cells[4].value ? row.cells[4].value : row.cells[4].value,
+      status: row.cells[5].value ? row.cells[5].value : row.cells[5].value,
     }])
 };
 
@@ -39,11 +37,10 @@ const ActionColumn = ({ row }) => {
         <Modal.Body>
         {(() => {
               switch (itemsmenuprincipal) {
-                case "Proyecto":
-                  return (<><FormProyectoUpdate
+                case "Material": case "ManoObra": case "Herramientas":
+                  return (<><FormUpdate
                     title={`ACTUALIZAR ${itemsmenuprincipal?.toUpperCase()}`}
                     validated={validated}
-                    accion={update}
                   /></>);
                 default:
                   return (
@@ -64,11 +61,10 @@ const ActionColumn = ({ row }) => {
         </React.Fragment>
   );
 };
-const Proyecto = (props) => {
+const Material = (props) => {
   const {
     validated,
     signUpModalAdd, setSignUpModalAdd,
-    items,add,
     setItems,sizePerPageList,StatusColumn,isLoading
   } = useContext(DashboardContext);
   const columns = [
@@ -83,26 +79,23 @@ const Proyecto = (props) => {
       sort: true,
     },
     {
-      Header: 'Tipo',
-      accessor: 'Tipo',
+      Header: 'Unidad',
+      accessor: 'Unidad',
       sort: true,
     }, {
-      Header: 'Direccion',
-      accessor: 'Direccion',
+      Header: 'Valor',
+      accessor: 'ValorUnitario',
       sort: true,
     }, {
-      Header: 'Cliente',
-      accessor: 'Cliente',
-      sort: false,
-    },{
-      Header: 'Estado',
-      accessor: 'Estado',
+      Header: 'Descripción',
+      accessor: 'Descripcion',
       sort: false,
     },
     {
       Header: 'Status',
       accessor: 'status',
       sort: true,
+      // eslint-disable-next-line no-undef
       Cell: StatusColumn,
     },
     {
@@ -140,13 +133,10 @@ const Proyecto = (props) => {
           <Modal.Body>
             {(() => {
               switch (props?.tipo) {
-                case "Proyecto":
-                  return (<><FormProyectoAdd
+                case "Material": case "ManoObra": case "Herramientas":
+                  return (<><FormAdd
                     title={`GESTIONAR ${props?.tipo?.toUpperCase()}`}
-                    setItems={setItems}
-                    items={items}
                     validated={validated}
-                    accion={add}
                   /></>);
                 default:
                   return (
@@ -173,7 +163,7 @@ const Proyecto = (props) => {
               </Row>
               {!isLoading? (<Table
                 columns={columns}
-                data={props.materias}
+                data={props.datos}
                 pageSize={5}
                 sizePerPageList={sizePerPageList}
                 isSortable={true}
@@ -182,13 +172,13 @@ const Proyecto = (props) => {
                 searchBoxClass="mt-2 mb-3"
                 isSearchable={true}
                 nametable={props.accion}
-              />):'Esperando...'}
+              />):<Suspense fallback={loading()}>Esperando...</Suspense>}
             </Card.Body>
           </Card>
         </Col>
-      </Row>
+       </Row>
     </>
   );
 };
 
-export default Proyecto;
+export default Material;

@@ -1,10 +1,9 @@
-import React,{useContext} from 'react';
+import React from 'react';
 
 import { Button, Form, Row, Col } from 'react-bootstrap';
-import FormInput from '../../components/FormInput';
-import { DashboardContext } from '../../../../layouts/context/DashboardContext';
-const FormClienteUpdate = (props) => {
-  const {setItems,items} = useContext(DashboardContext);
+import FormInput from '../../../components/FormInput';
+
+const ClienteFields = (props) => {
 
   return (
   <React.Fragment>
@@ -23,8 +22,8 @@ const FormClienteUpdate = (props) => {
               type="number"
               name="Identificacion"
               placeholder="Digite la Identificacion"
-              value={items[0]?.items?.Identificacion}
-              onChange={(e) =>setItems([{...items[0], Identificacion: e.target.value }])}
+              value={props.items[0]?.Identificacion}
+              onChange={(e) =>props.setItems([{...props.items[0], Identificacion: e.target.value }])}
             />
 
             <Form.Control.Feedback type="invalid">
@@ -41,8 +40,8 @@ const FormClienteUpdate = (props) => {
               containerClass={'mb-3'}
               name="Email"
               placeholder="Digite el email"
-              value={items[0]?.Email}
-              onChange={(e) => setItems([{...items[0], Email: e.target.value }])}
+              value={props.items[0]?.Email}
+              onChange={(e) => props.setItems([{...props.items[0], Email: e.target.value }])}
             />
             <Form.Control.Feedback type="invalid">
               Por favor, digite el email.
@@ -61,8 +60,8 @@ const FormClienteUpdate = (props) => {
               containerClass={'mb-3'}
               key="Nombre"
               placeholder="Digite el Nombre"
-              value={items[0]?.Nombre}
-              onChange={(e) =>setItems([{...items[0], Nombre: e.target.value }])}
+              value={props.items[0]?.Nombre}
+              onChange={(e) =>props.setItems([{...props.items[0], Nombre: e.target.value }])}
             />
 
             <Form.Control.Feedback type="invalid">
@@ -78,8 +77,8 @@ const FormClienteUpdate = (props) => {
               type="text"
               name="Direccion"
               placeholder="Digite la Direccion"
-              value={items[0]?.Direccion}
-              onChange={(e) => setItems([{...items[0], Direccion: e.target.value }])}
+              value={props.items[0]?.Direccion}
+              onChange={(e) => props.setItems([{...props.items[0], Direccion: e.target.value }])}
             />
             <Form.Control.Feedback type="invalid">
               Por favor, digite la Direccion.
@@ -96,8 +95,8 @@ const FormClienteUpdate = (props) => {
               type="number"
               name="Telefono"
               placeholder="Digite el Telefono"
-              value={items[0]?.Telefono}
-              onChange={(e) => setItems([{...items[0], Telefono: e.target.value }])}
+              value={props.items[0]?.Telefono}
+              onChange={(e) => props.setItems([{...props.items[0], Telefono: e.target.value }])}
             />
             <Form.Control.Feedback type="invalid">
               Por favor, digite el Telefono.
@@ -107,7 +106,7 @@ const FormClienteUpdate = (props) => {
         <Col sm={6}></Col>
         </Row>
       <div className="button-list">
-        <Button type="button" disabled={items.message ? 'true' : ''} onClick={props?.accion}>
+        <Button type="button" disabled={props.items.message ? 'true' : ''} onClick={props?.accion}>
           +
         </Button>
       </div>
@@ -115,4 +114,4 @@ const FormClienteUpdate = (props) => {
     </React.Fragment>
     );
 }
-export default FormClienteUpdate;
+export default ClienteFields;

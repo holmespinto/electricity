@@ -41,10 +41,10 @@ const Routes = (props) => {
     return (
         <HashRouter>
             <Switch>
-                <Route path={publicProtectedFlattenRoutes.map((r) => r['path'])}>
+                <Route path={publicProtectedFlattenRoutes?.map((r) => r['path'])}>
                     <DefaultLayout {...props} layout={layout}>
                         <Switch>
-                            {publicProtectedFlattenRoutes.map((route, index) => {
+                            {publicProtectedFlattenRoutes?.map((route, index) => {
                                 return (
                                     !route.children && (
                                         <route.route
@@ -61,10 +61,10 @@ const Routes = (props) => {
                     </DefaultLayout>
                 </Route>
 
-                <Route path={authProtectedFlattenRoutes.map((r) => r['path'])}>
+                <Route path={authProtectedFlattenRoutes?.map((r) => r['path'])}>
                     <Layout {...props} layout={layout} user={user}>
                         <Switch>
-                            {authProtectedFlattenRoutes.map((route, index) => {
+                            {authProtectedFlattenRoutes?.map((route, index) => {
                                 return (
                                     !route.children && (
                                         <route.route

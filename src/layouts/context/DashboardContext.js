@@ -12,8 +12,20 @@ const DashboardProvider = ({ children }) => {
   const [itemUrl, setitemsUrl] = useState('');
   const [validated, setValidated] = useState(false);
   const [items, setItems] = useState([]);
+  const [itemsQuery, setItemsQuery] = useState([]);
+  const [empleadoNomina, setEmpleadoNomina] = useState([]);
+  const [itemsQueryNominaEmpleado, setItemsQueryNominaEmpleado] = useState([{}]);
+  //const [itemsConcNomina, setItemConcNomina] = useState([]);
   const [signUpModal, setSignUpModal] = useState(false);
   const [signUpModalAdd, setSignUpModalAdd] = useState(false);
+  const [signUpNomina, setSignUpNomina] = useState(false);
+  const [signUpModalLiqNomina, setSignUpModalLiqNomina] = useState(false);
+  const [open, setOpen] = useState(false);
+
+
+  const toggle = () => {
+    setOpen((prevState) => !prevState);
+};
 
   //DESGLOSAR URL PARA CADA OPCION DEL MENU
   const itemsMenuCallBack = useCallback((e) => {
@@ -68,13 +80,15 @@ const DashboardProvider = ({ children }) => {
   }];
 
   //DESPLEGAR LISTA
-  const ConsultarListaDatos = useCallback(() => {
+  const ConsultarListaDatos = useCallback((itemUrl, itemsmenuprincipal) => {
     setLoading(true)
     const url = `accion=${itemUrl}&opcion=consultar&tipo=${itemsmenuprincipal}`;
     const datosMaterial = api.sendRequestData(`${url}`);
     datosMaterial?.then(function (response) {
       try {
-        setItems(response);
+
+        response?setItems(response):setItems([]);
+
       } catch (error) {
         console.error(error);
       }
@@ -85,9 +99,68 @@ const DashboardProvider = ({ children }) => {
         // }, 000);
       });
 
-  }, [itemUrl, itemsmenuprincipal]);
+  }, []);
+  //DESPLEGAR LISTA CLIENTES
 
-  const sendData = useCallback((event, opcion) => {
+  const query = useCallback((itemUrl, itemsmenuprincipal,opcion) => {
+    setLoading(true)
+    let varibles;
+    let datos=opcion;
+    if (opcion) {
+      var queryString = datos[0]
+        ? Object.keys(datos[0])
+          .map((key) => key + '=' + datos[0][key])
+          .join('&')
+        : '';
+    }
+    varibles = queryString;
+    const url = `accion=${itemUrl}&tipo=${itemsmenuprincipal}&${varibles}`;
+    const datosMaterial = api.sendRequestData(`${url}`);
+    datosMaterial?.then(function (response) {
+      try {
+        setItemsQuery(response);
+      } catch (error) {
+        console.error(error);
+      }
+    }).catch((error) => console.error('Error:', error))
+      .finally(() => {
+        //setTimeout(function () {
+        setLoading(false)
+        // }, 000);
+      });
+
+  }, []);
+
+  const queryNominaEmpleado = useCallback((itemUrl, itemsmenuprincipal,opcion) => {
+    setLoading(true)
+    let varibles;
+    let datos=opcion;
+    if (opcion) {
+      var queryString = datos[0]
+        ? Object.keys(datos[0])
+          .map((key) => key + '=' + datos[0][key])
+          .join('&')
+        : '';
+    }
+    varibles = queryString;
+    const url = `accion=${itemUrl}&tipo=${itemsmenuprincipal}&${varibles}`;
+    const datosMaterial = api.sendRequestData(`${url}`);
+    datosMaterial?.then(function (response) {
+      try {
+        setItemsQueryNominaEmpleado(response);
+      } catch (error) {
+        console.error(error);
+      }
+    }).catch((error) => console.error('Error:', error))
+      .finally(() => {
+        //setTimeout(function () {
+        setLoading(false)
+        // }, 000);
+      });
+
+  }, []);
+
+  const sendData = useCallback((event, opcion,data) => {
     const form = event.currentTarget;
     if (form.checkValidity() === false) {
       event.preventDefault();
@@ -97,11 +170,12 @@ const DashboardProvider = ({ children }) => {
     setValidated(true);
     if (validated) {
       let response;
-
-      if (items) {
-        var queryString = items[0]
-          ? Object.keys(items[0])
-            .map((key) => key + '=' + items[0][key])
+      let datos;
+      datos= (opcion ==='add')||(opcion ==='addNomina')?data:items;
+      if (datos) {
+        var queryString = datos[0]
+          ? Object.keys(datos[0])
+            .map((key) => key + '=' + datos[0][key])
             .join('&')
           : '';
       }
@@ -117,12 +191,15 @@ const DashboardProvider = ({ children }) => {
         .finally(() => {
           setTimeout(function () {
             (opcion === 'add') ? setSignUpModalAdd(false) : setSignUpModal(false);
-            ConsultarListaDatos()
+            (opcion === 'addNomina') ?
+            queryNominaEmpleado('OtrosRegistros','GenerarNomina',[{opcion:'consultar_nomina_empleado',idEmpleado:data[0]?.IdEmpleado,idNomina:data[0]?.IdNomina}]):
+            ConsultarListaDatos(itemUrl,itemsmenuprincipal)
+
           }, 2000);
         })
     }
 
-  }, [items, validated, itemUrl, itemsmenuprincipal, ConsultarListaDatos]);
+  }, [validated, items, itemUrl, itemsmenuprincipal, queryNominaEmpleado, ConsultarListaDatos]);
 
   //ELEIMINAR REGISTRO
 
@@ -141,58 +218,30 @@ const DashboardProvider = ({ children }) => {
           .catch((error) => console.error('Error:', error))
           .finally(() => {
             setTimeout(function () {
-              ConsultarListaDatos()
+              ConsultarListaDatos(itemUrl,itemsmenuprincipal)
 
             }, 5000);
           })
       }
     })
     // eslint-disable-next-line no-use-before-define
-  }, [ConsultarListaDatos, itemsmenuprincipal]);
+  }, [ConsultarListaDatos, itemUrl, itemsmenuprincipal]);
 
 
   //ACTUALIZAR REISTRO
   const update = useCallback((event) => {
-    sendData(event, 'update')
+    sendData(event, 'update',[])
 
   }, [sendData]);
 
   //GUARDAR REGISTRO
   const add = useCallback((event, data) => {
-    const form = event.currentTarget;
-    if (form.checkValidity() === false) {
-      event.preventDefault();
-      event.stopPropagation();
-    }
+    sendData(event, 'add', data)
+  }, [sendData]);
 
-    setValidated(true);
-    if (validated) {
-      let response;
-      if (data) {
-        var queryString = data
-          ? Object.keys(data)
-            .map((key) => key + '=' + data[key])
-            .join('&')
-          : '';
-      }
-      response = queryString;
-      const url = `accion=${itemUrl}&opcion=add&${response}&tipo=${itemsmenuprincipal}`;
-      const respuesta = api.sendRequestData(`${url}`);
-      respuesta.then(function (resp) {
-        Swal.fire('' + resp[0].menssage + '');
-
-      })
-        .catch((error) => console.error('Error:', error))
-        .finally(() => {
-          setTimeout(function () {
-            setSignUpModalAdd(false)
-            ConsultarListaDatos()
-          }, 2000);
-        })
-    }
-
-  }, [ConsultarListaDatos, itemUrl, itemsmenuprincipal, validated]);
-
+  const addNomina = useCallback((event, data) => {
+    sendData(event, 'addNomina', data)
+  }, [sendData]);
 
   const data = {
     itemsMenuCallBack,
@@ -203,7 +252,14 @@ const DashboardProvider = ({ children }) => {
     eliminar, update, ConsultarListaDatos, add,
     signUpModal, setSignUpModal,
     StatusColumn, sizePerPageList, INIT_RESPONSE,
-    signUpModalAdd, setSignUpModalAdd
+    signUpModalAdd, setSignUpModalAdd,
+    itemsQuery, setItemsQuery,query,
+    itemsQueryNominaEmpleado, setItemsQueryNominaEmpleado,queryNominaEmpleado,
+    empleadoNomina, setEmpleadoNomina,
+    signUpNomina, setSignUpNomina,
+    setSignUpModalLiqNomina, signUpModalLiqNomina,
+    addNomina,
+    open, setOpen,toggle
   };
 
   // eslint-disable-next-line react/jsx-no-undef

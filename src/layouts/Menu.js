@@ -40,7 +40,7 @@ const MenuItemWithChildren = ({ item, linkClassName, subMenuClassNames, activeMe
       </Link>
       <Collapse in={open}>
         <ul className={classNames(subMenuClassNames)}>
-          {item.children.map((child, i) => {
+          {item?.children?.map((child, i) => {
             return (
               <React.Fragment key={i}>
                 {child.children ? (
@@ -192,7 +192,7 @@ const AppMenu = ({ menuItems, location }: AppMenuProps) => {
   return (
     <>
       <ul className="side-nav" ref={menuRef} id="main-side-menu">
-        {(menuItems || []).map((item, idx) => {
+        {(menuItems || [])?.map((item, idx) => {
           return (
             <React.Fragment key={idx}>
               {item.isTitle ? (

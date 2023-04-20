@@ -48,7 +48,7 @@ type TopbarProps = {
 
 const Topbar = ({ hideLogo, navCssClasses, openLeftMenuCallBack, topbarDark }: TopbarProps): React$Element<any> => {
 
-
+  //const Logout = React.lazy(() => import('../pages/account/Logout'));
   const dispatch = useDispatch();
 
     const [isopen, setIsopen] = useState(false);
@@ -80,11 +80,15 @@ const Topbar = ({ hideLogo, navCssClasses, openLeftMenuCallBack, topbarDark }: T
         typeOfStorage:sessionStorage,
         item: 'hyper_user',
       })
+      //console.log('TopBar-userlocal',userlocal);
       setAutor({name:userlocal[0]?.username,role:userlocal[0]?.role});
+
     }, []);
 
     return (
         <React.Fragment>
+
+
             <div className={`navbar-custom ${navbarCssClasses} `}>
                 <div className={containerCssClasses}>
                     {!hideLogo && (

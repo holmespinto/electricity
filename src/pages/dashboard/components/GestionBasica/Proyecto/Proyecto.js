@@ -1,18 +1,17 @@
 // @flow
-import React, { useContext} from 'react';
+import React, { useContext,Suspense} from 'react';
 import { Row, Col, Card, Button, Modal } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
-import { DashboardContext } from '../../../../layouts/context/DashboardContext';
+import { DashboardContext } from '../../../../../layouts/context/DashboardContext';
 //import { GestionBasicaContext } from '../../../../layouts/context/GestionBasicaContext';
-import FormClienteAdd from './FormClienteAdd';
-import FormClienteUpdate from './FormClienteUpdate';
-import Table from '../../../../components/Table';
-
+import FormAdd from './FormAdd';
+import FormUpdate from './FormUpdate';
+import Table from '../../../../../components/Table';
+const loading = () => <div className="text-center"></div>;
 const ActionColumn = ({ row }) => {
 
   const {
     eliminar,
-    update,
     validated,
     signUpModal,
     setSignUpModal,
@@ -24,11 +23,11 @@ const ActionColumn = ({ row }) => {
     setSignUpModal(!signUpModal);
     setItems([{
       id: row.cells[0].value ? row.cells[0].value : row.cells[0].value,
-      Identificacion: row.cells[1].value ? row.cells[1].value : row.cells[1].value,
-      Email: row.cells[2].value ? row.cells[2].value : row.cells[2].value,
-      Nombre: row.cells[3].value ? row.cells[3].value : row.cells[3].value,
-      Direccion: row.cells[4].value ? row.cells[4].value : row.cells[4].value,
-      Telefono: row.cells[5].value ? row.cells[5].value : row.cells[5].value,
+      Nombre: row.cells[1].value ? row.cells[1].value : row.cells[1].value,
+      Tipo: row.cells[2].value ? row.cells[2].value : row.cells[2].value,
+      Direccion: row.cells[3].value ? row.cells[3].value : row.cells[3].value,
+      Cliente: row.cells[4].value ? row.cells[4].value : row.cells[4].value,
+      Estado:row.cells[5].value ? row.cells[5].value : row.cells[5].value,
       status: row.cells[6].value ? row.cells[6].value : row.cells[6].value,
     }])
 };
@@ -39,11 +38,10 @@ const ActionColumn = ({ row }) => {
         <Modal.Body>
         {(() => {
               switch (itemsmenuprincipal) {
-                case "Cliente":
-                  return (<><FormClienteUpdate
+                case "Proyecto":
+                  return (<><FormUpdate
                     title={`ACTUALIZAR ${itemsmenuprincipal?.toUpperCase()}`}
                     validated={validated}
-                    accion={update}
                   /></>);
                 default:
                   return (
@@ -64,13 +62,15 @@ const ActionColumn = ({ row }) => {
         </React.Fragment>
   );
 };
-const Material = (props) => {
+const Proyecto = (props) => {
+
   const {
     validated,
     signUpModalAdd, setSignUpModalAdd,
-    items,add,
     setItems,sizePerPageList,StatusColumn,isLoading
   } = useContext(DashboardContext);
+
+
   const columns = [
     {
       Header: 'ID',
@@ -78,25 +78,25 @@ const Material = (props) => {
       sort: true,
     },
     {
-      Header: 'Identificacion',
-      accessor: 'Identificacion',
+      Header: 'Nombre',
+      accessor: 'Nombre',
       sort: true,
     },
     {
-      Header: 'Email',
-      accessor: 'Email',
-      sort: true,
-    }, {
-      Header: 'Nombre',
-      accessor: 'Nombre',
+      Header: 'Tipo',
+      accessor: 'Tipo',
       sort: true,
     }, {
       Header: 'Direccion',
       accessor: 'Direccion',
-      sort: false,
+      sort: true,
     }, {
-      Header: 'Telefono',
-      accessor: 'Telefono',
+      Header: 'Cliente',
+      accessor: 'Cliente',
+      sort: false,
+    },{
+      Header: 'Estado',
+      accessor: 'Estado',
       sort: false,
     },
     {
@@ -118,9 +118,10 @@ const Material = (props) => {
     setItems([{
       id: 1,
       Nombre: '',
-      Unidad: '',
-      ValorUnitario: '',
-      Descripcion:'',
+      Tipo: '',
+      Direccion: '',
+      Cliente:'',
+      Estado:'',
       status:'',
     }])
  };
@@ -140,13 +141,10 @@ const Material = (props) => {
           <Modal.Body>
             {(() => {
               switch (props?.tipo) {
-                case "Cliente":
-                  return (<><FormClienteAdd
+                case "Proyecto":
+                  return (<><FormAdd
                     title={`GESTIONAR ${props?.tipo?.toUpperCase()}`}
-                    setItems={setItems}
-                    items={items}
                     validated={validated}
-                    accion={add}
                   /></>);
                 default:
                   return (
@@ -173,7 +171,7 @@ const Material = (props) => {
               </Row>
               {!isLoading? (<Table
                 columns={columns}
-                data={props.materias}
+                data={props?.datos}
                 pageSize={5}
                 sizePerPageList={sizePerPageList}
                 isSortable={true}
@@ -182,13 +180,13 @@ const Material = (props) => {
                 searchBoxClass="mt-2 mb-3"
                 isSearchable={true}
                 nametable={props.accion}
-              />):'Esperando...'}
+              />):<Suspense fallback={loading()}>Esperando...</Suspense>}
             </Card.Body>
           </Card>
         </Col>
-      </Row>
+       </Row>
     </>
   );
 };
 
-export default Material;
+export default Proyecto;

@@ -1,26 +1,43 @@
 // @flow
-import React from 'react';
-import RegistrarEmpleado from './RegistrarEmpleado';
-import ControlDiario from './ControlDiario';
-import OrdenCompra from './OrdenCompra';
-import GenerarNomina from './GenerarNomina';
-import ListProyectos from './ListProyectos';
+import React, { useEffect, useContext } from 'react';
+import ControlDiario from './ControlDiario/ControlDiario';
+import OrdenCompra from './OrdenCompra/OrdenCompra';
+import MenuNomina from './Nomina/MenuNomina';
+import { DashboardContext } from '../../../../layouts/context/DashboardContext';
+
 
 const OtrosRegistros = (props) => {
+  const { ConsultarListaDatos, items,query } = useContext(DashboardContext);
+
+  useEffect(() => {
+    ConsultarListaDatos(props.accion, props.tipo);
+  }, [ConsultarListaDatos, props.accion, props.tipo]);
+
+  useEffect(() => {
+    query('GestionBasica','Empleado',[{opcion:'consultar'}]);
+  }, [query]);
   return (
     <>
- {(() => {
+      {(() => {
         switch (props.tipo) {
-          case 'RegistrarEmpleado':
-            return (<><RegistrarEmpleado accion={'OtrosRegistros'} tipo={props.tipo}/></>);
           case 'ControlDiario':
-            return (<><ControlDiario accion={'OtrosRegistros'} tipo={props.tipo}/></>);
+            return (<><ControlDiario
+              accion={'GestionBasica'}
+              datos={items}
+              tipo={props.tipo}
+            /></>);
             case 'OrdenCompra':
-            return (<><OrdenCompra accion={'OtrosRegistros'} tipo={props.tipo}/></>);
+            return (<><OrdenCompra
+              accion={'GestionBasica'}
+              datos={items}
+              tipo={props.tipo}
+            /></>);
             case 'GenerarNomina':
-            return (<><GenerarNomina accion={'OtrosRegistros'} tipo={props.tipo}/></>);
-          case 'CotizarProyecto':case 'LiquidarProyecto':case 'EstadoProyecto':
-            return (<><ListProyectos accion={'OtrosRegistros'} tipo={props.tipo}/></>);
+            return (<><MenuNomina
+              accion={'GestionBasica'}
+              datos={items}
+              tipo={props.tipo}
+            /></>);
           default:
             return (
               <>{''}</>
