@@ -102,6 +102,32 @@ const FormInput = ({
                                 ) : null}
                             </Form.Group>
                         </>
+                    ) :type === 'number' ? (
+                        <>
+                            <Form.Group className={containerClass}>
+                                {label ? (
+                                    <>
+                                        {' '}
+                                        <Form.Label className={labelClassName}>{label}</Form.Label> {children}{' '}
+                                    </>
+                                ) : null}
+                                <input
+                                    type={type}
+                                    name={name}
+                                    placeholder={placeholder}
+                                    refCallback={refCallback}
+                                    errors={errors}
+                                    register={register}
+                                    className={className}
+                                />
+
+                                {errors && errors[name] ? (
+                                    <Form.Control.Feedback type="invalid" className="d-block">
+                                        {errors[name]['message']}
+                                    </Form.Control.Feedback>
+                                ) : null}
+                            </Form.Group>
+                        </>
                     ) : (
                         <>
                             {type === 'checkbox' || type === 'radio' ? (

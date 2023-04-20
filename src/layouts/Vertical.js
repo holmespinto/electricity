@@ -122,7 +122,7 @@ const VerticalLayout = (state: VerticalLayoutState): React$Element<any> => {
                     </RightSidebar>
                 </Suspense>
             </MenuProvider>
-            </DashboardProvider>
+             </DashboardProvider>
         </>
     );
 };
