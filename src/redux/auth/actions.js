@@ -13,7 +13,7 @@ export const authApiResponseError = (actionType: string, error: string): AuthAct
     type: AuthActionTypes.API_RESPONSE_ERROR,
     payload: { actionType, error },
 });
-//, id: number, usuario: string, usuario: string ,id,usuario,clave
+
 export const loginUser = (username: string, password: string): AuthAction => ({
     type: AuthActionTypes.LOGIN_USER,
     payload: { username, password},
@@ -23,10 +23,10 @@ export const logoutUser = (): AuthAction => ({
     type: AuthActionTypes.LOGOUT_USER,
     payload: {},
 });
-
-export const signupUser = (fullname: string, email: string, password: string): AuthAction => ({
+//REGISTRAR O ACTUALIZAR USUARIO
+export const signupUser = (datos: any): AuthAction => ({
     type: AuthActionTypes.SIGNUP_USER,
-    payload: { fullname, email, password },
+    payload: {datos},
 });
 
 export const forgotPassword = (username: string): AuthAction => ({

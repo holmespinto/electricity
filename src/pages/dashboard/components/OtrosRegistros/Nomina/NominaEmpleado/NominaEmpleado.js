@@ -1,6 +1,6 @@
 // @flow
 import React, { useContext, Suspense } from 'react';
-import { Row, Col, Card, /*Button, Modal*/ } from 'react-bootstrap';
+import { Row, Col, Card,Collapse /*Button, Modal*/ } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { DashboardContext } from '../../../../../../layouts/context/DashboardContext';
 import FormAdd from './FormAdd';
@@ -11,13 +11,15 @@ const loading = () => <div className="text-center"></div>;
 const ActionColumn = ({ row }) => {
 
   const {
-    eliminar,
-    setItems, queryNominaEmpleado,setSignUpNomina,signUpNomina
+    //eliminar,
+    setItems, queryNominaEmpleado,open, setOpen,toggle//setOpenNomin,openNomin
   } = useContext(DashboardContext);
 
   const toggleSignUpx = () => {
     if (row.cells[0].value > 0)
-      setSignUpNomina(!signUpNomina);
+    setOpen(open);
+    toggle()
+    //setOpenNomin(!openNomin);
       queryNominaEmpleado('OtrosRegistros', 'GenerarNomina', [{ opcion: 'consultar_nomina_empleado', idEmpleado: row.cells[0].value }]);
     console.log('click');
     setItems([{
@@ -37,10 +39,6 @@ const ActionColumn = ({ row }) => {
         {' '}
         <i className="mdi mdi-square-edit-outline"></i>
       </Link>
-      <Link to="#" className="action-icon" onClick={() => eliminar(row.cells[0].value)}>
-        {' '}
-        <i className="mdi mdi-delete"></i>
-      </Link>
     </React.Fragment>
   );
 };
@@ -49,7 +47,7 @@ const NominaEmpleado = (props) => {
   const {
 
     //signUpModalAdd,
-    sizePerPageList, isLoading,signUpNomina
+    sizePerPageList, isLoading,open
   } = useContext(DashboardContext);
 
   const columns = [
@@ -88,19 +86,23 @@ const NominaEmpleado = (props) => {
       Cell: ActionColumn,
     },
   ];
-console.log(signUpNomina)
+console.log(open)
   return (
     <>
       <Row>
         <Col>
           <Card>
             <Card.Body>
+            <Collapse in={open} appear>
+            <div>
               <Row>
-                <Col sm={12} className={`${signUpNomina ? 'd-lg-none' : ''}`} >
+
+                <Col sm={12} >
                   <FormAdd />
                 </Col>
               </Row>
-
+              </div>
+                </Collapse>
               {!isLoading ? (<Table
                 columns={columns}
                 data={props.datos}

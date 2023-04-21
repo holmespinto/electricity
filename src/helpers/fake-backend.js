@@ -1,7 +1,8 @@
 import axios from 'axios';
 import MockAdapter from 'axios-mock-adapter';
-import { setItemStorage } from '../pages/dashboard/components/itemStorage';
+import Swal from 'sweetalert2'
 import {environments} from '../environments/environments';
+
 import { APICore } from './api/apiCore';
 const api = new APICore();
 
@@ -47,51 +48,53 @@ export function configureFakeBackend() {
   });
   mock.onPost('/register/').reply(function (config) {
     return new Promise(function (resolve, reject) {
-      setTimeout(function () {
-        // get parameters from post request
-        let CryptoJS = require('crypto-js');
-        let params = JSON.parse(config.data);
-        const url = `accion=usuarios&opcion=registrar`;
-        const Usuarios = api.setConsultas(`${url}?numero_documento=${params.username}`);
-        Usuarios.then(function (response) {
-          let paramus = JSON.parse(response);
-          let user = paramus.Data[0];
-          if (!user) {
-            // else return error
-            resolve([401, { message: 'Username or password is incorrect' }]);
-          } else {
-            const arr = JSON.stringify(user);
-            const users = JSON.parse(arr);
-            let usuario = () => {
-              var password = CryptoJS.AES.encrypt(params.password, 'secret key 123').toString();
-              return users.username === params.username && password === params.password;
-            };
-            if (usuario) {
-              // if login details are valid return user details and fake jwt
-              const TOKEN = api.generateToken(users);
-              let newUser = {
-                id: users.length + 1,
-                username: users.username,
-                password: users.password,
-                nombres: users.nombres,
-                apellidos: users.apellidos,
-                role: users.role,
-                token: TOKEN,
-              };
-              users.push({ newUser });
-              setItemStorage(sessionStorage,'hyper_user',users)
-              resolve([200, newUser]);
-            } else {
-              resolve([401, { message: 'Username or password is incorrect' }]);
-            }
-          }
-        });
+        setTimeout(function () {
+            let params = JSON.parse(config?.data);
+            let obj=params?.datos
 
-        // add new users
-        //let [firstName, lastName] = params.fullname.split(' ');
-      }, 1000);
-    });
-  });
+            if (params) {
+              var queryString = obj
+                ? Object.keys(obj)
+                  .map((key) => key + '=' + obj[key])
+                  .join('&')
+                : '';
+              }
+              const url = `${queryString}`;
+              const respuesta = api.sendRequestData(`${url}`);
+              respuesta.then(function (resp) {
+                Swal.fire('' + resp[0].menssage + '');
+              })
+                .catch((error) => console.error('Error:', error))
+              resolve([200, params]);
+            }, 1000);
+        });
+});
+
+mock.onPost('/queryform/').reply(function (config) {
+    return new Promise(function (resolve, reject) {
+        setTimeout(function () {
+            let params = JSON.parse(config?.data);
+            let obj=params?.datos
+
+            if (params) {
+              var queryString = obj
+                ? Object.keys(obj)
+                  .map((key) => key + '=' + obj[key])
+                  .join('&')
+                : '';
+              }
+              const url = `${queryString}`;
+              const respuesta = api.sendRequestData(`${url}`);
+              respuesta.then(function (resp) {
+                Swal.fire('' + resp[0].menssage + '');
+              })
+                .catch((error) => console.error('Error:', error))
+              resolve([200, params]);
+            }, 1000);
+        });
+});
+
+
 
   mock.onPost('/forget-password/').reply(function (config) {
     return new Promise(function (resolve, reject) {

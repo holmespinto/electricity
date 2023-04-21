@@ -1,6 +1,6 @@
 // @flow
 import React, { useContext,Suspense} from 'react';
-import { Row, Col, Card, Button, Modal,Collapse } from 'react-bootstrap';
+import { Row, Col, Card, Button, Modal } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { DashboardContext } from '../../../../../../layouts/context/DashboardContext';
 import FormAdd from './FormAdd';
@@ -12,17 +12,17 @@ const ActionColumn = ({ row }) => {
   const {
     eliminar,
     validated,
-    signUpModal,
-    setSignUpModal,
+    openNomin,
+    setOpenNomin,
     setItems,itemsmenuprincipal,query
   } = useContext(DashboardContext);
 
-  const toggleSignUp = () => {
+  const toggleOpenNomin = () => {
 
      if(row.cells[0].value>0)
 
      query('OtrosRegistros','GenerarNomina',[{opcion:'consultar_estados'}]);
-      setSignUpModal(!signUpModal);
+     setOpenNomin(!openNomin);
       setItems([{
       id: row.cells[0].value ? row.cells[0].value : row.cells[0].value,
       Codigo: row.cells[1].value ? row.cells[1].value : row.cells[1].value,
@@ -35,14 +35,14 @@ const ActionColumn = ({ row }) => {
 
   return (
     <React.Fragment>
-      <Modal show={signUpModal} onHide={toggleSignUp}>
+      <Modal show={openNomin} onHide={toggleOpenNomin}>
         <Modal.Body><FormUpdate
                     title={`ACTUALIZAR ${itemsmenuprincipal?.toUpperCase()}`}
                     validated={validated}
                   />
         </Modal.Body>
       </Modal>
-            <Link to="#" className="action-icon" onClick={() => toggleSignUp()}>
+            <Link to="#" className="action-icon" onClick={() => toggleOpenNomin()}>
                 {' '}
                 <i className="mdi mdi-square-edit-outline"></i>
             </Link>
@@ -59,7 +59,7 @@ const Nomina = (props) => {
 
   const {
     validated,
-    open, setOpen,toggle,
+    setOpenNomin,openNomin,
     setItems,sizePerPageList,isLoading,query,
   } = useContext(DashboardContext);
 
@@ -104,8 +104,8 @@ const Nomina = (props) => {
   const toggleSignUp = () => {
     let opciones =[{opcion:'consultar_estados'}]
     query('OtrosRegistros','GenerarNomina',opciones);
-    toggle();
-    setOpen(!open);
+
+    setOpenNomin(!openNomin)
     setItems([{
       id: 1,
       Codigo: '',
@@ -125,16 +125,14 @@ const Nomina = (props) => {
         <Col>
           <Card>
             <Card.Body>
-            <Collapse in={open}>
-                    <div>
               <Row>
                 <Col sm={12} >
                   <Card>
                     <Card.Body>
                       {/* Sign up Modal */}
-                      <Modal show={open} onHide={setOpen}>
+                      <Modal show={openNomin} onHide={toggleSignUp}>
                         <Modal.Body><FormAdd
-                          title={`GESTIONAR ${props?.tipo?.toUpperCase()}`}
+                          title={`GESTIONAR NOMINA`}
                           validated={validated}
                         />
                         </Modal.Body>
@@ -143,8 +141,6 @@ const Nomina = (props) => {
                   </Card>
                 </Col>
               </Row>
-              </div>
-                </Collapse>
               <Row>
                 <Col sm={4}>
                 </Col>

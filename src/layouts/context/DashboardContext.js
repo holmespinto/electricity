@@ -12,15 +12,18 @@ const DashboardProvider = ({ children }) => {
   const [itemUrl, setitemsUrl] = useState('');
   const [validated, setValidated] = useState(false);
   const [items, setItems] = useState([]);
+  const [itemsUsuarios, setIUsuarios] = useState([]);
   const [itemsQuery, setItemsQuery] = useState([]);
   const [empleadoNomina, setEmpleadoNomina] = useState([]);
   const [itemsQueryNominaEmpleado, setItemsQueryNominaEmpleado] = useState([{}]);
   //const [itemsConcNomina, setItemConcNomina] = useState([]);
   const [signUpModal, setSignUpModal] = useState(false);
+  const [openNomin, setOpenNomin] = useState(false);
   const [signUpModalAdd, setSignUpModalAdd] = useState(false);
   const [signUpNomina, setSignUpNomina] = useState(false);
   const [signUpModalLiqNomina, setSignUpModalLiqNomina] = useState(false);
   const [open, setOpen] = useState(false);
+  const [ ItemsUpdate, setItemsUpdate] = useState([]);
 
 
   const toggle = () => {
@@ -86,7 +89,6 @@ const DashboardProvider = ({ children }) => {
     const datosMaterial = api.sendRequestData(`${url}`);
     datosMaterial?.then(function (response) {
       try {
-
         response?setItems(response):setItems([]);
 
       } catch (error) {
@@ -118,7 +120,16 @@ const DashboardProvider = ({ children }) => {
     const datosMaterial = api.sendRequestData(`${url}`);
     datosMaterial?.then(function (response) {
       try {
-        setItemsQuery(response);
+        (() => {
+          switch (datos[0]?.obj) {
+            case "Usuarios":
+              setIUsuarios(response)
+            // eslint-disable-next-line no-fallthrough
+            default:
+              setItemsQuery(response)
+          }
+        })()
+
       } catch (error) {
         console.error(error);
       }
@@ -190,10 +201,19 @@ const DashboardProvider = ({ children }) => {
         .catch((error) => console.error('Error:', error))
         .finally(() => {
           setTimeout(function () {
-            (opcion === 'add') ? setSignUpModalAdd(false) : setSignUpModal(false);
-            (opcion === 'addNomina') ?
-            queryNominaEmpleado('OtrosRegistros','GenerarNomina',[{opcion:'consultar_nomina_empleado',idEmpleado:data[0]?.IdEmpleado,idNomina:data[0]?.IdNomina}]):
-            ConsultarListaDatos(itemUrl,itemsmenuprincipal)
+            (() => {
+              switch (opcion) {
+                case "add":
+                  setSignUpModalAdd(false)
+                // eslint-disable-next-line no-fallthrough
+                case "addNomina":
+                  queryNominaEmpleado('OtrosRegistros','GenerarNomina',[{opcion:'consultar_nomina_empleado',idEmpleado:data[0]?.IdEmpleado,idNomina:data[0]?.IdNomina}])
+                // eslint-disable-next-line no-fallthrough
+                default:
+                  setSignUpModal(false);
+                  ConsultarListaDatos(itemUrl,itemsmenuprincipal)
+              }
+            })()
 
           }, 2000);
         })
@@ -243,6 +263,8 @@ const DashboardProvider = ({ children }) => {
     sendData(event, 'addNomina', data)
   }, [sendData]);
 
+
+
   const data = {
     itemsMenuCallBack,
     setLoading,
@@ -259,7 +281,10 @@ const DashboardProvider = ({ children }) => {
     signUpNomina, setSignUpNomina,
     setSignUpModalLiqNomina, signUpModalLiqNomina,
     addNomina,
-    open, setOpen,toggle
+    open, setOpen,toggle,
+    openNomin, setOpenNomin,
+    itemsUsuarios, setIUsuarios,
+    ItemsUpdate, setItemsUpdate,
   };
 
   // eslint-disable-next-line react/jsx-no-undef

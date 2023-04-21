@@ -7,7 +7,7 @@ const FormAdd = (props) => {
   const { add,itemsQuery } = useContext(DashboardContext);
   const [items, setItems] = useState({});
 
-  console.log('Nomina/FormAdd/estadosNomina',itemsQuery)
+  //console.log('Nomina/FormAdd/estadosNomina',itemsQuery)
   return (
     <React.Fragment>
       <Fields

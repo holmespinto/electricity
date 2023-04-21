@@ -1,36 +1,10 @@
 import React from 'react';
 import { Row, Col } from 'react-bootstrap';
-//import Select from 'react-select';
 import LiquidarNomina from '../LiquidarNomina/LiquidarNomina';
 
-//, Collapse, Card
 const Fields = (props) => {
   const listNomina = [props.listNomina] || [];
-
-  /*
-    const secondaryUser = estados.filter(item => item.value === props.items[0]?.Estado)
-    console.log(secondaryUser[0]?.Descripcion)
-
-  const [cart, setCart] = useState({
-    items: [listNomina?.data?.DatosNomina],
-    sub_total: 1071.29,
-    shipping: 0,
-    total: 1071.29,
-  });
-  /**
-   * Update the shipping cost
-
-
-  const updateShipping = (shippingCost) => {
-    var localCart = { ...cart };
-    localCart['shipping'] = shippingCost;
-    localCart['total'] = localCart['sub_total'] + shippingCost;
-    setCart(localCart);
-  };
-
-updateShipping()
- */
-  console.log('fields-EmpleadoNomina', props)
+  //console.log('fields-EmpleadoNomina', props)
   return (
     <React.Fragment>
       <Row>

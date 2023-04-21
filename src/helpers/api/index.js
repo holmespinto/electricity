@@ -1,5 +1,5 @@
 // @flow
 import { login, logout, signup, forgotPassword, forgotPasswordConfirm } from './auth';
-//import { getCategorias } from './categorias';
+import { queryform } from './queryform';
 
-export { login, logout, signup, forgotPassword, forgotPasswordConfirm };
+export { login, logout, signup, forgotPassword, forgotPasswordConfirm,queryform };

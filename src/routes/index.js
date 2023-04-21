@@ -10,6 +10,7 @@ import PrivateRoute from './PrivateRoute';
 const Login = React.lazy(() => import('../pages/account/Login'));
 const Logout = React.lazy(() => import('../pages/account/Logout'));
 const Register = React.lazy(() => import('../pages/account/Register'));
+const Queryform = React.lazy(() => import('../pages/dashboard/Project'));
 //const Confirm = React.lazy(() => import('../pages/account/Confirm'));
 const ForgetPassword = React.lazy(() => import('../pages/account/ForgetPassword'));
 const LockScreen = React.lazy(() => import('../pages/account/LockScreen'));
@@ -66,6 +67,15 @@ const flattenRoutes = (routes) => {
     return flatRoutes;
 };
 
+//Empleado
+const empleadoRoutes = [
+  {
+      path: '/GestionBasica/Queryform',
+      name: 'Queryform',
+      component: Queryform,
+      route: Route,
+  }
+]
 // auth
 const authRoutes = [
     {
@@ -102,7 +112,7 @@ const authRoutes = [
 
 // All routes
 const authProtectedRoutes = [rootRoute, dashboardRoutes, ...appRoutes];
-const publicRoutes = [...authRoutes];
+const publicRoutes = [...authRoutes,...empleadoRoutes];
 const authProtectedFlattenRoutes = flattenRoutes([...authProtectedRoutes]);
 const publicProtectedFlattenRoutes = flattenRoutes([...publicRoutes]);
 export { publicRoutes, authProtectedRoutes, authProtectedFlattenRoutes, publicProtectedFlattenRoutes };

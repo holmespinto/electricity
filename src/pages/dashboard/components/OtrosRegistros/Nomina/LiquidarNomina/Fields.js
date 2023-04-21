@@ -69,7 +69,7 @@ const Fields = (props) => {
                 name="Concepto"
                 className="react-select"
                 classNamePrefix="react-select"
-                onChange={(e) => setNomina([{ ...nomina[0], Concepto: e.value,IdEmpleado:props?.Empleado?.id,IdNomina:props?.Nomina?.id}])}
+                onChange={(e) => setNomina([{ ...nomina[0], Concepto: e.label,IdEmpleado:props?.Empleado?.id,IdNomina:props?.Nomina?.id}])}
                 options={props?.Conceptos}
                 placeholder="Selecione el Estado..."
                 selected={nomina?.Concepto}
