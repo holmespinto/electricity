@@ -3,9 +3,8 @@ import Fields from './Fields';
 import { DashboardContext } from '../../../../../../layouts/context/DashboardContext';
 /* custon FormAdd */
 const FormAdd = (props) => {
-  const {addNomina,empleadoNomina} = useContext(DashboardContext);
+  const {addNomina} = useContext(DashboardContext);
   const [items, setItems] = useState({});
-  console.log('FormAdd',empleadoNomina)
   return (
     <React.Fragment>
       <Fields

@@ -1,9 +1,14 @@
-import React from 'react';
+import React,{Suspense } from 'react';
 import { Row, Col } from 'react-bootstrap';
 import LiquidarNomina from '../LiquidarNomina/LiquidarNomina';
+const loading = () => <div className="text-center"></div>;
 
 const Fields = (props) => {
-  const listNomina = [props.listNomina] || [];
+  const DatosEmpleadoNomina = [props.EmpleadoNomina] || [];
+  const isLoading = props.loading;
+
+
+  console.log('props.Nomina',  )
   //console.log('fields-EmpleadoNomina', props)
   return (
     <React.Fragment>
@@ -20,7 +25,7 @@ const Fields = (props) => {
                           Comprobante Número:
                         </p>
                       </td>
-                      <td className="text-end text-body fw-semibold">{props?.Nomina?.Codigo}</td><td className="text-end"></td><td className="text-end">Nombre:</td><td className="text-left">{props?.Empleado?.Nombres} {props?.Empleado?.Apellidos}</td><td>Cargo:</td><td className="text-left">{listNomina[0]?.data?.Empleado?.Cargo}</td>
+                      <td className="text-end text-body fw-semibold">{props?.Nomina?.Codigo}</td><td className="text-end"></td><td className="text-end">Nombre:</td><td className="text-left">{props?.Empleado?.Nombres} {props?.Empleado?.Apellidos}</td><td>Cargo:</td><td className="text-left">{props?.Empleado?.Cargo}</td>
                     </tr><tr>
                       <td>
                         <p className="m-0 d-inline-block align-middle text-body fw-semibold">
@@ -38,12 +43,14 @@ const Fields = (props) => {
       </Row>
       <Row>
         <Col sm={12}>
+        {!isLoading && DatosEmpleadoNomina?.length>0? (
           <LiquidarNomina
-            EmpleadoNomina={props.EmpleadoNomina}
+            EmpleadoNomina={DatosEmpleadoNomina}
             Empleado={props?.Empleado}
             Nomina={props?.Nomina}
             Conceptos={props?.Conceptos}
             accion={'GenerarNomina'} />
+            ) :<Suspense fallback={loading()}>Esperando...</Suspense>}
         </Col>
       </Row>
     </React.Fragment>

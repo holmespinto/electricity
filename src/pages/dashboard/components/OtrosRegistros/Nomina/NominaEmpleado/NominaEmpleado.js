@@ -1,53 +1,75 @@
 // @flow
-import React, { useContext, Suspense } from 'react';
-import { Row, Col, Card,Collapse /*Button, Modal*/ } from 'react-bootstrap';
+import React, { useContext,Suspense } from 'react';
+import { Row, Col, Card,Collapse } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { DashboardContext } from '../../../../../../layouts/context/DashboardContext';
 import FormAdd from './FormAdd';
-//import FormUpdate from './FormUpdate';
 import Table from '../../../../../../components/Table';
 const loading = () => <div className="text-center"></div>;
 
-const ActionColumn = ({ row }) => {
-
+const ActionColumnEmpleado = ({ row }) => {
   const {
-    //eliminar,
-    setItems, open, setOpen,toggle//setOpenNomin,openNomin
+    setItemsUpdate, itemsNomina, openNominaEmpleado, setOpenNominaEmpleado, toggle
   } = useContext(DashboardContext);
 
-  const toggleSignUpx = () => {
-    if (row.cells[0].value > 0)
-    setOpen(open);
-    toggle()
-    //setOpenNomin(!openNomin);
-      //queryNominaEmpleado('OtrosRegistros', 'GenerarNomina', [{ opcion: 'consultar_nomina_empleado', idEmpleado: row.cells[0].value }]);
-    console.log('click');
-    setItems([{
-      id: row.cells[0].value ? row.cells[0].value : row.cells[0].value,
-      Identificacion: row.cells[1].value ? row.cells[1].value : row.cells[1].value,
-      Nombres: row.cells[2].value ? row.cells[2].value : row.cells[2].value,
-      Apellidos: row.cells[3].value ? row.cells[3].value : row.cells[3].value,
-      Cargo: row.cells[4].value ? row.cells[4].value : row.cells[4].value,
-      Salario: row.cells[5].value ? row.cells[5].value : row.cells[5].value,
-    }])
+  const toggleUpUpdateEmpleado = (id) => {
+    const Empleado = itemsNomina?.data?.Empleado || [{}];
+    const EmpleadoNomina =  [];
+    //const Nomina = itemsNomina?.data?.Nomina || [{}];
+    const Conceptos = itemsNomina?.data?.Conceptos || [{}];
+    const TodasNomina = itemsNomina?.data?.TodasNomina || [{}];
 
+    const nominaActiva=[]
+    // eslint-disable-next-line array-callback-return
+    TodasNomina?.map((row, i) => {
+      if (row.Estado === 'Procesando') {
+        nominaActiva.push(row)
+      }
+    })
+
+    // eslint-disable-next-line array-callback-return
+    Empleado?.map((row, i) => {
+      if (row.id === id) {
+        Empleado.push(row)
+      }
+    })
+    // eslint-disable-next-line array-callback-return
+    itemsNomina?.data?.EmpleadoNomina?.map((row, i) => {
+      //console.log('row',row)
+      if (row?.Empleado === id && row?.IdNomina===nominaActiva[0]?.id) {
+        EmpleadoNomina.push(row)
+      }
+    })
+    const obj={
+      "data": {
+        "Empleado":Empleado[0],
+        "Nomina": nominaActiva[0],
+        "EmpleadoNomina":EmpleadoNomina,
+        "Conceptos":Conceptos,
+        "isLoading":true,
+      }}
+
+    setItemsUpdate(obj)
+    setOpenNominaEmpleado(!openNominaEmpleado);
+    toggle()
+    //console.log('toggleUpUpdate',obj?.data)
   };
 
   return (
     <React.Fragment>
-      <Link to="#" className="action-icon" data-bs-toggle="collapse" onClick={() => toggleSignUpx()}>
+      <Link to="#" className="action-icon" data-bs-toggle="collapse"onClick={() => toggleUpUpdateEmpleado(row.cells[0].value)}>
         {' '}
         <i className="mdi mdi-square-edit-outline"></i>
       </Link>
     </React.Fragment>
   );
 };
+
 const NominaEmpleado = (props) => {
 
   const {
-
-    //signUpModalAdd,
-    sizePerPageList, isLoading,open
+    sizePerPageList, isLoading,itemsNomina,ItemsUpdate,
+    openNominaEmpleado
   } = useContext(DashboardContext);
 
   const columns = [
@@ -83,29 +105,29 @@ const NominaEmpleado = (props) => {
       accessor: 'action',
       sort: false,
       classes: 'table-action',
-      Cell: ActionColumn,
+      Cell: ActionColumnEmpleado,
     },
   ];
-console.log(open)
+  //console.log('open',open,ItemsUpdate)
   return (
     <>
       <Row>
         <Col>
           <Card>
             <Card.Body>
-            <Collapse in={open} appear>
+            <Collapse in={openNominaEmpleado} appear>
             <div>
               <Row>
-
                 <Col sm={12} >
-                  <FormAdd />
+                  <FormAdd EmpleadoId={ItemsUpdate}/>
                 </Col>
               </Row>
               </div>
                 </Collapse>
-              {!isLoading && props?.listEmpleados.length>1? (<Table
+
+              {!isLoading && itemsNomina?.data?.Empleado?.length>0? (<Table
                 columns={columns}
-                data={props?.listEmpleados}
+                data={itemsNomina?.data?.Empleado}
                 pageSize={5}
                 sizePerPageList={sizePerPageList}
                 isSortable={true}
@@ -115,6 +137,7 @@ console.log(open)
                 isSearchable={true}
                 nametable={props.accion}
               />) : <Suspense fallback={loading()}>Esperando...</Suspense>}
+
             </Card.Body>
           </Card>
         </Col>

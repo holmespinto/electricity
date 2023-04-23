@@ -1,24 +1,67 @@
-import React from 'react';
-import { Button, Form, Row, Col, Collapse, Card } from 'react-bootstrap';
+// @flow
+import React, {  useState,useContext } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { Redirect } from 'react-router-dom';
+import { Alert,Form,Col,Row,Button } from 'react-bootstrap';
+import FormInput from '../../../../../components/FormInput';
 import Select from 'react-select';
-import FormInput from '../../../../components/FormInput';
-const Fields = (props) => {
-  const estados = props.estadosNomina || [];
-  /*
-  const secondaryUser = estados.filter(item => item.value === props.items[0]?.Estado)
-  console.log(secondaryUser[0]?.Descripcion)
-*/
-  return (
-    <React.Fragment>
-      <div className="text-center mt-2 mb-4 btn-success">
-        <br />
-        <span className="text-white">{props?.title}</span>
-        <br />
-      </div>
 
-      <Form validated={props?.validated}>
-        <Row>
-          <Col sm={3}>
+import * as yup from 'yup';
+import { yupResolver } from '@hookform/resolvers/yup';
+//actions
+import { queryFormSend } from '../../../../../redux/actions';
+// components
+import { VerticalForm } from '../../../../../components/';
+import { DashboardContext } from '../../../../../layouts/context/DashboardContext';
+const Register = (props): React$Element<React$FragmentType> => {
+  const {setOpen,open} = useContext(DashboardContext);
+  const [items, setItems] = useState([{
+    FechaInicial: props?.Nomina?props?.Nomina?.FechaInicial:'',
+    FechaFinal: props?.Nomina?props?.Nomina?.FechaFinal:'',
+    Estado: props?.Nomina?props?.Nomina?.Estado:'',
+    accion: props?.accion,
+    opcion: props?.opcion,
+    tipo: props?.tipo,
+    id: props?.Nomina?props?.Nomina?.id:'',
+  }]);
+
+  const dispatch = useDispatch();
+
+  const {loading,queryForm, error } = useSelector((state) => ({
+    loading: state.Queryform.loading,
+    error: state.Queryform.error,
+    queryForm: state.Queryform.queryForm,
+  }));
+
+
+  const schemaResolver = yupResolver(
+    yup.object().shape({
+    })
+  );
+  const onSubmit = () => {
+
+    dispatch(queryFormSend(...items))
+
+    setTimeout(function () {
+     setOpen(open)
+    }, 2000);
+  };
+  const estados = props.Estados || [];
+
+  return (
+    <>
+      {queryForm ? <Redirect to={`/${props?.accion}/${props?.tipo}`}></Redirect> : null}
+      <div className="text-center w-75 m-auto">
+        <h4 className="text-dark-50 text-center mt-0 fw-bold">{`${props?.textBtn}`}</h4>
+      </div>
+      {error && (
+        <Alert variant="danger" className="my-2">
+          {error}
+        </Alert>
+      )}
+      <VerticalForm onSubmit={onSubmit} resolver={schemaResolver} defaultValues={{}}>
+      <Row>
+      <Col sm={3}>
             <Form.Group className="mb-3" controlId="Codigo">
               <FormInput
                 label="Código"
@@ -28,7 +71,7 @@ const Fields = (props) => {
                 containerClass={'mb-3'}
                 key="Codigo"
                 disabled
-                value={props.items[0]?.Codigo}
+                value={items[0]?.Codigo}
               />
 
               <Form.Control.Feedback type="invalid">
@@ -44,7 +87,7 @@ const Fields = (props) => {
                 type="text"
                 name="Comprobante"
                 placeholder="No."
-                value={props.items[0]?.id}
+                value={items[0]?.id}
                 disabled
               />
               <Form.Control.Feedback type="invalid">
@@ -59,7 +102,7 @@ const Fields = (props) => {
                 required
                 type="text"
                 name="Total"
-                value={props.items[0]?.Total}
+                value={items?.Total}
                 disabled
               />
               <Form.Control.Feedback type="invalid">
@@ -77,8 +120,8 @@ const Fields = (props) => {
                 name="FechaInicial"
                 containerClass={'mb-3'}
                 key="FechaInicial"
-                value={props.items[0]?.FechaInicial}
-                onChange={(e) => props.setItems([{ ...props.items[0], FechaInicial: e.target.value }])}
+                value={items[0]?.FechaInicial}
+                onChange={(e) => setItems([{ ...items[0], FechaInicial: e.target.value }])}
               />
               <Form.Control.Feedback type="invalid">
                 Por favor, digite la Fecha Inicial.
@@ -93,8 +136,8 @@ const Fields = (props) => {
                 name="FechaFinal"
                 containerClass={'mb-3'}
                 key="FechaFinal"
-                value={props.items[0]?.FechaFinal}
-                onChange={(e) => props.setItems([{ ...props.items[0], FechaFinal: e.target.value }])}
+                value={items[0]?.FechaFinal}
+                onChange={(e) =>setItems([{ ...items[0], FechaFinal: e.target.value }])}
               />
               <Form.Control.Feedback type="invalid">
                 Por favor, digite la Fecha Final.
@@ -111,10 +154,10 @@ const Fields = (props) => {
                 name="Estado"
                 className="react-select"
                 classNamePrefix="react-select"
-                onChange={(e) => props.setItems([{ ...props.items[0], Estado: e.value }])}
+                onChange={(e) => setItems([{ ...items[0], Estado: e.value }])}
                 options={estados}
                 placeholder="Selecione el Estado..."
-                selected={props.items[0]?.Estado}
+                selected={items[0]?.Estado}
               />
               <Form.Control.Feedback type="invalid">
                 Por favor, digite el Estado.
@@ -124,23 +167,20 @@ const Fields = (props) => {
           <Col sm={6}></Col>
         </Row>
         <Row>
-          <Col sm={12}>
-            <Collapse in={true} appear>
-              <div>
-                <Card.Body><blockquote class="blockquote"><p>{props.items[0]?.Estado}</p></blockquote>:{'secondaryUser[0]?.Descripcion'}
-                </Card.Body>
-              </div>
-            </Collapse>
 
-          </Col>
-        </Row>
-        <div className="button-list">
-          <Button type="button" disabled={props.items[0]?.message?.length < 0 ? 'true' : ''} onClick={(e) => { props.accion(e, props.items) }}>
-            +
+        <Col sm={3}>
+          <Form.Group className="mb-3 mb-3 mb-3 ">
+          <Button variant="primary" type="submit" disabled={loading}>
+            {(props?.textBtn)}
           </Button>
-        </div>
-      </Form>
-    </React.Fragment>
+          </Form.Group>
+        </Col>
+      </Row>
+
+      </VerticalForm>
+
+    </>
   );
-}
-export default Fields;
+};
+
+export default Register;

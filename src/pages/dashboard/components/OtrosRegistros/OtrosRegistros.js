@@ -1,46 +1,39 @@
 // @flow
-import React, { useEffect, useContext } from 'react';
+import React, { useContext } from 'react';
 import ControlDiario from './ControlDiario/ControlDiario';
 import OrdenCompra from './OrdenCompra/OrdenCompra';
-import MenuNomina from './Nomina/MenuNomina';
+import Nomina from './Nomina/Nomina';
+import ConfigNomina from './ConfigNomina/ConfigNomina';
 import Usuarios from './Usuarios/Usuarios';
 import Roles from './Roles/Roles';
 import { DashboardContext } from '../../../../layouts/context/DashboardContext';
 
 
 const OtrosRegistros = (props) => {
-  const { ConsultarListaDatos, items,itemsUsuarios,itemsRoles,listEmpleados  } = useContext(DashboardContext);
-
-  useEffect(() => {
-    ConsultarListaDatos(props.accion, props.tipo);
-  }, [ConsultarListaDatos, props.accion, props.tipo]);
-
-
-
+  const { itemsUsuarios,itemsRoles,itemsControlDiario,itemsOrdenCompra} = useContext(DashboardContext);
   return (
     <>
       {(() => {
         switch (props.tipo) {
           case 'ControlDiario':
             return (<>
-
             <ControlDiario
               accion={'GestionBasica'}
-              datos={items}
+              datos={itemsControlDiario}
               tipo={props.tipo}
             />
-
             </>);
             case 'OrdenCompra':
             return (<><OrdenCompra
               accion={'GestionBasica'}
-              datos={items}
+              datos={itemsOrdenCompra}
               tipo={props.tipo}
             /></>);
             case 'GenerarNomina':
-            return (<><MenuNomina
+            return (<>
+
+            <Nomina
               accion={'GestionBasica'}
-              datos={listEmpleados}
               tipo={props.tipo}
             /></>);
             case 'Usuarios':
@@ -55,6 +48,12 @@ const OtrosRegistros = (props) => {
               accion={'GestionBasica'}
               tipo={props.tipo}
               datos={itemsRoles}
+            /></>);
+            case 'ConfigNomina':
+            return (<>
+            <ConfigNomina
+              accion={'GestionBasica'}
+              tipo={props.tipo}
             /></>);
           default:
             return (

@@ -1,5 +1,5 @@
 // @flow
-import React, { useContext,Suspense} from 'react';
+import React, { useContext, Suspense, useEffect } from 'react';
 import { Row, Col, Card, Button, Modal } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { DashboardContext } from '../../../../../layouts/context/DashboardContext';
@@ -15,12 +15,12 @@ const ActionColumn = ({ row }) => {
     validated,
     signUpModal,
     setSignUpModal,
-    setItems,itemsmenuprincipal
+    setItems, itemsmenuprincipal
   } = useContext(DashboardContext);
 
   const toggleSignUp = () => {
-     if(row.cells[0].value>0)
-    setSignUpModal(!signUpModal);
+    if (row.cells[0].value > 0)
+      setSignUpModal(!signUpModal);
     setItems([{
       id: row.cells[0].value ? row.cells[0].value : row.cells[0].value,
       Ciudad: row.cells[1].value ? row.cells[1].value : row.cells[1].value,
@@ -31,44 +31,37 @@ const ActionColumn = ({ row }) => {
       ValorLetras: row.cells[6].value ? row.cells[6].value : row.cells[6].value,
       status: row.cells[7].value ? row.cells[7].value : row.cells[7].value,
     }])
-};
+  };
 
   return (
     <React.Fragment>
       <Modal show={signUpModal} onHide={toggleSignUp}>
         <Modal.Body>
-        {(() => {
-              switch (itemsmenuprincipal) {
-                case "ControlDiario":
-                  return (<><FormUpdate
-                    title={`ACTUALIZAR ${itemsmenuprincipal?.toUpperCase()}`}
-                    validated={validated}
-                  /></>);
-                default:
-                  return (
-                    <>{''}</>
-                  );
-              }
-            })()}
+          <FormUpdate
+            title={`ACTUALIZAR ${itemsmenuprincipal?.toUpperCase()}`}
+            validated={validated}
+          />
         </Modal.Body>
       </Modal>
-            <Link to="#" className="action-icon" onClick={() => toggleSignUp()}>
-                {' '}
-                <i className="mdi mdi-square-edit-outline"></i>
-            </Link>
-            <Link to="#" className="action-icon" onClick={() => eliminar(row.cells[0].value)}>
-                {' '}
-                <i className="mdi mdi-delete"></i>
-            </Link>
-        </React.Fragment>
+      <Link to="#" className="action-icon" onClick={() => toggleSignUp()}>
+        {' '}
+        <i className="mdi mdi-square-edit-outline"></i>
+      </Link>
+      <Link to="#" className="action-icon" onClick={() => eliminar(row.cells[0].value)}>
+        {' '}
+        <i className="mdi mdi-delete"></i>
+      </Link>
+    </React.Fragment>
   );
 };
 const ControlDiario = (props) => {
   const {
+    query,
     validated,
     signUpModalAdd, setSignUpModalAdd,
-    setItems,sizePerPageList,isLoading
+    setItems, sizePerPageList, isLoading
   } = useContext(DashboardContext);
+
   const columns = [
     {
       Header: 'ID',
@@ -93,11 +86,11 @@ const ControlDiario = (props) => {
       accessor: 'Paga',
       sort: true,
     }
-    ,{
+    , {
       Header: 'Valor',
       accessor: 'Valor',
       sort: false,
-    },{
+    }, {
       Header: 'Valor Letra',
       accessor: 'ValorLetras',
       sort: false,
@@ -117,12 +110,18 @@ const ControlDiario = (props) => {
       Ciudad: '',
       Concepto: '',
       Fecha: '',
-      ValorLetras:'',
-      Paga:'',
-      Valor:'',
-      status:'',
+      ValorLetras: '',
+      Paga: '',
+      Valor: '',
+      status: '',
     }])
- };
+  };
+
+  useEffect(() => {
+    query('OtrosRegistros', 'ControlDiario', [{ opcion: 'consultar', obj: 'ControlDiario' }]);
+  }, [query]);
+
+  const controDiario = props?.datos || [];
 
   return (
     <>
@@ -132,29 +131,20 @@ const ControlDiario = (props) => {
             <Card.Body>
               <Row>
                 <Col sm={12} className={`${signUpModalAdd ? '' : 'd-lg-none'}`}>
-                <Card>
-      <Card.Body>
-        {/* Sign up Modal */}
-        <Modal show={signUpModalAdd} onHide={setSignUpModalAdd}>
-          <Modal.Body>
-            {(() => {
-              switch (props?.tipo) {
-                case "ControlDiario":
-                  return (<><FormAdd
-                    title={`GESTIONAR ${props?.tipo?.toUpperCase()}`}
-                    validated={validated}
-                  /></>);
-                default:
-                  return (
-                    <>{''}</>
-                  );
-              }
-            })()}
-          </Modal.Body>
-        </Modal>
-      </Card.Body>
-    </Card>
-              </Col>
+                  <Card>
+                    <Card.Body>
+                      {/* Sign up Modal */}
+                      <Modal show={signUpModalAdd} onHide={setSignUpModalAdd}>
+                        <Modal.Body>
+                          <FormAdd
+                            title={`GESTIONAR ${props?.tipo?.toUpperCase()}`}
+                            validated={validated}
+                          />
+                        </Modal.Body>
+                      </Modal>
+                    </Card.Body>
+                  </Card>
+                </Col>
               </Row>
               <Row>
                 <Col sm={4}>
@@ -167,9 +157,9 @@ const ControlDiario = (props) => {
                   </div>
                 </Col>
               </Row>
-              {!isLoading? (<Table
+              {!isLoading && controDiario.length > 0 ? (<Table
                 columns={columns}
-                data={props.datos}
+                data={controDiario}
                 pageSize={5}
                 sizePerPageList={sizePerPageList}
                 isSortable={true}
@@ -178,11 +168,11 @@ const ControlDiario = (props) => {
                 searchBoxClass="mt-2 mb-3"
                 isSearchable={true}
                 nametable={props.accion}
-              />):<Suspense fallback={loading()}>Esperando...</Suspense>}
+              />) : <Suspense fallback={loading()}>Esperando...</Suspense>}
             </Card.Body>
           </Card>
         </Col>
-       </Row>
+      </Row>
     </>
   );
 };

@@ -1,11 +1,8 @@
-import React,{useContext,useEffect}  from 'react';
+import React from 'react';
 import { Row, Col, Tab, Card, Nav} from 'react-bootstrap';
 import classnames from 'classnames';
-import { DashboardContext } from '../../../../../layouts/context/DashboardContext';
+import NominaEmpleado from '../NominaEmpleado/NominaEmpleado';
 
-import Nomina from './Nomina/Nomina';
-import NominaEmpleado from './NominaEmpleado/NominaEmpleado';
-//import Table from '../../../components/Table';
 
 const tabItems = [
   {
@@ -13,22 +10,11 @@ const tabItems = [
     title: 'Generar Nomina',
     icon: 'mdi mdi-home-variant',
     text: 'En esta sección se Genera la Nomina',
-  },
-  {
-    id: 2,
-    title: 'Asignar Nomina',
-    icon: 'mdi mdi-chart-bar',
-    text: 'En esta sección se le asigna la Nómina a cada Empleado',
   }
 ];
 
 const MenuNomina = (props) => {
-  const {query
-  } = useContext(DashboardContext);
-//listEmpleados
-  useEffect(() => {
-    query('GestionBasica','Empleado',[{opcion:'consultar_nomina',obj:'Empleado'}]);
-  }, [query]);
+
 return (
     <React.Fragment>
       <Row>
@@ -59,27 +45,15 @@ return (
                                 return ( <>
                                 <Row>
                                    <Col sm="12 mt-1">
-                                   <NominaEmpleado tipo={props.tipo}
-                                    listEmpleados={props.listEmpleados}
-                                    accion={props.accion}/>
+                                  <NominaEmpleado
+                                     tipo={props.tipo}
+                                    accion={props.accion}
+                                    EmpleadoNomina={props?.datos?.EmpleadoNomina}
+                                    />
+
                                   </Col>
                                 </Row>
                                 </> )
-                              case 2:
-                                return (
-                                <>
-                                 <Row>
-                                  <Col sm="12 mt-1">
-                                  <Nomina tipo={props.tipo}
-                                    datos={props.datos}
-                                    accion={props.accion}/>
-                                  </Col>
-                                </Row>
-                                <Row>
-                                <Col sm="12 mt-1">
-                               </Col>
-                                </Row>
-                                </>);
                               default:
                                 return (
                                   'defould'

@@ -1,48 +1,55 @@
 // @flow
-import React, { useContext,Suspense} from 'react';
+import React, { useContext,Suspense,useEffect} from 'react';
 import { Row, Col, Card, Button, Modal } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
-import { DashboardContext } from '../../../../../../layouts/context/DashboardContext';
+import { DashboardContext } from '../../../../../layouts/context/DashboardContext';
 import FormAdd from './FormAdd';
 import FormUpdate from './FormUpdate';
-import Table from '../../../../../../components/Table';
+import Table from '../../../../../components/Table';
 const loading = () => <div className="text-center"></div>;
 const ActionColumn = ({ row }) => {
-
   const {
-    eliminar,
-    validated,
-    openNomin,
-    setOpenNomin,
-    setItems,itemsmenuprincipal,query
+    validated,setOpen,open,toggle,setItemsUpdate,itemsNomina,eliminar,
+    itemsmenuprincipal,
+    itemUrl
   } = useContext(DashboardContext);
+  const DatosTodasNomina = itemsNomina?.data?.TodasNomina || [{}];
+  const EstadosNomina = itemsNomina?.data?.EstadosNomina || [{}];
 
-  const toggleOpenNomin = () => {
+  const toggleUpUpdate = (id) => {
+  let array = [];
 
-     if(row.cells[0].value>0)
+  // eslint-disable-next-line array-callback-return
+  DatosTodasNomina?.map((row, i) =>{
+         if(row.id===id){
+          array.push(row)
+         }
+      })
 
-     query('OtrosRegistros','GenerarNomina',[{opcion:'consultar_estados'}]);
-     setOpenNomin(!openNomin);
-      setItems([{
-      id: row.cells[0].value ? row.cells[0].value : row.cells[0].value,
-      Codigo: row.cells[1].value ? row.cells[1].value : row.cells[1].value,
-      FechaInicial: row.cells[2].value ? row.cells[2].value : row.cells[2].value,
-      FechaFinal: row.cells[3].value ? row.cells[3].value : row.cells[3].value,
-      Total:  row.cells[4].value ? row.cells[4].value : row.cells[4].value,
-      Estado: row.cells[5].value ? row.cells[5].value : row.cells[5].value,
-    }])
-};
+    const obj={
+      "data": {
+        "Nomina":array[0],
+        "Estados": EstadosNomina,
+        "isLoading":true,
+      }}
+
+    setOpen(open);
+    toggle()
+    setItemsUpdate(obj)
+  };
 
   return (
     <React.Fragment>
-      <Modal show={openNomin} onHide={toggleOpenNomin}>
+      <Modal show={open} onHide={toggleUpUpdate}>
         <Modal.Body><FormUpdate
-                    title={`ACTUALIZAR ${itemsmenuprincipal?.toUpperCase()}`}
+                    title={`ACTUALIZAR`}
                     validated={validated}
+                    tipo={itemsmenuprincipal}
+                    accion={itemUrl}
                   />
         </Modal.Body>
       </Modal>
-            <Link to="#" className="action-icon" onClick={() => toggleOpenNomin()}>
+            <Link to="#" className="action-icon" onClick={() => toggleUpUpdate(row.cells[0].value)}>
                 {' '}
                 <i className="mdi mdi-square-edit-outline"></i>
             </Link>
@@ -53,16 +60,14 @@ const ActionColumn = ({ row }) => {
         </React.Fragment>
   );
 };
-const Nomina = (props) => {
-
-
-
+const ConfigNomina = (props) => {
   const {
     validated,
-    setOpenNomin,openNomin,
-    setItems,sizePerPageList,isLoading,query,
+    setOpen,open,
+    setItems,sizePerPageList,isLoading,itemsNomina,query
   } = useContext(DashboardContext);
 
+  const DatosTodasNomina = itemsNomina.data?.TodasNomina || [{}];
 
 
   const columns = [
@@ -102,10 +107,8 @@ const Nomina = (props) => {
     },
   ];
   const toggleSignUp = () => {
-    let opciones =[{opcion:'consultar_estados'}]
-    query('OtrosRegistros','GenerarNomina',opciones);
 
-    setOpenNomin(!openNomin)
+    setOpen(!open)
     setItems([{
       id: 1,
       Codigo: '',
@@ -118,7 +121,9 @@ const Nomina = (props) => {
       status:'',
     }])
  };
-
+ useEffect(() => {
+  query('OtrosRegistros','GenerarNomina',[{opcion:'consultar',obj:'GenerarNomina'}]);
+}, [query]);
   return (
     <>
       <Row>
@@ -130,10 +135,12 @@ const Nomina = (props) => {
                   <Card>
                     <Card.Body>
                       {/* Sign up Modal */}
-                      <Modal show={openNomin} onHide={toggleSignUp}>
+                      <Modal show={open} onHide={toggleSignUp}>
                         <Modal.Body><FormAdd
                           title={`GESTIONAR NOMINA`}
                           validated={validated}
+                          tipo={props.tipo}
+                          accion={props.accion}
                         />
                         </Modal.Body>
                       </Modal>
@@ -152,9 +159,9 @@ const Nomina = (props) => {
                   </div>
                 </Col>
               </Row>
-              {!isLoading? (<Table
+              {!isLoading && DatosTodasNomina.length>0?(<Table
                 columns={columns}
-                data={props.datos}
+                data={DatosTodasNomina}
                 pageSize={5}
                 sizePerPageList={sizePerPageList}
                 isSortable={true}
@@ -172,4 +179,4 @@ const Nomina = (props) => {
   );
 };
 
-export default Nomina;
+export default ConfigNomina;

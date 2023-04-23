@@ -6,6 +6,7 @@ import { DashboardContext } from '../../../../../../layouts/context/DashboardCon
 import FormAdd from './FormAdd'
 import Table from '../../../../../../components/Table';
 //const loading = () => <div className="text-center"></div>;
+
 const ActionColumn = ({ row }) => {
   const {
     eliminar,
@@ -20,10 +21,12 @@ const ActionColumn = ({ row }) => {
     </React.Fragment>
   );
 };
-const LiquidarNomina = (props) => {
 
+const LiquidarNomina = (props) => {
+  const DatosEmpleadoNomina = props?.EmpleadoNomina[0] || [{}];
+  const DatosEmpleado = props?.Empleado || [{}];
   const {
-    validated,
+    //validated,
     setSignUpModalLiqNomina, signUpModalLiqNomina,
   } = useContext(DashboardContext);
 
@@ -57,12 +60,13 @@ const LiquidarNomina = (props) => {
       Cell: ActionColumn,
     },
   ];
+
   const toggleUpNomina = () => {
 
     setSignUpModalLiqNomina(!signUpModalLiqNomina);
 
   };
-  console.log('listNomina', props?.EmpleadoNomina)
+  //console.log('listNomina', DatosEmpleado)
   return (
     <>
       <Row>
@@ -70,15 +74,15 @@ const LiquidarNomina = (props) => {
           <Modal show={signUpModalLiqNomina} onHide={toggleUpNomina} size={'lg'}>
             <Modal.Body>
               {
-                props?.Empleado.Identificacion > 0 ?
+                DatosEmpleado?.Identificacion >0 ?
                   <FormAdd
                     title={`GESTIONAR NOMINA`}
-                    validated={validated}
                     Empleado={props?.Empleado}
                     Nomina={props?.Nomina}
                     Conceptos={props?.Conceptos}
+                    DatosEmpleadoNomina={DatosEmpleadoNomina}
                   /> : 'Seleccione el Empleado para liquidar la Nomina'
-              }
+  }
             </Modal.Body>
           </Modal>
         </Col>
@@ -97,16 +101,18 @@ const LiquidarNomina = (props) => {
 
       <Row>
         <Col>
+        {
           <div className="text-left mt-2 mb-4 text-white mx-auto ">
-            {props?.EmpleadoNomina?.length > 0 ? (<Table
+            {DatosEmpleadoNomina?.length > 0 ? (<Table
               columns={columns}
-              data={props?.EmpleadoNomina}
+              data={DatosEmpleadoNomina}
               isSortable={true}
               isSearchable={false}
               numtable={'1'}
               isVisible={false}
             />) : ('Esperando...')}
           </div>
+            }
         </Col>
       </Row>
     </>

@@ -19,7 +19,7 @@ import { DashboardContext } from '../../../layouts/context/DashboardContext';
               accion={'GestionBasica'}
               tipo={itemsmenuprincipal}
             /></>);
-          case 'ControlDiario':case 'OrdenCompra':case 'GenerarNomina':case 'Usuarios':case 'Roles':
+          case 'ControlDiario':case 'OrdenCompra':case 'GenerarNomina':case 'Usuarios':case 'Roles':case 'ConfigNomina':
             return (<><OtrosRegistros
               accion={'OtrosRegistros'}
               tipo={itemsmenuprincipal}

@@ -15,17 +15,21 @@ const DashboardProvider = ({ children }) => {
   const [itemsUsuarios, setIUsuarios] = useState([]);
   const [itemsQuery, setItemsQuery] = useState([]);
   const [empleadoNomina, setEmpleadoNomina] = useState([]);
-  const [itemsQueryNominaEmpleado, setItemsQueryNominaEmpleado] = useState([{}]);
+  //const [itemsQueryNominaEmpleado, setItemsQueryNominaEmpleado] = useState([{}]);
   //const [itemsConcNomina, setItemConcNomina] = useState([]);
   const [signUpModal, setSignUpModal] = useState(false);
-  const [openNomin, setOpenNomin] = useState(false);
+  const [openNomin, setOpenNomina] = useState(false);
+  const [openNominaEmpleado, setOpenNominaEmpleado] = useState(false);
   const [signUpModalAdd, setSignUpModalAdd] = useState(false);
   const [signUpNomina, setSignUpNomina] = useState(false);
   const [signUpModalLiqNomina, setSignUpModalLiqNomina] = useState(false);
   const [open, setOpen] = useState(false);
-  const [ ItemsUpdate, setItemsUpdate] = useState([]);
+  const [ itemsUpdate, setItemsUpdate] = useState([]);
   const [ itemsRoles, setRoles] = useState([]);
   const [ listEmpleados, setEmpleado] = useState([]);
+  const [ itemsNomina, setNomina] = useState([]);
+  const [ itemsControlDiario, setControlDiario] = useState([]);
+  const [ itemsOrdenCompra, setOrdenCompra] = useState([]);
 
 
   const toggle = () => {
@@ -133,40 +137,20 @@ const DashboardProvider = ({ children }) => {
              case "Empleado":
               setEmpleado(response)
             // eslint-disable-next-line no-fallthrough
+            case "GenerarNomina":
+              setNomina(response)
+            // eslint-disable-next-line no-fallthrough
+            case "ControlDiario":
+              setControlDiario(response)
+            // eslint-disable-next-line no-fallthrough
+            case "OrdenCompra":
+              setOrdenCompra(response)
+            // eslint-disable-next-line no-fallthrough
             default:
               setItemsQuery(response)
           }
         })()
 
-      } catch (error) {
-        console.error(error);
-      }
-    }).catch((error) => console.error('Error:', error))
-      .finally(() => {
-        //setTimeout(function () {
-        setLoading(false)
-        // }, 000);
-      });
-
-  }, []);
-
-  const queryNominaEmpleado = useCallback((itemUrl, itemsmenuprincipal,opcion) => {
-    setLoading(true)
-    let varibles;
-    let datos=opcion;
-    if (opcion) {
-      var queryString = datos[0]
-        ? Object.keys(datos[0])
-          .map((key) => key + '=' + datos[0][key])
-          .join('&')
-        : '';
-    }
-    varibles = queryString;
-    const url = `accion=${itemUrl}&tipo=${itemsmenuprincipal}&${varibles}`;
-    const datosMaterial = api.sendRequestData(`${url}`);
-    datosMaterial?.then(function (response) {
-      try {
-        setItemsQueryNominaEmpleado(response);
       } catch (error) {
         console.error(error);
       }
@@ -215,7 +199,7 @@ const DashboardProvider = ({ children }) => {
                   setSignUpModalAdd(false)
                 // eslint-disable-next-line no-fallthrough
                 case "addNomina":
-                  queryNominaEmpleado('OtrosRegistros','GenerarNomina',[{opcion:'consultar_nomina_empleado',idEmpleado:data[0]?.IdEmpleado,idNomina:data[0]?.IdNomina}])
+                  //queryNominaEmpleado('OtrosRegistros','GenerarNomina',[{opcion:'consultar_nomina_empleado',idEmpleado:data[0]?.IdEmpleado,idNomina:data[0]?.IdNomina}])
                 // eslint-disable-next-line no-fallthrough
                 default:
                   setSignUpModal(false);
@@ -227,7 +211,7 @@ const DashboardProvider = ({ children }) => {
         })
     }
 
-  }, [validated, items, itemUrl, itemsmenuprincipal, queryNominaEmpleado, ConsultarListaDatos]);
+  }, [validated, items, itemUrl, itemsmenuprincipal, /*queryNominaEmpleado,*/ ConsultarListaDatos]);
 
   //ELEIMINAR REGISTRO
 
@@ -238,7 +222,7 @@ const DashboardProvider = ({ children }) => {
     }).then((result) => {
       /* Read more about isConfirmed, isDenied below */
       if (result.isConfirmed) {
-        const url = `accion=GestionBasica&tipo=${itemsmenuprincipal}&opcion=delete&id=${cel}`;
+        const url = `accion=${itemUrl}&tipo=${itemsmenuprincipal}&opcion=delete&id=${cel}`;
         const respuesta = api.sendRequestData(`${url}`);
         respuesta.then(function (resp) {
           Swal.fire('' + resp[0].menssage + '');
@@ -284,17 +268,21 @@ const DashboardProvider = ({ children }) => {
     StatusColumn, sizePerPageList, INIT_RESPONSE,
     signUpModalAdd, setSignUpModalAdd,
     itemsQuery, setItemsQuery,query,
-    itemsQueryNominaEmpleado, setItemsQueryNominaEmpleado,queryNominaEmpleado,
+    //itemsQueryNominaEmpleado, setItemsQueryNominaEmpleado,queryNominaEmpleado,
     empleadoNomina, setEmpleadoNomina,
     signUpNomina, setSignUpNomina,
     setSignUpModalLiqNomina, signUpModalLiqNomina,
     addNomina,
     open, setOpen,toggle,
-    openNomin, setOpenNomin,
+    openNomin, setOpenNomina,
     itemsUsuarios, setIUsuarios,
-    ItemsUpdate, setItemsUpdate,
+    itemsUpdate, setItemsUpdate,
     itemsRoles, setRoles,
-    listEmpleados, setEmpleado
+    listEmpleados, setEmpleado,
+    itemsNomina, setNomina,
+    openNominaEmpleado, setOpenNominaEmpleado,
+    itemsControlDiario, setControlDiario,
+    itemsOrdenCompra, setOrdenCompra
   };
 
   // eslint-disable-next-line react/jsx-no-undef

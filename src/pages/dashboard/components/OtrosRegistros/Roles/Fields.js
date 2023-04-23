@@ -49,7 +49,7 @@ const Register = (props): React$Element<React$FragmentType> => {
     }, 2000);
   };
   const operado=[{value:'',label:''},{value:'S',label:'S'},{value:'N',label:'N'}];
-  console.log('FormUpdate',items)
+
    return (
     <>
       {queryForm ? <Redirect to={`/${props?.accion}/${props?.tipo}`}></Redirect> : null}
