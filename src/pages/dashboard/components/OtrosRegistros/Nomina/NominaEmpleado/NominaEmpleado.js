@@ -12,7 +12,7 @@ const ActionColumn = ({ row }) => {
 
   const {
     //eliminar,
-    setItems, queryNominaEmpleado,open, setOpen,toggle//setOpenNomin,openNomin
+    setItems, open, setOpen,toggle//setOpenNomin,openNomin
   } = useContext(DashboardContext);
 
   const toggleSignUpx = () => {
@@ -20,7 +20,7 @@ const ActionColumn = ({ row }) => {
     setOpen(open);
     toggle()
     //setOpenNomin(!openNomin);
-      queryNominaEmpleado('OtrosRegistros', 'GenerarNomina', [{ opcion: 'consultar_nomina_empleado', idEmpleado: row.cells[0].value }]);
+      //queryNominaEmpleado('OtrosRegistros', 'GenerarNomina', [{ opcion: 'consultar_nomina_empleado', idEmpleado: row.cells[0].value }]);
     console.log('click');
     setItems([{
       id: row.cells[0].value ? row.cells[0].value : row.cells[0].value,
@@ -103,9 +103,9 @@ console.log(open)
               </Row>
               </div>
                 </Collapse>
-              {!isLoading ? (<Table
+              {!isLoading && props?.listEmpleados.length>1? (<Table
                 columns={columns}
-                data={props.datos}
+                data={props?.listEmpleados}
                 pageSize={5}
                 sizePerPageList={sizePerPageList}
                 isSortable={true}

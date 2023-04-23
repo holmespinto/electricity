@@ -1,29 +1,28 @@
 // @flow
 import React, { useContext, Suspense,useEffect} from 'react';
-import { Row, Col, Card, Button, Modal } from 'react-bootstrap';
+import { Row, Col, Card,  Modal } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { DashboardContext } from '../../../../../layouts/context/DashboardContext';
-import FormAdd from './FormAdd';
 import FormUpdate from './FormUpdate';
 import Table from '../../../../../components/Table';
 const loading = () => <div className="text-center"></div>;
 const ActionColumn = ({ row }) => {
 
   const {
-    eliminar,
-    validated,setOpen,open,toggle,setItemsUpdate,itemsUsuarios
+    validated,setOpen,open,toggle,setItemsUpdate,itemsRoles
   } = useContext(DashboardContext);
 
   const toggleUpUpdate = (id) => {
   let array = [];
   // eslint-disable-next-line array-callback-return
-  itemsUsuarios?.data?.auteurs?.map((row, i) =>{
+  itemsRoles.dataRoles?.roles?.map((row, i) =>{
          if(row.id===id){
           array.push(row)
          }
       })
-
+      //console.log('ActionColumn',array[0])
     if (array.length > 0)
+
     setOpen(open);
     toggle()
     setItemsUpdate(array[0])
@@ -32,7 +31,7 @@ const ActionColumn = ({ row }) => {
 //console.log('signUpUpdate',signUpUpdate)
   return (
     <React.Fragment>
-      <Modal show={open} onHide={toggleUpUpdate}>
+      <Modal show={open} onHide={toggleUpUpdate} size={'lg'}>
         <Modal.Body>
           <FormUpdate
           title={`ACTUALIZAR DATOS DEL USUARIOS`}
@@ -44,20 +43,14 @@ const ActionColumn = ({ row }) => {
         {' '}
         <i className="mdi mdi-square-edit-outline"></i>
       </Link>
-      <Link to="#" className="action-icon" onClick={() => eliminar(row.cells[0].value)}>
-        {' '}
-        <i className="mdi mdi-delete"></i>
-      </Link>
     </React.Fragment>
   );
 };
-const Usuarios = (props) => {
+const Roles = (props) => {
 
 
   const {
-    validated,
-    signUpModalAdd, setSignUpModalAdd,query,
-    sizePerPageList, isLoading
+    sizePerPageList, isLoading,query
   } = useContext(DashboardContext);
 
   const columns = [
@@ -67,18 +60,34 @@ const Usuarios = (props) => {
       sort: true,
     },
     {
-      Header: 'Login',
-      accessor: 'login',
+      Header: 'Menu',
+      accessor: 'menu',
       sort: true,
     },
     {
-      Header: 'Email',
-      accessor: 'email',
+      Header: 'Submenu',
+      accessor: 'submenu',
       sort: true,
     }
     , {
-      Header: 'Tipo Usuario',
+      Header: 'rol',
       accessor: 'rol',
+      sort: false,
+    }, {
+      Header: 'query',
+      accessor: 'c',
+      sort: false,
+    }, {
+      Header: 'add',
+      accessor: 'a',
+      sort: false,
+    }, {
+      Header: 'update',
+      accessor: 'u',
+      sort: false,
+    }, {
+      Header: 'delete',
+      accessor: 'd',
       sort: false,
     },
     {
@@ -89,50 +98,20 @@ const Usuarios = (props) => {
       Cell: ActionColumn,
     },
   ];
-  const toggleSignUp = () => {
-    setSignUpModalAdd(!signUpModalAdd);
-  };
-  useEffect(() => {
-    query('GestionBasica','Usuarios',[{opcion:'lista_Usuarios',obj:'Usuarios'}]);
-  }, [query]);
 
-  //console.log('Usuarios',props)
+  useEffect(() => {
+    query('OtrosRegistros','Roles',[{opcion:'consultar',obj:'Roles'}]);
+  }, [query])
+
   return (
     <>
       <Row>
         <Col>
           <Card>
             <Card.Body>
-              <Row>
-                <Col sm={12}>
-                  <Card>
-                    <Card.Body>
-                      {/* Sign up Modal */}
-                      <Modal show={signUpModalAdd} onHide={setSignUpModalAdd}>
-                        <Modal.Body><FormAdd
-                          title={`GESTIONAR USUARIOS`}
-                          validated={validated}
-                        />
-                        </Modal.Body>
-                      </Modal>
-                    </Card.Body>
-                  </Card>
-                </Col>
-              </Row>
-              <Row>
-                <Col sm={4}>
-                </Col>
-                <Col sm={8}>
-                  <div className="text-sm-end">
-                    <Button className="btn btn-success mb-2 me-1" onClick={toggleSignUp}>
-                      <i className="mdi mdi-cog-outline"></i>
-                    </Button>
-                  </div>
-                </Col>
-              </Row>
-              {!isLoading && props?.datos?.auteurs?.length>0? (<Table
+              {!isLoading && props?.datos?.dataRoles?.roles?.length>1? (<Table
                 columns={columns}
-                data={props?.datos?.auteurs}
+                data={props?.datos?.dataRoles?.roles}
                 pageSize={5}
                 sizePerPageList={sizePerPageList}
                 isSortable={true}
@@ -150,4 +129,4 @@ const Usuarios = (props) => {
   );
 };
 
-export default Usuarios;
+export default Roles;

@@ -19,7 +19,7 @@ import { DashboardContext } from '../../../layouts/context/DashboardContext';
               accion={'GestionBasica'}
               tipo={itemsmenuprincipal}
             /></>);
-          case 'ControlDiario':case 'OrdenCompra':case 'GenerarNomina':case 'Usuarios':
+          case 'ControlDiario':case 'OrdenCompra':case 'GenerarNomina':case 'Usuarios':case 'Roles':
             return (<><OtrosRegistros
               accion={'OtrosRegistros'}
               tipo={itemsmenuprincipal}
@@ -30,8 +30,8 @@ import { DashboardContext } from '../../../layouts/context/DashboardContext';
             return (<>{''}</>);
           case 'RegistrarAPU':
             return (<>{'RegistrarAPU'}</>);
-          case 'AdminUsuarios':
-            return (<>{'AdminUsuarios'}</>);
+          case 'Configuraciones':
+            return (<>{'Configuraciones'}</>);
           default:
             return (
               <>{''}</>

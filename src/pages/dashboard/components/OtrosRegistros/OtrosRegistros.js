@@ -4,34 +4,33 @@ import ControlDiario from './ControlDiario/ControlDiario';
 import OrdenCompra from './OrdenCompra/OrdenCompra';
 import MenuNomina from './Nomina/MenuNomina';
 import Usuarios from './Usuarios/Usuarios';
+import Roles from './Roles/Roles';
 import { DashboardContext } from '../../../../layouts/context/DashboardContext';
 
 
 const OtrosRegistros = (props) => {
-  const { ConsultarListaDatos, items,query,itemsUsuarios } = useContext(DashboardContext);
+  const { ConsultarListaDatos, items,itemsUsuarios,itemsRoles,listEmpleados  } = useContext(DashboardContext);
 
   useEffect(() => {
     ConsultarListaDatos(props.accion, props.tipo);
   }, [ConsultarListaDatos, props.accion, props.tipo]);
 
-  useEffect(() => {
-    query('GestionBasica','Empleado',[{opcion:'consultar_nomina'}]);
-  }, [query]);
 
-  useEffect(() => {
-    query('GestionBasica','Usuarios',[{opcion:'lista_Usuarios',obj:'Usuarios'}]);
-  }, [query]);
 
   return (
     <>
       {(() => {
         switch (props.tipo) {
           case 'ControlDiario':
-            return (<><ControlDiario
+            return (<>
+
+            <ControlDiario
               accion={'GestionBasica'}
               datos={items}
               tipo={props.tipo}
-            /></>);
+            />
+
+            </>);
             case 'OrdenCompra':
             return (<><OrdenCompra
               accion={'GestionBasica'}
@@ -41,7 +40,7 @@ const OtrosRegistros = (props) => {
             case 'GenerarNomina':
             return (<><MenuNomina
               accion={'GestionBasica'}
-              datos={items}
+              datos={listEmpleados}
               tipo={props.tipo}
             /></>);
             case 'Usuarios':
@@ -49,6 +48,13 @@ const OtrosRegistros = (props) => {
               accion={'GestionBasica'}
               tipo={props.tipo}
               datos={itemsUsuarios?.data}
+            /></>);
+            case 'Roles':
+            return (<>
+            <Roles
+              accion={'GestionBasica'}
+              tipo={props.tipo}
+              datos={itemsRoles}
             /></>);
           default:
             return (

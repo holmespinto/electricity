@@ -24,6 +24,8 @@ const DashboardProvider = ({ children }) => {
   const [signUpModalLiqNomina, setSignUpModalLiqNomina] = useState(false);
   const [open, setOpen] = useState(false);
   const [ ItemsUpdate, setItemsUpdate] = useState([]);
+  const [ itemsRoles, setRoles] = useState([]);
+  const [ listEmpleados, setEmpleado] = useState([]);
 
 
   const toggle = () => {
@@ -124,6 +126,12 @@ const DashboardProvider = ({ children }) => {
           switch (datos[0]?.obj) {
             case "Usuarios":
               setIUsuarios(response)
+            // eslint-disable-next-line no-fallthrough
+            case "Roles":
+              setRoles(response)
+            // eslint-disable-next-line no-fallthrough
+             case "Empleado":
+              setEmpleado(response)
             // eslint-disable-next-line no-fallthrough
             default:
               setItemsQuery(response)
@@ -285,6 +293,8 @@ const DashboardProvider = ({ children }) => {
     openNomin, setOpenNomin,
     itemsUsuarios, setIUsuarios,
     ItemsUpdate, setItemsUpdate,
+    itemsRoles, setRoles,
+    listEmpleados, setEmpleado
   };
 
   // eslint-disable-next-line react/jsx-no-undef

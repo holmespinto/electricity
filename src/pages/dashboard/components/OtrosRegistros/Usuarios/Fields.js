@@ -1,5 +1,5 @@
 // @flow
-import React, { useEffect, useState,useContext } from 'react';
+import React, { useState,useContext } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Redirect } from 'react-router-dom';
 import { Button, Alert } from 'react-bootstrap';
@@ -13,8 +13,9 @@ import { queryFormSend } from '../../../../../redux/actions';
 import { VerticalForm, FormInput } from '../../../../../components/';
 import { DashboardContext } from '../../../../../layouts/context/DashboardContext';
 const Register = (props): React$Element<React$FragmentType> => {
+
   const {query,setOpen,open} = useContext(DashboardContext);
-  const [items, setItems] = useState({
+  const [items, setItems] = useState([{
     login: props?.usuario?.length===1?props?.usuario[0]?.login:'0',
     email: props?.usuario?.length===1?props?.usuario[0]?.email:'0',
     rol: props?.usuario?.length===1?props?.usuario[0]?.rol:'0',
@@ -22,7 +23,7 @@ const Register = (props): React$Element<React$FragmentType> => {
     opcion: props?.opcion,
     tipo: props?.tipo,
     id: props?.usuario?.length===1?props?.usuario[0]?.id:'0',
-  });
+  }]);
   const { t } = useTranslation();
   const dispatch = useDispatch();
 
@@ -44,10 +45,11 @@ const Register = (props): React$Element<React$FragmentType> => {
     dispatch(queryFormSend(...items))
 
     setTimeout(function () {
-      query('GestionBasica', 'Usuarios', [{ opcion: 'lista_Usuarios', obj: 'Usuarios' }]);
-      setOpen(!open)
+      query('GestionBasica', 'Usuarios', [{ opcion: 'lista_Usuarios', obj: 'Usuarios'}]);
+      setOpen(open)
     }, 2000);
   };
+  console.log('Register',items)
    return (
     <>
       {queryForm ? <Redirect to={`/${props?.accion}/${props?.tipo}}`}></Redirect> : null}
@@ -69,11 +71,11 @@ const Register = (props): React$Element<React$FragmentType> => {
           name="login"
           value={items?.login}
           onChange={(e) => setItems([{
-            ...items, login: e.target.value,
+            ...items[0], login: e.target.value,
             accion: props?.accion,
             opcion: props?.opcion,
             tipo: props?.tipo,
-            id: items?.id
+            id: items[0]?.id
           }])}
           placeholder={t('Digite su login')}
           containerClass={'mb-3'}
@@ -84,11 +86,11 @@ const Register = (props): React$Element<React$FragmentType> => {
           name="email"
           value={items?.email}
           onChange={(e) => setItems([{
-            ...items, email: e.target.value,
+            ...items[0], email: e.target.value,
             accion: props?.accion,
             opcion: props?.opcion,
             tipo: props?.tipo,
-            id: items?.id,
+            id: items[0]?.id,
           }])}
           placeholder={t('Digite su email')}
           containerClass={'mb-3'}
@@ -99,11 +101,11 @@ const Register = (props): React$Element<React$FragmentType> => {
           className="react-select"
           classNamePrefix="react-select"
           onChange={(e) => setItems([{
-            ...items, rol: e.value
+            ...items[0], rol: e.value
             , accion: props?.accion,
             opcion: props?.opcion,
             tipo: props?.tipo,
-            id: items?.id,
+            id: items[0]?.id,
           }])}
           options={props?.roles}
           placeholder="Selecione el Rol..."

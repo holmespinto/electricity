@@ -1,4 +1,4 @@
-import React,{useContext}  from 'react';
+import React,{useContext,useEffect}  from 'react';
 import { Row, Col, Tab, Card, Nav} from 'react-bootstrap';
 import classnames from 'classnames';
 import { DashboardContext } from '../../../../../layouts/context/DashboardContext';
@@ -23,22 +23,12 @@ const tabItems = [
 ];
 
 const MenuNomina = (props) => {
-  const {itemsQuery
+  const {query
   } = useContext(DashboardContext);
-
-  const listEmpleados= itemsQuery || [{
-    id:1,
-    Identificacion:'',
-    Nombres:'No existen registros',
-    Apellidos:'',
-    Email:'',
-    Telefono:'',
-    Cargo:'',
-    Salario:'',
-    AuxTrans:'',
-    status:'Deactivated'
-  }];
-
+//listEmpleados
+  useEffect(() => {
+    query('GestionBasica','Empleado',[{opcion:'consultar_nomina',obj:'Empleado'}]);
+  }, [query]);
 return (
     <React.Fragment>
       <Row>
@@ -70,7 +60,7 @@ return (
                                 <Row>
                                    <Col sm="12 mt-1">
                                    <NominaEmpleado tipo={props.tipo}
-                                    datos={listEmpleados}
+                                    listEmpleados={props.listEmpleados}
                                     accion={props.accion}/>
                                   </Col>
                                 </Row>

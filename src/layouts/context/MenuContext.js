@@ -1,6 +1,5 @@
 import React, { createContext, useState, useCallback,useEffect } from 'react';
-
-
+import encodeBasicUrl from '../../utils/encodeBasicUrl';
 import { APICore } from '../../helpers/api/apiCore';
 const api = new APICore();
 const MenuContext = createContext();
@@ -15,7 +14,7 @@ const MenuProvider = ({ children }) => {
             let userInfo = sessionStorage.getItem('hyper_user');
             const user = JSON.parse(userInfo);
             if (user) {
-            const url = `accion=menu&opcion=consultar&IdMenu=${user[0]?.id}`;
+            const url = `accion=menu&opcion=consultar&IdMenu=${encodeBasicUrl(user[0]?.role)}`;
             const datosMenu = api.sendRequestData(`${url}`);
             datosMenu.then(function (response) {
                 try {
