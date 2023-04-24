@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext,useEffect } from 'react';
 import Title from '../../../pages/dashboard/components/Title';
 import GestionBasica from '../../../pages/dashboard/components/GestionBasica/GestionBasica';
 import OtrosRegistros from '../../../pages/dashboard/components/OtrosRegistros/OtrosRegistros';
@@ -7,7 +7,12 @@ import OtrosRegistros from '../../../pages/dashboard/components/OtrosRegistros/O
 import { DashboardContext } from '../../../layouts/context/DashboardContext';
 
  const ProjectDashboard = () => {
-  const { itemsmenuprincipal} = useContext(DashboardContext)
+  const { itemsmenuprincipal,onPermisos} = useContext(DashboardContext)
+
+  useEffect(() => {
+    onPermisos(itemsmenuprincipal);
+  }, [itemsmenuprincipal, onPermisos]);
+
   return (
 
     <React.Fragment>

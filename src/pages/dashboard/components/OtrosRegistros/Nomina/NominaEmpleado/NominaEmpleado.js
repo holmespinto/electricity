@@ -13,24 +13,28 @@ const ActionColumnEmpleado = ({ row }) => {
   } = useContext(DashboardContext);
 
   const toggleUpUpdateEmpleado = (id) => {
+
     const Empleado = itemsNomina?.data?.Empleado || [{}];
     const EmpleadoNomina =  [];
     //const Nomina = itemsNomina?.data?.Nomina || [{}];
     const Conceptos = itemsNomina?.data?.Conceptos || [{}];
     const TodasNomina = itemsNomina?.data?.TodasNomina || [{}];
 
+
     const nominaActiva=[]
+    // eslint-disable-next-line array-callback-return
+    if(id>0)
     // eslint-disable-next-line array-callback-return
     TodasNomina?.map((row, i) => {
       if (row.Estado === 'Procesando') {
         nominaActiva.push(row)
       }
     })
-
+ const DatosEmpleado=[]
     // eslint-disable-next-line array-callback-return
     Empleado?.map((row, i) => {
       if (row.id === id) {
-        Empleado.push(row)
+        DatosEmpleado.push(row)
       }
     })
     // eslint-disable-next-line array-callback-return
@@ -40,9 +44,10 @@ const ActionColumnEmpleado = ({ row }) => {
         EmpleadoNomina.push(row)
       }
     })
+
     const obj={
       "data": {
-        "Empleado":Empleado[0],
+        "Empleado":DatosEmpleado[0],
         "Nomina": nominaActiva[0],
         "EmpleadoNomina":EmpleadoNomina,
         "Conceptos":Conceptos,

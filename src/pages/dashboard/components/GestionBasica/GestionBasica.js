@@ -8,7 +8,7 @@ import { DashboardContext } from '../../../../layouts/context/DashboardContext';
 
 
 const GestionBasica = (props) => {
-  const {ConsultarListaDatos,items,query } = useContext(DashboardContext);
+  const {ConsultarListaDatos,items,query} = useContext(DashboardContext);
 
   useEffect(() => {
     ConsultarListaDatos(props.accion, props.tipo);
@@ -17,6 +17,8 @@ const GestionBasica = (props) => {
   useEffect(() => {
     query(props.accion,'Cliente','consultar');
   }, [props.accion,query]);
+
+
   return (
     <>
       {(() => {

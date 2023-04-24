@@ -1,6 +1,7 @@
 import React, { createContext, useState, useCallback } from 'react';
 import Swal from 'sweetalert2'
 import classNames from 'classnames';
+import encodeBasicUrl from '../../utils/encodeBasicUrl';
 import { APICore } from '../../helpers/api/apiCore';
 const api = new APICore();
 const DashboardContext = createContext();
@@ -30,7 +31,7 @@ const DashboardProvider = ({ children }) => {
   const [ itemsNomina, setNomina] = useState([]);
   const [ itemsControlDiario, setControlDiario] = useState([]);
   const [ itemsOrdenCompra, setOrdenCompra] = useState([]);
-
+  const [PERMISOS_USER, setpermisos] = useState([{}]);
 
   const toggle = () => {
     setOpen((prevState) => !prevState);
@@ -255,6 +256,36 @@ const DashboardProvider = ({ children }) => {
     sendData(event, 'addNomina', data)
   }, [sendData]);
 
+  const onPermisos = useCallback((itemUrl) => {
+    setTimeout(function () {
+
+        // get parameters from post request
+        let userInfo = sessionStorage.getItem('hyper_user');
+        const user = JSON.parse(userInfo);
+        if (user) {
+        const url = `accion=permisos&opcion=consultar&IdMenu=${encodeBasicUrl(user[0]?.role)}`;
+        const datosMenu = api.sendRequestData(`${url}`);
+        datosMenu.then(function (response) {
+            try {
+              const perm=[]
+              const permisos = response?.Permisos || [{}];
+
+              if(itemUrl.length > 0)
+              // eslint-disable-next-line array-callback-return
+              permisos?.map((row, i) => {
+                if (row.opcion === itemUrl) {
+                  perm.push(row)
+                }
+              })
+              setpermisos(perm[0]);
+
+            } catch (error) {
+                console.error(error);
+            }
+        });
+      }
+    }, 1000);
+}, []);
 
 
   const data = {
@@ -282,7 +313,8 @@ const DashboardProvider = ({ children }) => {
     itemsNomina, setNomina,
     openNominaEmpleado, setOpenNominaEmpleado,
     itemsControlDiario, setControlDiario,
-    itemsOrdenCompra, setOrdenCompra
+    itemsOrdenCompra, setOrdenCompra,
+    onPermisos,PERMISOS_USER
   };
 
   // eslint-disable-next-line react/jsx-no-undef

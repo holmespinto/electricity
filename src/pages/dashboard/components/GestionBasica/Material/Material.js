@@ -15,9 +15,9 @@ const ActionColumn = ({ row }) => {
     validated,
     signUpModal,
     setSignUpModal,
-    setItems,itemsmenuprincipal
+    setItems,itemsmenuprincipal,PERMISOS_USER
   } = useContext(DashboardContext);
-
+  const permisos = PERMISOS_USER || [{}];
   const toggleSignUp = () => {
      if(row.cells[0].value>0)
     setSignUpModal(!signUpModal);
@@ -50,14 +50,19 @@ const ActionColumn = ({ row }) => {
             })()}
         </Modal.Body>
       </Modal>
+            {
+            permisos?.update==='S'?(
             <Link to="#" className="action-icon" onClick={() => toggleSignUp()}>
                 {' '}
                 <i className="mdi mdi-square-edit-outline"></i>
-            </Link>
+            </Link>):''
+            }
+             {
+            permisos?.delete==='S'?(
             <Link to="#" className="action-icon" onClick={() => eliminar(row.cells[0].value)}>
                 {' '}
                 <i className="mdi mdi-delete"></i>
-            </Link>
+            </Link>):''}
         </React.Fragment>
   );
 };
@@ -65,8 +70,10 @@ const Material = (props) => {
   const {
     validated,
     signUpModalAdd, setSignUpModalAdd,
-    setItems,sizePerPageList,StatusColumn,isLoading
+    setItems,sizePerPageList,StatusColumn,isLoading,PERMISOS_USER
   } = useContext(DashboardContext);
+  const permisos = PERMISOS_USER || [{}];
+
   const columns = [
     {
       Header: 'ID',
@@ -92,32 +99,24 @@ const Material = (props) => {
       sort: false,
     },
     {
-      Header: 'Status',
-      accessor: 'status',
-      sort: true,
-      // eslint-disable-next-line no-undef
-      Cell: StatusColumn,
-    },
-    {
       Header: 'Action',
       accessor: 'action',
       sort: false,
       classes: 'table-action',
       Cell: ActionColumn,
     },
+    {
+      Header: 'Status',
+      accessor: 'status',
+      sort: true,
+      // eslint-disable-next-line no-undef
+      Cell: StatusColumn,
+    },
   ];
   const toggleSignUp = () => {
     setSignUpModalAdd(!signUpModalAdd);
-    setItems([{
-      id: 1,
-      Nombre: '',
-      Unidad: '',
-      ValorUnitario: '',
-      Descripcion:'',
-      status:'',
-    }])
  };
-
+ console.log('PERMISOS_USER',permisos)
   return (
     <>
       <Row>
@@ -130,20 +129,11 @@ const Material = (props) => {
       <Card.Body>
         {/* Sign up Modal */}
         <Modal show={signUpModalAdd} onHide={setSignUpModalAdd}>
-          <Modal.Body>
-            {(() => {
-              switch (props?.tipo) {
-                case "Material": case "ManoObra": case "Herramientas":
-                  return (<><FormAdd
+          <Modal.Body>{
+          permisos?.add==='S'?(<FormAdd
                     title={`GESTIONAR ${props?.tipo?.toUpperCase()}`}
                     validated={validated}
-                  /></>);
-                default:
-                  return (
-                    <>{''}</>
-                  );
-              }
-            })()}
+                  />):''}
           </Modal.Body>
         </Modal>
       </Card.Body>
@@ -154,14 +144,18 @@ const Material = (props) => {
                 <Col sm={4}>
                 </Col>
                 <Col sm={8}>
+                  {
+                  permisos?.add==='S'?(
                   <div className="text-sm-end">
                     <Button className="btn btn-success mb-2 me-1" onClick={toggleSignUp}>
                       <i className="mdi mdi-cog-outline"></i>
                     </Button>
                   </div>
+                  ):''
+                    }
                 </Col>
               </Row>
-              {!isLoading? (<Table
+              {!isLoading && permisos?.query==='S'?(<Table
                 columns={columns}
                 data={props.datos}
                 pageSize={5}

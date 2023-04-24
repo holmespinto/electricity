@@ -14,17 +14,20 @@ const ActionColumn = ({ row }) => {
 
   const toggleUpUpdate = (id) => {
   let array = [];
-  // eslint-disable-next-line array-callback-return
+
+
+  if(id>0)
+   // eslint-disable-next-line array-callback-return
   itemsRoles.dataRoles?.roles?.map((row, i) =>{
          if(row.id===id){
           array.push(row)
          }
       })
       //console.log('ActionColumn',array[0])
-    if (array.length > 0)
 
     setOpen(open);
     toggle()
+
     setItemsUpdate(array[0])
   };
 
