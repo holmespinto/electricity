@@ -186,7 +186,7 @@ const Table = (props: TableProps): React$Element<React$FragmentType> => {
                         {
                         permisos?.add === 'S' ? (
                         <Button className="btn btn-info mb-0 me-5 p-2" onClick={toggleSignUp}>
-                          <i className="mdi mdi-cog-outline">{titulo}</i>
+                          <i className="mdi mdi-tray-plus">{titulo}</i>
                         </Button>):({titulo})
                         }
                       </div>

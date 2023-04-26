@@ -1,29 +1,37 @@
 /* eslint-disable array-callback-return */
 // @flow
 import React, { useContext, Suspense, useEffect } from 'react';
-import { Row, Col, Card,  Modal } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
+import { Row, Col, Card, Modal,Pagination } from 'react-bootstrap';
 import { DashboardContext } from '../../../../../layouts/context/DashboardContext';
-//import { GestionBasicaContext } from '../../../../layouts/context/GestionBasicaContext';
+import BtnActions from '../../BtnActions';
 import FormAdd from './FormAdd';
-import FormUpdate from './FormUpdate';
+import OptionsActions from './OptionsActions';
 import Table from '../../../../../components/Table';
 const loading = () => <div className="text-center"></div>;
+
+
 const ActionColumn = ({ row }) => {
 
   const {
-    eliminar,
-    validated,
     setOpen, toggle, setItemsUpdate,
-    open, itemsmenuprincipal, itemsProyecto,PERMISOS_USER
+    open, itemsApu, PERMISOS_USER
   } = useContext(DashboardContext);
+
   const permisos = PERMISOS_USER || [{}];
-  const toggleSignUp = (id) => {
+  const Apus = itemsApu?.data?.Apus || [];
+
+  const toggleSignUp = (id,opcion) => {
     let array = [];
     if (id > 0)
-      itemsProyecto?.map((row, i) => {
+    Apus?.map((row, i) => {
+      const obj ={
+        id: row.id,
+        Objetivo: row.Objetivo,
+        Total: row.Total,
+        Opcion: opcion,
+      }
         if (row.id === id) {
-          array.push(row)
+          array.push(obj)
         }
       })
     setOpen(open);
@@ -33,38 +41,98 @@ const ActionColumn = ({ row }) => {
 
   return (
     <React.Fragment>
-      <Modal show={open} onHide={toggleSignUp}>
-        <Modal.Body><FormUpdate
-          title={`ACTUALIZAR ${itemsmenuprincipal?.toUpperCase()}`}
-          validated={validated}
-        />
-        </Modal.Body>
-      </Modal>
-      {
-        permisos?.update === 'S' ? (
-          <Link to="#" className="action-icon" onClick={() => toggleSignUp(row.cells[0].value)}>
-            {' '}
-            <i className="mdi mdi-square-edit-outline"></i>
-          </Link>) : ''
-      }
-      {
-        permisos?.delete === 'S' ? (
-          <Link to="#" className="action-icon" onClick={() => eliminar(row.cells[0].value)}>
-            {' '}
-            <i className="mdi mdi-delete"></i>
-          </Link>) : ''}
+      <Row>
+        <Modal show={open} onHide={toggleSignUp}>
+          <Modal.Body><OptionsActions
+            title={'FORMULARIO'}
+          />
+          </Modal.Body>
+        </Modal>
+      </Row>
 
+      <Row>
+      <Pagination className="pagination-rounded mx-auto" size="sm">
+      <Pagination.Prev className="mx-auto mt-0 mb-0 ">
+          <BtnActions
+            permisos={permisos?.update}
+            key={`APU_${row.cells[0].value}`}
+            toggleSignUp={toggleSignUp}
+            row={row.cells[0].value}
+            titulo={'APU'}
+            descripcion={'Registre las Categoria y Subcategorias de la APU'}
+            icon={'mdi mdi-comment-text-multiple-outline'}
+          />
+       </Pagination.Prev>
+       <Pagination.Item>
+        <BtnActions
+            permisos={permisos?.update}
+            key={`EQUIPOS_${row.cells[0].value}`}
+            toggleSignUp={toggleSignUp}
+            row={row.cells[0].value}
+            titulo={'EQUIPOS'}
+            descripcion={'Registrar Equipos o Herramientas'}
+            icon={'mdi mdi-account-hard-hat'}
+          />
+        </Pagination.Item>
+        <Pagination.Item>
+        <BtnActions
+            permisos={permisos?.update}
+            key={`MATERIALES_${row.cells[0].value}`}
+            toggleSignUp={toggleSignUp}
+            row={row.cells[0].value}
+            titulo={'MATERIALES'}
+            descripcion={'Registrar Materiales'}
+            icon={'mdi mdi-alpha-m-circle'}
+          />
+        </Pagination.Item>
+        <Pagination.Item>
+        <BtnActions
+            permisos={permisos?.update}
+            key={`TRANSPORTE_${row.cells[0].value}`}
+            toggleSignUp={toggleSignUp}
+            row={row.cells[0].value}
+            titulo={'TRANSPORTE'}
+            descripcion={'Registrar Transporte'}
+            icon={'mdi mdi-ambulance'}
+          />
+        </Pagination.Item>
+        <Pagination.Item>
+        <BtnActions
+            permisos={permisos?.update}
+            key={`MANOBRA_${row.cells[0].value}`}
+            toggleSignUp={toggleSignUp}
+            row={row.cells[0].value}
+            titulo={'MANO DE OBRA'}
+            descripcion={'Registrar Mano de Obras'}
+            icon={'mdi mdi-allergy'}
+          />
+        </Pagination.Item>
+        <Pagination.Item>
+        <BtnActions
+            permisos={permisos?.update}
+            key={`VISTA_${row.cells[0].value}`}
+            toggleSignUp={toggleSignUp}
+            row={row.cells[0].value}
+            titulo={'VISTA'}
+            descripcion={'Vista previa de la APU'}
+            icon={'mdi mdi-eye-check'}
+          />
+        </Pagination.Item>
+        </Pagination>
+      </Row>
     </React.Fragment>
   );
 };
 const AnalisisPreciosUnitarios = (props) => {
 
   const {
-    validated, Spinners,itemsmenuprincipal,
+    validated, Spinners, itemsApu,
     signUpModalAdd, setSignUpModalAdd, query,
-    sizePerPageList, StatusColumn, isLoading,PERMISOS_USER
+    sizePerPageList, isLoading, PERMISOS_USER
   } = useContext(DashboardContext);
   const permisos = PERMISOS_USER || [{}];
+
+  const Apus = itemsApu?.data?.Apus || [];
 
   const columns = [
     {
@@ -73,41 +141,18 @@ const AnalisisPreciosUnitarios = (props) => {
       sort: true,
     },
     {
-      Header: 'Nombre',
-      accessor: 'Nombre',
+      Header: 'Objetivo',
+      accessor: 'Objetivo',
       sort: true,
-      with:20,
+      with: 20,
     },
     {
-      Header: 'Tipo Proyecto',
-      accessor: 'Tipo',
-      sort: true,
-    }, {
-      Header: 'Direccion',
-      accessor: 'Direccion',
-      sort: true,
-    }, {
-      Header: 'Cliente',
-      accessor: 'Cliente',
-      sort: false,
-    }, {
-      Header: 'Estado',
-      accessor: 'Estado',
-      sort: false,
-    },
-    {
-      Header: 'Status',
-      accessor: 'status',
-      sort: true,
-      Cell: StatusColumn,
-    },
-    {
-      Header: 'Action',
+      Header: '',
       accessor: 'action',
       sort: false,
       classes: 'table-action',
       Cell: ActionColumn,
-    },
+    }
   ];
   const toggleSignUp = () => {
     setSignUpModalAdd(!signUpModalAdd);
@@ -115,6 +160,7 @@ const AnalisisPreciosUnitarios = (props) => {
   useEffect(() => {
     query('RegistrosAvanzados', 'Apu', [{ opcion: 'consultar', obj: 'Apu' }]);
   }, [query])
+
   return (
     <>
       <Row>
@@ -137,9 +183,9 @@ const AnalisisPreciosUnitarios = (props) => {
                   </Card>
                 </Col>
               </Row>
-              {/*!isLoading && props?.datos?.length>0 && permisos?.query === 'S'? (<Table
+              {!isLoading && Apus?.length > 0 && permisos?.query === 'S' ? (<Table
                 columns={columns}
-                data={props?.datos}
+                data={Apus}
                 pageSize={5}
                 sizePerPageList={sizePerPageList}
                 isSortable={true}
@@ -148,10 +194,10 @@ const AnalisisPreciosUnitarios = (props) => {
                 searchBoxClass="mt-2 mb-3"
                 isSearchable={true}
                 nametable={props.accion}
-                titulo={itemsmenuprincipal}
+                titulo={' Registrar Objetivos'}
                 permisos={permisos}
                 toggleSignUp={toggleSignUp}
-              />) : <Suspense fallback={loading()}><Spinners /></Suspense>*/}
+              />) : <Suspense fallback={loading()}><Spinners /></Suspense>}
             </Card.Body>
           </Card>
         </Col>

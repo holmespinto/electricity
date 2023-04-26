@@ -3,7 +3,7 @@
 /* eslint-disable no-duplicate-case */
 /* eslint-disable no-fallthrough */
 import React, { useContext, Suspense, useEffect } from 'react';
-import { Row, Col, Card,Modal } from 'react-bootstrap';
+import { Row, Col, Card, Modal } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { DashboardContext } from '../../../../../layouts/context/DashboardContext';
 import FormAdd from './FormAdd';

@@ -1,5 +1,5 @@
 // @flow
-//import React, { useContext } from 'react';
+import React from 'react';
 import Categorias from './Categorias/Categorias';
 import SubCapitulos from './SubCapitulos/SubCapitulos';
 import AnalisisPreciosUnitarios from './AnalisisPreciosUnitarios/AnalisisPreciosUnitarios';
@@ -7,7 +7,7 @@ import AnalisisPreciosUnitarios from './AnalisisPreciosUnitarios/AnalisisPrecios
 
 
 const RegistrosAvanzados = (props) => {
- // const { itemsSubCategorias} = useContext(DashboardContext);
+//onst { itemsApu} = useContext(DashboardContext);
 
 
   return (
@@ -26,7 +26,7 @@ const RegistrosAvanzados = (props) => {
               accion={'RegistrosAvanzados'}
               tipo={props.tipo}
             /></>);
-            case 'AdminAPU':
+            case 'APU':
             return (<>
             <AnalisisPreciosUnitarios
               accion={'RegistrosAvanzados'}

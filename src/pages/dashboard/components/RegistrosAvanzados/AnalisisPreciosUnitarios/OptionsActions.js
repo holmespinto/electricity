@@ -2,10 +2,10 @@ import React,{useContext} from 'react';
 import { DashboardContext } from '../../../../../layouts/context/DashboardContext';
 /* custon FormUpdate */
 import Fields from './Fields';
-const FormUpdate = (props) => {
+const OptionsActions = (props) => {
   const { itemUrl, itemsmenuprincipal,itemsUpdate, } = useContext(DashboardContext);
 
-
+console.log('itemsUpdate',itemsUpdate)
   return (
   <React.Fragment>
       <Fields
@@ -20,4 +20,4 @@ const FormUpdate = (props) => {
   </React.Fragment>
     );
 }
-export default FormUpdate;
+export default OptionsActions;
