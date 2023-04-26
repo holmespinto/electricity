@@ -1,6 +1,9 @@
-// @flow
+/* eslint-disable no-lone-blocks */
+/* eslint-disable array-callback-return */
+/* eslint-disable no-duplicate-case */
+/* eslint-disable no-fallthrough */
 import React, { useContext, Suspense, useEffect } from 'react';
-import { Row, Col, Card,  Modal } from 'react-bootstrap';
+import { Row, Col, Card,Modal } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { DashboardContext } from '../../../../../layouts/context/DashboardContext';
 import FormAdd from './FormAdd';
@@ -12,30 +15,41 @@ const ActionColumn = ({ row }) => {
   const {
     eliminar,
     validated,
-    signUpModal,
-    setSignUpModal,
-    setItems, itemsmenuprincipal,PERMISOS_USER
+    setSignUpModalAdd,
+    signUpModalAdd,
+    setItemsUpdate,toggle,
+    setOpen,itemsCategorias,
+    open, itemsmenuprincipal, PERMISOS_USER
   } = useContext(DashboardContext);
   const permisos = PERMISOS_USER || [{}];
-  const toggleSignUp = () => {
-    if (row.cells[0].value > 0)
-      setSignUpModal(!signUpModal);
-    setItems([{
-      id: row.cells[0].value ? row.cells[0].value : row.cells[0].value,
-      Identificacion: row.cells[1].value ? row.cells[1].value : row.cells[1].value,
-      Nombres: row.cells[2].value ? row.cells[2].value : row.cells[2].value,
-      Apellidos: row.cells[3].value ? row.cells[3].value : row.cells[3].value,
-      Email: row.cells[4].value ? row.cells[4].value : row.cells[4].value,
-      Telefono: row.cells[5].value ? row.cells[5].value : row.cells[5].value,
-      Cargo: row.cells[6].value ? row.cells[6].value : row.cells[6].value,
-      Salario: row.cells[7].value ? row.cells[7].value : row.cells[7].value,
-      status: row.cells[8].value ? row.cells[8].value : row.cells[8].value,
-    }])
+  const Categorias = itemsCategorias?.data?.Categorias || [{}];
+  const TipoCategoria = itemsCategorias?.data?.TipoCategoria|| [{}];
+
+  const toggleSignUp = (id) => {
+    let array = [];
+
+    if(id>0)
+    Categorias?.map((row, i) =>{
+           if(row.id===id){
+            const obj ={
+              id:row.id,
+              Nombre:row.Categoria,
+              IdTipoCategoria:row.TipoCategoria,
+              TipoCategorias:TipoCategoria
+            }
+            array.push(obj)
+           }
+        })
+      setItemsUpdate(array[0])
+      setOpen(open);
+      setSignUpModalAdd(signUpModalAdd);
+      toggle()
+
   };
 
   return (
     <React.Fragment>
-      <Modal show={signUpModal} onHide={toggleSignUp}>
+      <Modal show={open} onHide={toggleSignUp}>
         <Modal.Body><FormUpdate
           title={`ACTUALIZAR ${itemsmenuprincipal?.toUpperCase()}`}
           validated={validated}
@@ -44,7 +58,7 @@ const ActionColumn = ({ row }) => {
       </Modal>
       {
         permisos?.update === 'S' ? (
-          <Link to="#" className="action-icon" onClick={() => toggleSignUp()}>
+          <Link to="#" className="action-icon" onClick={() => toggleSignUp(row.cells[0].value)}>
             {' '}
             <i className="mdi mdi-square-edit-outline"></i>
           </Link>) : ''
@@ -58,14 +72,17 @@ const ActionColumn = ({ row }) => {
     </React.Fragment>
   );
 };
-const Empleado = (props) => {
+const Categorias = (props) => {
+  //const [registros, setRegistros] = useState();
   const {
-    validated, Spinners, itemsmenuprincipal,
-    signUpModalAdd, setSignUpModalAdd,
-    query, sizePerPageList, StatusColumn, isLoading,PERMISOS_USER
+    validated,itemsmenuprincipal,itemsCategorias,setItemsAdd,toggle,
+    signUpModalAdd, setSignUpModalAdd, query,Spinners,setOpen,open,
+    sizePerPageList, StatusColumn, PERMISOS_USER
   } = useContext(DashboardContext);
-  const Empleados = props?.datos?.length > 0 ? props?.datos : []
+
   const permisos = PERMISOS_USER || [{}];
+  const datos = itemsCategorias?.data?.Categorias || [];
+
   const columns = [
     {
       Header: 'ID',
@@ -73,40 +90,14 @@ const Empleado = (props) => {
       sort: true,
     },
     {
-      Header: 'Identificacion',
-      accessor: 'Identificacion',
+      Header: 'Código',
+      accessor: 'Codigo',
       sort: true,
     },
     {
-      Header: 'Nombres',
-      accessor: 'Nombres',
+      Header: 'Categoria',
+      accessor: 'Categoria',
       sort: true,
-    }, {
-      Header: 'Apellidos',
-      accessor: 'Apellidos',
-      sort: true,
-    }, {
-      Header: 'Email',
-      accessor: 'Email',
-      sort: false,
-    }, {
-      Header: 'Telefono',
-      accessor: 'Telefono',
-      sort: false,
-    }, {
-      Header: 'Cargo',
-      accessor: 'Cargo',
-      sort: false,
-    }, {
-      Header: 'Salario',
-      accessor: 'Salario',
-      sort: false,
-    },
-    {
-      Header: 'Status',
-      accessor: 'status',
-      sort: true,
-      Cell: StatusColumn,
     },
     {
       Header: 'Action',
@@ -115,13 +106,42 @@ const Empleado = (props) => {
       classes: 'table-action',
       Cell: ActionColumn,
     },
+    {
+      Header: 'Status',
+      accessor: 'status',
+      sort: true,
+      Cell: StatusColumn,
+    },
   ];
   const toggleSignUp = () => {
-    setSignUpModalAdd(!signUpModalAdd);
+
+    const TipoCategoria = itemsCategorias?.data?.TipoCategoria|| [{}];
+    let Categoria = [];
+    const obj ={
+      value:'0',
+      label:'Registrar como nueva Categoria'
+    }
+    if (TipoCategoria.length>0)
+    Categoria.push(obj)
+    TipoCategoria?.map((row, i) =>{
+            const obj ={
+              value:row.id,
+              label:row.Categoria
+            }
+            Categoria.push(obj)
+        })
+      setItemsAdd(Categoria)
+      toggle()
+     setSignUpModalAdd(!signUpModalAdd);
+     setOpen(open);
   };
+
   useEffect(() => {
-    query('GestionesBasicas', 'Empleado', [{ opcion: 'consultar', obj: 'Empleado' }]);
-  }, [query])
+    {
+      query('RegistrosAvanzados','Categorias',[{opcion:'consultar',obj:'Categorias'}]);
+    }
+  }, [props.tipo, query])
+
   return (
     <>
       <Row>
@@ -134,19 +154,20 @@ const Empleado = (props) => {
                     <Card.Body>
                       {/* Sign up Modal */}
                       <Modal show={signUpModalAdd} onHide={setSignUpModalAdd}>
-                        <Modal.Body><FormAdd
-                          title={`GESTIONAR ${props?.tipo?.toUpperCase()}`}
-                          validated={validated}
-                        />
+                        <Modal.Body>{
+                          permisos?.add === 'S' ? (<FormAdd
+                            title={`GESTIONAR ${props?.tipo?.toUpperCase()}`}
+                            validated={validated}
+                          />) : ''}
                         </Modal.Body>
                       </Modal>
                     </Card.Body>
                   </Card>
-                </Col>>
+                </Col>
               </Row>
-              {!isLoading && Empleados.length > 0 && permisos?.query === 'S' ? (<Table
+              {datos?.length>0 && permisos?.query === 'S' ? (<Table
                 columns={columns}
-                data={Empleados}
+                data={datos}
                 pageSize={5}
                 sizePerPageList={sizePerPageList}
                 isSortable={true}
@@ -167,4 +188,4 @@ const Empleado = (props) => {
   );
 };
 
-export default Empleado;
+export default Categorias;

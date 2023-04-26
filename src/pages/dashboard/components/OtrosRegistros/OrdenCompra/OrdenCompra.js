@@ -1,6 +1,6 @@
 // @flow
 import React, { useContext, Suspense, useEffect } from 'react';
-import { Row, Col, Card, Button, Modal } from 'react-bootstrap';
+import { Row, Col, Card,  Modal } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { DashboardContext } from '../../../../../layouts/context/DashboardContext';
 import FormAdd from './FormAdd';
@@ -14,8 +14,9 @@ const ActionColumn = ({ row }) => {
     validated,
     signUpModal,
     setSignUpModal,
-    setItems, itemsmenuprincipal
+    setItems, itemsmenuprincipal,PERMISOS_USER
   } = useContext(DashboardContext);
+  const permisos = PERMISOS_USER || [{}];
 
   const toggleSignUp = () => {
     if (row.cells[0].value > 0)
@@ -41,23 +42,29 @@ const ActionColumn = ({ row }) => {
         />
         </Modal.Body>
       </Modal>
-      <Link to="#" className="action-icon" onClick={() => toggleSignUp()}>
-        {' '}
-        <i className="mdi mdi-square-edit-outline"></i>
-      </Link>
-      <Link to="#" className="action-icon" onClick={() => eliminar(row.cells[0].value)}>
-        {' '}
-        <i className="mdi mdi-delete"></i>
-      </Link>
+      {
+        permisos?.update === 'S' ? (
+          <Link to="#" className="action-icon" onClick={() => toggleSignUp()}>
+            {' '}
+            <i className="mdi mdi-square-edit-outline"></i>
+          </Link>) : ''
+      }
+      {
+        permisos?.delete === 'S' ? (
+          <Link to="#" className="action-icon" onClick={() => eliminar(row.cells[0].value)}>
+            {' '}
+            <i className="mdi mdi-delete"></i>
+          </Link>) : ''}
     </React.Fragment>
   );
 };
 const OrdenCompra = (props) => {
   const {
-    validated, query,
+    validated, query,Spinners,
     signUpModalAdd, setSignUpModalAdd,
-    setItems, sizePerPageList, StatusColumn, isLoading
+    itemsmenuprincipal, sizePerPageList, StatusColumn, isLoading,PERMISOS_USER
   } = useContext(DashboardContext);
+  const permisos = PERMISOS_USER || [{}];
   const columns = [
     {
       Header: 'ID',
@@ -108,16 +115,6 @@ const OrdenCompra = (props) => {
   ];
   const toggleSignUp = () => {
     setSignUpModalAdd(!signUpModalAdd);
-    setItems([{
-      id: 1,
-      Codigo: '',
-      Empresa: '',
-      Fecha: '',
-      Descripcion: '',
-      Cantidad: '',
-      ValorUnitario: '',
-      status: '',
-    }])
   };
 
   useEffect(() => {
@@ -146,18 +143,7 @@ const OrdenCompra = (props) => {
                   </Card>
                 </Col>
               </Row>
-              <Row>
-                <Col sm={4}>
-                </Col>
-                <Col sm={8}>
-                  <div className="text-sm-end">
-                    <Button className="btn btn-success mb-2 me-1" onClick={toggleSignUp}>
-                      <i className="mdi mdi-cog-outline"></i>
-                    </Button>
-                  </div>
-                </Col>
-              </Row>
-              {!isLoading && OrdenCompra.length > 0 ? (<Table
+              {!isLoading && OrdenCompra.length > 0 && permisos?.query === 'S'? (<Table
                 columns={columns}
                 data={OrdenCompra}
                 pageSize={5}
@@ -168,7 +154,10 @@ const OrdenCompra = (props) => {
                 searchBoxClass="mt-2 mb-3"
                 isSearchable={true}
                 nametable={props.accion}
-              />) : <Suspense fallback={loading()}>Esperando...</Suspense>}
+                titulo={itemsmenuprincipal}
+                permisos={permisos}
+                toggleSignUp={toggleSignUp}
+                />) : <Suspense fallback={loading()}><Spinners /></Suspense>}
             </Card.Body>
           </Card>
         </Col>

@@ -13,7 +13,7 @@ import { queryFormSend } from '../../../../../redux/actions';
 import { VerticalForm, FormInput } from '../../../../../components/';
 import { DashboardContext } from '../../../../../layouts/context/DashboardContext';
 const Register = (props): React$Element<React$FragmentType> => {
-
+  console.log('auteurs',props?.usuario)
   const {query,setOpen,open} = useContext(DashboardContext);
   const [items, setItems] = useState([{
     login: props?.usuario?.length===1?props?.usuario[0]?.login:'0',
@@ -69,7 +69,7 @@ const Register = (props): React$Element<React$FragmentType> => {
           label={t('login')}
           type="text"
           name="login"
-          value={items?.login}
+          value={items[0]?.login}
           onChange={(e) => setItems([{
             ...items[0], login: e.target.value,
             accion: props?.accion,
@@ -84,7 +84,7 @@ const Register = (props): React$Element<React$FragmentType> => {
           label={t('Email')}
           type="email"
           name="email"
-          value={items?.email}
+          value={items[0]?.email}
           onChange={(e) => setItems([{
             ...items[0], email: e.target.value,
             accion: props?.accion,

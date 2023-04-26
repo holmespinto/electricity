@@ -1,27 +1,51 @@
 // @flow
-import React from 'react';
-import ConsultaMaterial from './ConsultaMaterial';
-import ConsultaControlDiario from './ConsultaControlDiario';
-import ConsultaOrdenCompra from './ConsultaOrdenCompra';
+import React, { useEffect, useContext } from 'react';
+import Material from '../GestionBasica/Material/Material';
+import Cliente from '../GestionBasica/Cliente/Cliente';
+import Proyecto from '../GestionBasica/Proyecto/Proyecto';
+import Empleado from '../GestionBasica/Empleado/Empleado';
+import { DashboardContext } from '../../../../layouts/context/DashboardContext';
 
-const ConsultasBasicas = (props) => {
+
+const GestionBasica = (props) => {
+  const {ConsultarListaDatos,items,query} = useContext(DashboardContext);
+
+  useEffect(() => {
+    ConsultarListaDatos(props.accion, props.tipo);
+  }, [ConsultarListaDatos, props.accion, props.tipo]);
+
+  useEffect(() => {
+    query(props.accion,'Cliente','consultar');
+  }, [props.accion,query]);
+
+
   return (
     <>
- {(() => {
+      {(() => {
         switch (props.tipo) {
-          case 'ConsultaMaterial':case 'ConsultaManoObra':case 'ConsultaHerramientas':
-            return (<><ConsultaMaterial
-              accion={'Informes'}
+          case 'Material':case 'ManoObra':case 'Herramientas':
+            return (<><Material
+              accion={'GestionBasica'}
+              datos={items}
               tipo={props.tipo}
-              materias={props.materias}
+            /></>);
+          case 'Empleado':
+            return (<><Empleado
+              accion={'GestionBasica'}
+              tipo={props.tipo}
+              datos={items}
               /></>);
-         case 'ConsultaCliente':
-            case 'OtrasControlDiario':
-            return (<><ConsultaControlDiario accion={'OtrasConsultas'} tipo={props.tipo}/></>);
-              case 'OtrasOrdenCompra':
-            return (<><ConsultaOrdenCompra accion={'OtrasConsultas'} tipo={props.tipo}/></>);
-           case 'ConsultaApu':
-            return (<>{'ConsultaApu'}</>);
+          case 'Cliente':
+            return (<><Cliente
+              accion={'GestionBasica'}
+              tipo={props.tipo}
+              datos={items}
+              /></>);
+          case 'Proyecto':
+            return (<><Proyecto
+              accion={'GestionBasica'}
+              tipo={props.tipo}
+              datos={items}/></>);
           default:
             return (
               <>{''}</>
@@ -32,4 +56,4 @@ const ConsultasBasicas = (props) => {
   );
 };
 
-export default ConsultasBasicas;
+export default GestionBasica;

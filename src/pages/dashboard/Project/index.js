@@ -1,9 +1,13 @@
+/* eslint-disable no-fallthrough */
+/* eslint-disable no-undef */
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useContext,useEffect } from 'react';
 import Title from '../../../pages/dashboard/components/Title';
 import GestionBasica from '../../../pages/dashboard/components/GestionBasica/GestionBasica';
 import OtrosRegistros from '../../../pages/dashboard/components/OtrosRegistros/OtrosRegistros';
+import RegistrosAvanzados from '../../../pages/dashboard/components/RegistrosAvanzados/RegistrosAvanzados';
 //import Informes from '../../../pages/dashboard/components/Informes/Informes';
-//import ConsultasBasicas from '../../../pages/dashboard/components/ConsultasBasicas/ConsultasBasicas';
+import OtrasConsultas from '../../../pages/dashboard/components/OtrasConsultas/OtrasConsultas';
 import { DashboardContext } from '../../../layouts/context/DashboardContext';
 
  const ProjectDashboard = () => {
@@ -13,13 +17,14 @@ import { DashboardContext } from '../../../layouts/context/DashboardContext';
     onPermisos(itemsmenuprincipal);
   }, [itemsmenuprincipal, onPermisos]);
 
+
   return (
 
     <React.Fragment>
       <Title />
       {(() => {
         switch (itemsmenuprincipal) {
-          case 'Material': case 'ManoObra': case 'Herramientas': case 'Cliente': case 'Proyecto': case 'Empleado':
+          case 'Productos': case 'Cliente': case 'Proyecto': case 'Empleado':
             return (<><GestionBasica
               accion={'GestionBasica'}
               tipo={itemsmenuprincipal}
@@ -29,14 +34,19 @@ import { DashboardContext } from '../../../layouts/context/DashboardContext';
               accion={'OtrosRegistros'}
               tipo={itemsmenuprincipal}
             /></>);
-           case 'ConsultaProyecto':case 'Liquidacion':case 'ConsultaNomina':
-            return (<>{''}</>);
-           case 'ConsultaMaterial':case 'ConsultaHerramientas':case 'ConsultaManoObra':case 'ConsultaCliente':case 'ConsultaApu':case 'OtrasControlDiario':case 'OtrasOrdenCompra':
-            return (<>{''}</>);
+            // eslint-disable-next-line no-duplicate-case
+            case 'ControlDiario':case 'OrdenCompra':case 'OrdenCompra':
+              return (<><OtrasConsultas
+                accion={'OtrosRegistros'}
+                tipo={itemsmenuprincipal}
+              /></>);
+           case 'AdminAPU':case 'Categorias':case 'SubCategorias':case 'Configuraciones':
+            return (<><RegistrosAvanzados
+              accion={'RegistrosAvanzados'}
+              tipo={itemsmenuprincipal}
+            /></>);
           case 'RegistrarAPU':
             return (<>{'RegistrarAPU'}</>);
-          case 'Configuraciones':
-            return (<>{'Configuraciones'}</>);
           default:
             return (
               <>{''}</>

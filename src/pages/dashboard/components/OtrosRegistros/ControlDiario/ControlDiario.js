@@ -1,6 +1,6 @@
 // @flow
 import React, { useContext, Suspense, useEffect } from 'react';
-import { Row, Col, Card, Button, Modal } from 'react-bootstrap';
+import { Row, Col, Card,  Modal } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { DashboardContext } from '../../../../../layouts/context/DashboardContext';
 //import { GestionBasicaContext } from '../../../../layouts/context/GestionBasicaContext';
@@ -57,11 +57,13 @@ const ActionColumn = ({ row }) => {
 const ControlDiario = (props) => {
   const {
     query,
-    validated,
+    validated,itemsmenuprincipal,
     signUpModalAdd, setSignUpModalAdd,
-    setItems, sizePerPageList, isLoading
+    Spinners, sizePerPageList, isLoading,
+    PERMISOS_USER
   } = useContext(DashboardContext);
 
+  const permisos = PERMISOS_USER || [{}];
   const columns = [
     {
       Header: 'ID',
@@ -105,16 +107,6 @@ const ControlDiario = (props) => {
   ];
   const toggleSignUp = () => {
     setSignUpModalAdd(!signUpModalAdd);
-    setItems([{
-      id: 1,
-      Ciudad: '',
-      Concepto: '',
-      Fecha: '',
-      ValorLetras: '',
-      Paga: '',
-      Valor: '',
-      status: '',
-    }])
   };
 
   useEffect(() => {
@@ -146,18 +138,7 @@ const ControlDiario = (props) => {
                   </Card>
                 </Col>
               </Row>
-              <Row>
-                <Col sm={4}>
-                </Col>
-                <Col sm={8}>
-                  <div className="text-sm-end">
-                    <Button className="btn btn-success mb-2 me-1" onClick={toggleSignUp}>
-                      <i className="mdi mdi-cog-outline"></i>
-                    </Button>
-                  </div>
-                </Col>
-              </Row>
-              {!isLoading && controDiario.length > 0 ? (<Table
+              {!isLoading && controDiario.length > 0 && permisos?.query === 'S'? (<Table
                 columns={columns}
                 data={controDiario}
                 pageSize={5}
@@ -168,7 +149,10 @@ const ControlDiario = (props) => {
                 searchBoxClass="mt-2 mb-3"
                 isSearchable={true}
                 nametable={props.accion}
-              />) : <Suspense fallback={loading()}>Esperando...</Suspense>}
+                titulo={itemsmenuprincipal}
+                permisos={permisos}
+                toggleSignUp={toggleSignUp}
+                />) : <Suspense fallback={loading()}><Spinners /></Suspense>}
             </Card.Body>
           </Card>
         </Col>

@@ -1,34 +1,55 @@
+/* eslint-disable no-lone-blocks */
 /* eslint-disable array-callback-return */
-// @flow
-import React, { useContext, Suspense, useEffect } from 'react';
-import { Row, Col, Card,  Modal } from 'react-bootstrap';
+/* eslint-disable no-duplicate-case */
+/* eslint-disable no-fallthrough */
+import React, { useContext,Suspense, useEffect } from 'react';
+import { Row, Col, Card, Modal } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { DashboardContext } from '../../../../../layouts/context/DashboardContext';
-//import { GestionBasicaContext } from '../../../../layouts/context/GestionBasicaContext';
 import FormAdd from './FormAdd';
 import FormUpdate from './FormUpdate';
 import Table from '../../../../../components/Table';
 const loading = () => <div className="text-center"></div>;
+
 const ActionColumn = ({ row }) => {
 
   const {
     eliminar,
     validated,
-    setOpen, toggle, setItemsUpdate,
-    open, itemsmenuprincipal, itemsProyecto,PERMISOS_USER
+    setSignUpModalAdd,
+    signUpModalAdd,
+    setItemsUpdate,toggle,
+    setOpen,itemsSubCategorias,
+    open, itemsmenuprincipal, PERMISOS_USER
   } = useContext(DashboardContext);
   const permisos = PERMISOS_USER || [{}];
+  const Categorias = itemsSubCategorias?.data?.Categoria || [{}];
+  const SubCategorias = itemsSubCategorias?.data?.SubCategorias|| [{}];
+
   const toggleSignUp = (id) => {
     let array = [];
-    if (id > 0)
-      itemsProyecto?.map((row, i) => {
-        if (row.id === id) {
-          array.push(row)
-        }
-      })
-    setOpen(open);
-    toggle()
-    setItemsUpdate(array[0])
+
+    if(id>0)
+    SubCategorias?.map((row, i) =>{
+           if(row.id===id){
+            const obj ={
+              id: row.id,
+              idCategoria: row.id,
+              Codigo: row.Codigo,
+              Descripcion:row.Descripcion,
+              Unidad: row.Unidad,
+              Cantidad: row.Cantidad,
+              ValorUnitario: row.ValorUnitario,
+              TipoCategoria:Categorias
+            }
+            array.push(obj)
+           }
+        })
+      setItemsUpdate(array[0])
+      setOpen(open);
+      setSignUpModalAdd(signUpModalAdd);
+      toggle()
+
   };
 
   return (
@@ -53,18 +74,19 @@ const ActionColumn = ({ row }) => {
             {' '}
             <i className="mdi mdi-delete"></i>
           </Link>) : ''}
-
     </React.Fragment>
   );
 };
-const Proyecto = (props) => {
 
+const SubCapitulos = (props) => {
   const {
-    validated, Spinners,itemsmenuprincipal,
-    signUpModalAdd, setSignUpModalAdd, query,
-    sizePerPageList, StatusColumn, isLoading,PERMISOS_USER
+    validated,itemsSubCategorias,setItemsAdd,toggle,signUpModalAdd, setSignUpModalAdd,Spinners,setOpen,open,
+    sizePerPageList,PERMISOS_USER,
+     query
   } = useContext(DashboardContext);
+
   const permisos = PERMISOS_USER || [{}];
+  const datos = itemsSubCategorias?.data?.SubCategorias || [];
 
   const columns = [
     {
@@ -73,33 +95,26 @@ const Proyecto = (props) => {
       sort: true,
     },
     {
-      Header: 'Nombre',
-      accessor: 'Nombre',
+      Header: 'Código',
+      accessor: 'Codigo',
       sort: true,
-      with:20,
     },
     {
-      Header: 'Tipo Proyecto',
-      accessor: 'Tipo',
+      Header: 'Descripcion',
+      accessor: 'Descripcion',
       sort: true,
-    }, {
-      Header: 'Direccion',
-      accessor: 'Direccion',
+    },{
+      Header: 'Unidad',
+      accessor: 'Unidad',
       sort: true,
-    }, {
-      Header: 'Cliente',
-      accessor: 'Cliente',
-      sort: false,
-    }, {
-      Header: 'Estado',
-      accessor: 'Estado',
-      sort: false,
-    },
-    {
-      Header: 'Status',
-      accessor: 'status',
+    },{
+      Header: 'Cantidad',
+      accessor: 'Cantidad',
       sort: true,
-      Cell: StatusColumn,
+    },{
+      Header: 'Valor Unitario',
+      accessor: 'ValorUnitario',
+      sort: true,
     },
     {
       Header: 'Action',
@@ -110,11 +125,34 @@ const Proyecto = (props) => {
     },
   ];
   const toggleSignUp = () => {
-    setSignUpModalAdd(!signUpModalAdd);
+
+    const TipoCategoria = itemsSubCategorias?.data?.Categoria|| [{}];
+    let Categoria = [];
+    const obj ={
+      value:'0',
+      label:'Registrar como nueva Categoria'
+    }
+    if (TipoCategoria.length>0)
+    Categoria.push(obj)
+    TipoCategoria?.map((row, i) =>{
+            const obj ={
+              value:row.id,
+              label:row.Codigo +'.-'+ row.Categoria
+            }
+            Categoria.push(obj)
+        })
+      setItemsAdd(Categoria)
+      toggle()
+     setSignUpModalAdd(!signUpModalAdd);
+     setOpen(open);
   };
+
   useEffect(() => {
-    query('GestionesBasicas', 'Proyecto', [{ opcion: 'consultar', obj: 'Proyecto' }]);
-  }, [query])
+    {
+      query('RegistrosAvanzados','SubCategorias',[{opcion:'consultar',obj:'SubCategorias'}]);
+    }
+  }, [props.tipo, query])
+
   return (
     <>
       <Row>
@@ -125,21 +163,21 @@ const Proyecto = (props) => {
                 <Col sm={12} className={`${signUpModalAdd ? '' : 'd-lg-none'}`}>
                   <Card>
                     <Card.Body>
-                      {/* Sign up Modal */}
                       <Modal show={signUpModalAdd} onHide={setSignUpModalAdd}>
-                        <Modal.Body><FormAdd
-                          title={`GESTIONAR ${props?.tipo?.toUpperCase()}`}
-                          validated={validated}
-                        />
+                        <Modal.Body>{
+                          permisos?.add === 'S' ? (<FormAdd
+                            title={`GESTIONAR ${props?.tipo?.toUpperCase()}`}
+                            validated={validated}
+                          />) : ''}
                         </Modal.Body>
                       </Modal>
                     </Card.Body>
                   </Card>
                 </Col>
               </Row>
-              {!isLoading && props?.datos?.length>0 && permisos?.query === 'S'? (<Table
+              { /*datos?.length>0 && permisos?.query === 'S'*/ datos?.length>0? (<Table
                 columns={columns}
-                data={props?.datos}
+                data={datos}
                 pageSize={5}
                 sizePerPageList={sizePerPageList}
                 isSortable={true}
@@ -148,7 +186,7 @@ const Proyecto = (props) => {
                 searchBoxClass="mt-2 mb-3"
                 isSearchable={true}
                 nametable={props.accion}
-                titulo={itemsmenuprincipal}
+                titulo={' Registrar SubCapitulo'}
                 permisos={permisos}
                 toggleSignUp={toggleSignUp}
               />) : <Suspense fallback={loading()}><Spinners /></Suspense>}
@@ -160,4 +198,4 @@ const Proyecto = (props) => {
   );
 };
 
-export default Proyecto;
+export default SubCapitulos;

@@ -1,7 +1,13 @@
+/* eslint-disable array-callback-return */
+/* eslint-disable no-duplicate-case */
+/* eslint-disable no-fallthrough */
 import React, { createContext, useState, useCallback } from 'react';
 import Swal from 'sweetalert2'
 import classNames from 'classnames';
 import encodeBasicUrl from '../../utils/encodeBasicUrl';
+import {Card } from 'react-bootstrap';
+import Spinner from '../../components/Spinner';
+
 import { APICore } from '../../helpers/api/apiCore';
 const api = new APICore();
 const DashboardContext = createContext();
@@ -11,31 +17,36 @@ const DashboardProvider = ({ children }) => {
   const [isLoading, setLoading] = useState(false);
   const [itemsmenuprincipal, setitemsMenuPrincipal] = useState('');
   const [itemUrl, setitemsUrl] = useState('');
-  const [validated, setValidated] = useState(false);
   const [items, setItems] = useState([]);
   const [itemsUsuarios, setIUsuarios] = useState([]);
   const [itemsQuery, setItemsQuery] = useState([]);
   const [empleadoNomina, setEmpleadoNomina] = useState([]);
-  //const [itemsQueryNominaEmpleado, setItemsQueryNominaEmpleado] = useState([{}]);
-  //const [itemsConcNomina, setItemConcNomina] = useState([]);
   const [signUpModal, setSignUpModal] = useState(false);
   const [openNomin, setOpenNomina] = useState(false);
-  const [openNominaEmpleado, setOpenNominaEmpleado] = useState(false);
   const [signUpModalAdd, setSignUpModalAdd] = useState(false);
   const [signUpNomina, setSignUpNomina] = useState(false);
-  const [signUpModalLiqNomina, setSignUpModalLiqNomina] = useState(false);
+  const [itemsUpProductos, setSignUpProductos] = useState(false);
   const [open, setOpen] = useState(false);
-  const [ itemsUpdate, setItemsUpdate] = useState([]);
-  const [ itemsRoles, setRoles] = useState([]);
-  const [ listEmpleados, setEmpleado] = useState([]);
-  const [ itemsNomina, setNomina] = useState([]);
-  const [ itemsControlDiario, setControlDiario] = useState([]);
-  const [ itemsOrdenCompra, setOrdenCompra] = useState([]);
+
+
+  const [itemsUpdate, setItemsUpdate] = useState([]);
+  const [itemsAdd, setItemsAdd] = useState([]);
+  const [itemsRoles, setRoles] = useState([]);
+  const [itemsEmpleado, setEmpleado] = useState([]);
+  const [itemsNomina, setNomina] = useState([]);
+  const [itemsControlDiario, setControlDiario] = useState([]);
+  const [itemsOrdenCompra, setOrdenCompra] = useState([]);
+  const [itemsCliente, setCliente] = useState([]);
+  const [itemsProyecto, setProyecto] = useState([]);
+  const [itemsProductos, setProductos] = useState([]);
+  const [itemsCategorias, setCategorias] = useState([]);
+  const [itemsSubCategorias, setSubCategorias] = useState([]);
+  const [itemsApu, setApu] = useState([]);
   const [PERMISOS_USER, setpermisos] = useState([{}]);
 
   const toggle = () => {
     setOpen((prevState) => !prevState);
-};
+  };
 
   //DESGLOSAR URL PARA CADA OPCION DEL MENU
   const itemsMenuCallBack = useCallback((e) => {
@@ -51,6 +62,25 @@ const DashboardProvider = ({ children }) => {
     }
   }, []);
 
+  const Spinners = () => {
+    const sizes = ['sm'];
+
+    return (
+        <Card>
+            <Card.Body>
+                <div className="row">
+                    {sizes.map((size, index) => {
+                        return (
+                            <div key={index} className="col-lg-6">
+                                <Spinner className="text-primary m-2" color="primary" size={size} />
+                            </div>
+                        );
+                    })}
+                </div>
+            </Card.Body>
+        </Card>
+    );
+};
   const StatusColumn = ({ row }) => {
     return (
       <React.Fragment>
@@ -89,32 +119,10 @@ const DashboardProvider = ({ children }) => {
     status: 'Deactivated',
   }];
 
-  //DESPLEGAR LISTA
-  const ConsultarListaDatos = useCallback((itemUrl, itemsmenuprincipal) => {
-    setLoading(true)
-    const url = `accion=${itemUrl}&opcion=consultar&tipo=${itemsmenuprincipal}`;
-    const datosMaterial = api.sendRequestData(`${url}`);
-    datosMaterial?.then(function (response) {
-      try {
-        response?setItems(response):setItems([]);
-
-      } catch (error) {
-        console.error(error);
-      }
-    }).catch((error) => console.error('Error:', error))
-      .finally(() => {
-        //setTimeout(function () {
-        setLoading(false)
-        // }, 000);
-      });
-
-  }, []);
-  //DESPLEGAR LISTA CLIENTES
-
-  const query = useCallback((itemUrl, itemsmenuprincipal,opcion) => {
+  const query = useCallback((itemUrl, itemsmenuprincipal, opcion) => {
     setLoading(true)
     let varibles;
-    let datos=opcion;
+    let datos = opcion;
     if (opcion) {
       var queryString = datos[0]
         ? Object.keys(datos[0])
@@ -131,91 +139,46 @@ const DashboardProvider = ({ children }) => {
           switch (datos[0]?.obj) {
             case "Usuarios":
               setIUsuarios(response)
-            // eslint-disable-next-line no-fallthrough
             case "Roles":
               setRoles(response)
-            // eslint-disable-next-line no-fallthrough
-             case "Empleado":
+            case "Empleado":
               setEmpleado(response)
-            // eslint-disable-next-line no-fallthrough
             case "GenerarNomina":
               setNomina(response)
-            // eslint-disable-next-line no-fallthrough
             case "ControlDiario":
               setControlDiario(response)
-            // eslint-disable-next-line no-fallthrough
             case "OrdenCompra":
               setOrdenCompra(response)
-            // eslint-disable-next-line no-fallthrough
-            default:
+            case "Cliente":
+              setCliente(response)
+            case "Proyecto":
+              setProyecto(response)
+            case "Empleado":
+              setEmpleado(response)
+            case 'Productos':
+              setProductos(response)
+            case 'Categorias':
+              setCategorias(response)
+            case 'SubCategorias':
+              setSubCategorias(response)
+            case 'Apu':
+              setApu(response)
+              default:
               setItemsQuery(response)
           }
         })()
-
       } catch (error) {
         console.error(error);
       }
     }).catch((error) => console.error('Error:', error))
       .finally(() => {
-        //setTimeout(function () {
+        setTimeout(function () {
         setLoading(false)
-        // }, 000);
+        },1000);
       });
 
   }, []);
-
-  const sendData = useCallback((event, opcion,data) => {
-    const form = event.currentTarget;
-    if (form.checkValidity() === false) {
-      event.preventDefault();
-      event.stopPropagation();
-    }
-
-    setValidated(true);
-    if (validated) {
-      let response;
-      let datos;
-      datos= (opcion ==='add')||(opcion ==='addNomina')?data:items;
-      if (datos) {
-        var queryString = datos[0]
-          ? Object.keys(datos[0])
-            .map((key) => key + '=' + datos[0][key])
-            .join('&')
-          : '';
-      }
-
-      response = queryString;
-      const url = `accion=${itemUrl}&opcion=${opcion}&${response}&tipo=${itemsmenuprincipal}`;
-      const respuesta = api.sendRequestData(`${url}`);
-      respuesta.then(function (resp) {
-        Swal.fire('' + resp[0].menssage + '');
-
-      })
-        .catch((error) => console.error('Error:', error))
-        .finally(() => {
-          setTimeout(function () {
-            (() => {
-              switch (opcion) {
-                case "add":
-                  setSignUpModalAdd(false)
-                // eslint-disable-next-line no-fallthrough
-                case "addNomina":
-                  //queryNominaEmpleado('OtrosRegistros','GenerarNomina',[{opcion:'consultar_nomina_empleado',idEmpleado:data[0]?.IdEmpleado,idNomina:data[0]?.IdNomina}])
-                // eslint-disable-next-line no-fallthrough
-                default:
-                  setSignUpModal(false);
-                  ConsultarListaDatos(itemUrl,itemsmenuprincipal)
-              }
-            })()
-
-          }, 2000);
-        })
-    }
-
-  }, [validated, items, itemUrl, itemsmenuprincipal, /*queryNominaEmpleado,*/ ConsultarListaDatos]);
-
   //ELEIMINAR REGISTRO
-
   const eliminar = useCallback((cel) => {
     Swal.fire({
       title: 'Desea eliminar el registro? ' + cel,
@@ -231,61 +194,48 @@ const DashboardProvider = ({ children }) => {
           .catch((error) => console.error('Error:', error))
           .finally(() => {
             setTimeout(function () {
-              ConsultarListaDatos(itemUrl,itemsmenuprincipal)
-
             }, 5000);
           })
       }
     })
-    // eslint-disable-next-line no-use-before-define
-  }, [ConsultarListaDatos, itemUrl, itemsmenuprincipal]);
-
-
-  //ACTUALIZAR REISTRO
-  const update = useCallback((event) => {
-    sendData(event, 'update',[])
-
-  }, [sendData]);
-
-  //GUARDAR REGISTRO
-  const add = useCallback((event, data) => {
-    sendData(event, 'add', data)
-  }, [sendData]);
-
-  const addNomina = useCallback((event, data) => {
-    sendData(event, 'addNomina', data)
-  }, [sendData]);
+  }, [itemUrl, itemsmenuprincipal]);
 
   const onPermisos = useCallback((itemUrl) => {
     setTimeout(function () {
 
-        // get parameters from post request
-        let userInfo = sessionStorage.getItem('hyper_user');
-        const user = JSON.parse(userInfo);
-        if (user) {
+      // get parameters from post request
+      let userInfo = sessionStorage.getItem('hyper_user');
+      const user = JSON.parse(userInfo);
+      if (user) {
         const url = `accion=permisos&opcion=consultar&IdMenu=${encodeBasicUrl(user[0]?.role)}`;
         const datosMenu = api.sendRequestData(`${url}`);
         datosMenu.then(function (response) {
-            try {
-              const perm=[]
-              const permisos = response?.Permisos || [{}];
-
-              if(itemUrl.length > 0)
-              // eslint-disable-next-line array-callback-return
+          try {
+            const perm = []
+            const permisos = response?.Permisos || [{}];
+            if (itemUrl.length > 0)
               permisos?.map((row, i) => {
                 if (row.opcion === itemUrl) {
                   perm.push(row)
                 }
               })
-              setpermisos(perm[0]);
 
-            } catch (error) {
-                console.error(error);
-            }
+           perm.length > 0?setpermisos(perm[0]):setpermisos([{
+            "query": "N",
+            "add": "N",
+            "update": "N",
+            "delete": "N",
+            "opcion": itemUrl,
+            "userInfo":user[0]?.role
+        }])
+
+          } catch (error) {
+            console.error(error);
+          }
         });
       }
     }, 1000);
-}, []);
+  }, []);
 
 
   const data = {
@@ -293,31 +243,35 @@ const DashboardProvider = ({ children }) => {
     setLoading,
     isLoading,
     itemsmenuprincipal,
-    itemUrl, setItems, items, validated,
-    eliminar, update, ConsultarListaDatos, add,
+    itemUrl, setItems, items,
+    eliminar,
     signUpModal, setSignUpModal,
     StatusColumn, sizePerPageList, INIT_RESPONSE,
     signUpModalAdd, setSignUpModalAdd,
-    itemsQuery, setItemsQuery,query,
-    //itemsQueryNominaEmpleado, setItemsQueryNominaEmpleado,queryNominaEmpleado,
+    itemsQuery, setItemsQuery, query,
     empleadoNomina, setEmpleadoNomina,
     signUpNomina, setSignUpNomina,
-    setSignUpModalLiqNomina, signUpModalLiqNomina,
-    addNomina,
-    open, setOpen,toggle,
+    open, setOpen, toggle,
     openNomin, setOpenNomina,
+
     itemsUsuarios, setIUsuarios,
     itemsUpdate, setItemsUpdate,
+    itemsAdd, setItemsAdd,
     itemsRoles, setRoles,
-    listEmpleados, setEmpleado,
+    itemsEmpleado, setEmpleado,
     itemsNomina, setNomina,
-    openNominaEmpleado, setOpenNominaEmpleado,
     itemsControlDiario, setControlDiario,
     itemsOrdenCompra, setOrdenCompra,
-    onPermisos,PERMISOS_USER
+    itemsCliente, setCliente,
+    itemsProyecto, setProyecto,
+    Spinners,
+    itemsProductos, setProductos,
+    itemsUpProductos, setSignUpProductos,
+    itemsCategorias, setCategorias,
+    itemsSubCategorias, setSubCategorias,
+    itemsApu, setApu,
+    onPermisos, PERMISOS_USER
   };
-
-  // eslint-disable-next-line react/jsx-no-undef
   return (
     <>
       <DashboardContext.Provider value={data}>{children}</DashboardContext.Provider>

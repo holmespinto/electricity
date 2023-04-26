@@ -1,9 +1,11 @@
-// @flow
+/* eslint-disable no-lone-blocks */
+/* eslint-disable array-callback-return */
+/* eslint-disable no-duplicate-case */
+/* eslint-disable no-fallthrough */
 import React, { useContext, Suspense, useEffect } from 'react';
 import { Row, Col, Card,  Modal } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { DashboardContext } from '../../../../../layouts/context/DashboardContext';
-//import { GestionBasicaContext } from '../../../../layouts/context/GestionBasicaContext';
 import FormAdd from './FormAdd';
 import FormUpdate from './FormUpdate';
 import Table from '../../../../../components/Table';
@@ -13,28 +15,37 @@ const ActionColumn = ({ row }) => {
   const {
     eliminar,
     validated,
-    signUpModal,
-    setSignUpModal,PERMISOS_USER,
-    setItems, itemsmenuprincipal
+    setItemsUpdate,toggle,
+    setOpen,itemsProductos,
+    open, itemsmenuprincipal, PERMISOS_USER
   } = useContext(DashboardContext);
   const permisos = PERMISOS_USER || [{}];
-  const toggleSignUp = () => {
-    if (row.cells[0].value > 0)
-      setSignUpModal(!signUpModal);
-    setItems([{
-      id: row.cells[0].value ? row.cells[0].value : row.cells[0].value,
-      Identificacion: row.cells[1].value ? row.cells[1].value : row.cells[1].value,
-      Email: row.cells[2].value ? row.cells[2].value : row.cells[2].value,
-      Nombre: row.cells[3].value ? row.cells[3].value : row.cells[3].value,
-      Direccion: row.cells[4].value ? row.cells[4].value : row.cells[4].value,
-      Telefono: row.cells[5].value ? row.cells[5].value : row.cells[5].value,
-      status: row.cells[6].value ? row.cells[6].value : row.cells[6].value,
-    }])
+  const toggleSignUp = (id) => {
+    let array = [];
+    console.log('itemsProductos',id)
+    if(id>0)
+    itemsProductos?.map((row, i) =>{
+           if(row.id===id){
+            const obj ={
+              id:row.id,
+              Nombre:row.Nombre,
+              Unidad:row.Unidad,
+              Cantidad:row.Cantidad,
+              ValorUnitario:row.ValorUnitario,
+              Producto:row.Producto
+            }
+            array.push(obj)
+           }
+        })
+      setItemsUpdate(array[0])
+      setOpen(open);
+      toggle()
+
   };
 
   return (
     <React.Fragment>
-      <Modal show={signUpModal} onHide={toggleSignUp}>
+      <Modal show={open} onHide={toggleSignUp}>
         <Modal.Body><FormUpdate
           title={`ACTUALIZAR ${itemsmenuprincipal?.toUpperCase()}`}
           validated={validated}
@@ -43,7 +54,7 @@ const ActionColumn = ({ row }) => {
       </Modal>
       {
         permisos?.update === 'S' ? (
-          <Link to="#" className="action-icon" onClick={() => toggleSignUp()}>
+          <Link to="#" className="action-icon" onClick={() => toggleSignUp(row.cells[0].value)}>
             {' '}
             <i className="mdi mdi-square-edit-outline"></i>
           </Link>) : ''
@@ -54,16 +65,20 @@ const ActionColumn = ({ row }) => {
             {' '}
             <i className="mdi mdi-delete"></i>
           </Link>) : ''}
-
     </React.Fragment>
   );
 };
-const Material = (props) => {
+const Productos = (props) => {
+  //const [registros, setRegistros] = useState();
   const {
-    validated, Spinners, itemsmenuprincipal,
-    signUpModalAdd, setSignUpModalAdd,PERMISOS_USER,
-    sizePerPageList, StatusColumn, isLoading, query
+    validated,itemsmenuprincipal,
+    signUpModalAdd, setSignUpModalAdd, query,Spinners,
+    sizePerPageList, StatusColumn, PERMISOS_USER
   } = useContext(DashboardContext);
+
+  const permisos = PERMISOS_USER || [{}];
+  const datos = props?.datos || [{}];
+
   const columns = [
     {
       Header: 'ID',
@@ -71,32 +86,30 @@ const Material = (props) => {
       sort: true,
     },
     {
-      Header: 'Identificacion',
-      accessor: 'Identificacion',
-      sort: true,
-    },
-    {
-      Header: 'Email',
-      accessor: 'Email',
-      sort: true,
-    }, {
       Header: 'Nombre',
       accessor: 'Nombre',
       sort: true,
-    }, {
-      Header: 'Direccion',
-      accessor: 'Direccion',
-      sort: false,
-    }, {
-      Header: 'Telefono',
-      accessor: 'Telefono',
-      sort: false,
     },
     {
-      Header: 'Status',
-      accessor: 'status',
+      Header: 'Unidad',
+      accessor: 'Unidad',
       sort: true,
-      Cell: StatusColumn,
+    }, {
+      Header: 'Valor',
+      accessor: 'ValorUnitario',
+      sort: true,
+    }, {
+      Header: 'Cantidad',
+      accessor: 'Cantidad',
+      sort: true,
+    }, {
+      Header: 'Total',
+      accessor: 'Total',
+      sort: false,
+    },{
+      Header: 'Tipo',
+      accessor: 'Producto',
+      sort: false,
     },
     {
       Header: 'Action',
@@ -105,14 +118,23 @@ const Material = (props) => {
       classes: 'table-action',
       Cell: ActionColumn,
     },
+    {
+      Header: 'Status',
+      accessor: 'status',
+      sort: true,
+      Cell: StatusColumn,
+    },
   ];
   const toggleSignUp = () => {
     setSignUpModalAdd(!signUpModalAdd);
   };
+
   useEffect(() => {
-    query('GestionesBasicas', 'Cliente', [{ opcion: 'consultar', obj: 'Cliente' }]);
-  }, [query])
-  const permisos = PERMISOS_USER || [{}];
+    {
+     query('GestionesBasicas', 'Productos', [{ opcion: 'consultar', obj: 'Productos' }]);
+    }
+  }, [props.tipo, query])
+
   return (
     <>
       <Row>
@@ -125,20 +147,20 @@ const Material = (props) => {
                     <Card.Body>
                       {/* Sign up Modal */}
                       <Modal show={signUpModalAdd} onHide={setSignUpModalAdd}>
-                        <Modal.Body><FormAdd
-                          title={`GESTIONAR ${props?.tipo?.toUpperCase()}`}
-                          validated={validated}
-                        />
+                        <Modal.Body>{
+                          permisos?.add === 'S' ? (<FormAdd
+                            title={`GESTIONAR ${props?.tipo?.toUpperCase()}`}
+                            validated={validated}
+                          />) : ''}
                         </Modal.Body>
                       </Modal>
                     </Card.Body>
                   </Card>
                 </Col>
               </Row>
-
-              {!isLoading && props.datos.length > 0 && permisos?.query === 'S' ? (<Table
+              {datos?.length>0 && permisos?.query === 'S' ? (<Table
                 columns={columns}
-                data={props.datos}
+                data={datos}
                 pageSize={5}
                 sizePerPageList={sizePerPageList}
                 isSortable={true}
@@ -159,4 +181,4 @@ const Material = (props) => {
   );
 };
 
-export default Material;
+export default Productos;

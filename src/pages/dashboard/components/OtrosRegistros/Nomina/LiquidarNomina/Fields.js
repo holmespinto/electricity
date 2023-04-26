@@ -24,7 +24,7 @@ function ParseFloat(str,val) {
 }
 
 const Register = (props): React$Element<React$FragmentType> => {
-  const {setOpen,open,query} = useContext(DashboardContext);
+  const {setOpen,open} = useContext(DashboardContext);
   const [nomina, setNomina] = useState([]);
   const [inputValue, setInputValue] = useState(0);
   const [formattedValue, setFormattedValue] = useState(0);

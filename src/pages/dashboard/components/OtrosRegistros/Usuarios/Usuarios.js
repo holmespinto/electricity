@@ -1,3 +1,4 @@
+/* eslint-disable array-callback-return */
 // @flow
 import React, { useContext, Suspense,useEffect} from 'react';
 import { Row, Col, Card, Button, Modal } from 'react-bootstrap';
@@ -5,7 +6,7 @@ import { Link } from 'react-router-dom';
 import { DashboardContext } from '../../../../../layouts/context/DashboardContext';
 import FormAdd from './FormAdd';
 import FormUpdate from './FormUpdate';
-import Table from '../../../../../components/Table';
+import Table from '../../Table';
 const loading = () => <div className="text-center"></div>;
 const ActionColumn = ({ row }) => {
 
@@ -15,18 +16,25 @@ const ActionColumn = ({ row }) => {
   } = useContext(DashboardContext);
 
   const toggleUpUpdate = (id) => {
-  let array = [];
-  // eslint-disable-next-line array-callback-return
+  let auteurs = [];
+  if (id > 0)
   itemsUsuarios?.data?.auteurs?.map((row, i) =>{
          if(row.id===id){
-          array.push(row)
+         const obj =
+            {
+                id: row.id,
+                login: row.login,
+                email: row.email,
+                rol: row.rol
+            }
+            auteurs.push(obj)
          }
       })
+      setItemsUpdate(auteurs[0])
 
-    if (array.length > 0)
     setOpen(open);
     toggle()
-    setItemsUpdate(array[0])
+
   };
 
 //console.log('signUpUpdate',signUpUpdate)

@@ -1,5 +1,6 @@
 // @flow
 import React, { useRef, useEffect, forwardRef } from 'react';
+import {Button } from 'react-bootstrap';
 import {
     useTable,
     useSortBy,
@@ -89,6 +90,9 @@ const Table = (props: TableProps): React$Element<React$FragmentType> => {
     const isExpandable = props['isExpandable'] || false;
     const isVisible = props['isVisible'] || false;
     const numtable = props['numtable'] || '0';
+    const titulo = props['titulo'] ||  '';
+    const permisos = props['permisos'] ||  false;
+    const toggleSignUp = props['toggleSignUp'] || '';
 
     const dataTable = useTable(
         {
@@ -176,9 +180,19 @@ const Table = (props: TableProps): React$Element<React$FragmentType> => {
             </div>
 
             <div className="table-responsive">
+
+                    <div className="bg-success p-1 text-sm-end">
+
+                        {
+                        permisos?.add === 'S' ? (
+                        <Button className="btn btn-info mb-0 me-5 p-2" onClick={toggleSignUp}>
+                          <i className="mdi mdi-cog-outline">{titulo}</i>
+                        </Button>):({titulo})
+                        }
+                      </div>
                 <table id={table}
                     {...dataTable.getTableProps()}
-                    className={classNames('table table-centered react-table', props['tableClass'])}>
+                    className={classNames('table table-striped', props['tableClass'])}>
                     <thead className={props['theadClass']} >
                         {dataTable.headerGroups.map((headerGroup) => (
                             <tr {...headerGroup.getHeaderGroupProps()}>

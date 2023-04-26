@@ -4,7 +4,7 @@ import { Row, Col, Modal, Button } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { DashboardContext } from '../../../../../../layouts/context/DashboardContext';
 import FormAdd from './FormAdd'
-import Table from '../../../../../../components/Table';
+import Table from '../../../../../../pages/dashboard/components/Table';
 //const loading = () => <div className="text-center"></div>;
 
 const ActionColumn = ({ row }) => {
@@ -27,7 +27,7 @@ const LiquidarNomina = (props) => {
   const DatosEmpleado = props?.Empleado || [{}];
   const {
     //validated,
-    setSignUpModalLiqNomina, signUpModalLiqNomina,
+    setOpenNomina, openNomin,
   } = useContext(DashboardContext);
 
   const columns = [
@@ -63,7 +63,7 @@ const LiquidarNomina = (props) => {
 
   const toggleUpNomina = () => {
 
-    setSignUpModalLiqNomina(!signUpModalLiqNomina);
+    setOpenNomina(!openNomin);
 
   };
   //console.log('listNomina', DatosEmpleado)
@@ -71,7 +71,7 @@ const LiquidarNomina = (props) => {
     <>
       <Row>
         <Col sm={12}>
-          <Modal show={signUpModalLiqNomina} onHide={toggleUpNomina} size={'lg'}>
+          <Modal show={openNomin} onHide={toggleUpNomina} size={'lg'}>
             <Modal.Body>
               {
                 DatosEmpleado?.Identificacion >0 ?
@@ -81,6 +81,7 @@ const LiquidarNomina = (props) => {
                     Nomina={props?.Nomina}
                     Conceptos={props?.Conceptos}
                     DatosEmpleadoNomina={DatosEmpleadoNomina}
+                    titulo={props?.titulo}
                   /> : 'Seleccione el Empleado para liquidar la Nomina'
   }
             </Modal.Body>

@@ -53,7 +53,8 @@ const Roles = (props) => {
 
 
   const {
-    sizePerPageList, isLoading,query
+    sizePerPageList, isLoading,query,
+    itemsmenuprincipal,
   } = useContext(DashboardContext);
 
   const columns = [
@@ -101,11 +102,13 @@ const Roles = (props) => {
       Cell: ActionColumn,
     },
   ];
-
+  const toggleSignUp = () => {
+    console.log('0k')
+  };
   useEffect(() => {
     query('OtrosRegistros','Roles',[{opcion:'consultar',obj:'Roles'}]);
   }, [query])
-
+  const operado={add:'S'};
   return (
     <>
       <Row>
@@ -123,6 +126,9 @@ const Roles = (props) => {
                 searchBoxClass="mt-2 mb-3"
                 isSearchable={true}
                 nametable={props.accion}
+                titulo={itemsmenuprincipal}
+                permisos={operado}
+                toggleSignUp={toggleSignUp}
               />) : <Suspense fallback={loading()}>Esperando...</Suspense>}
             </Card.Body>
           </Card>

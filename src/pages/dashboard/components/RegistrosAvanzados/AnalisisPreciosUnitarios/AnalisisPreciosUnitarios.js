@@ -1,3 +1,4 @@
+/* eslint-disable array-callback-return */
 // @flow
 import React, { useContext, Suspense, useEffect } from 'react';
 import { Row, Col, Card,  Modal } from 'react-bootstrap';
@@ -13,28 +14,26 @@ const ActionColumn = ({ row }) => {
   const {
     eliminar,
     validated,
-    signUpModal,
-    setSignUpModal,PERMISOS_USER,
-    setItems, itemsmenuprincipal
+    setOpen, toggle, setItemsUpdate,
+    open, itemsmenuprincipal, itemsProyecto,PERMISOS_USER
   } = useContext(DashboardContext);
   const permisos = PERMISOS_USER || [{}];
-  const toggleSignUp = () => {
-    if (row.cells[0].value > 0)
-      setSignUpModal(!signUpModal);
-    setItems([{
-      id: row.cells[0].value ? row.cells[0].value : row.cells[0].value,
-      Identificacion: row.cells[1].value ? row.cells[1].value : row.cells[1].value,
-      Email: row.cells[2].value ? row.cells[2].value : row.cells[2].value,
-      Nombre: row.cells[3].value ? row.cells[3].value : row.cells[3].value,
-      Direccion: row.cells[4].value ? row.cells[4].value : row.cells[4].value,
-      Telefono: row.cells[5].value ? row.cells[5].value : row.cells[5].value,
-      status: row.cells[6].value ? row.cells[6].value : row.cells[6].value,
-    }])
+  const toggleSignUp = (id) => {
+    let array = [];
+    if (id > 0)
+      itemsProyecto?.map((row, i) => {
+        if (row.id === id) {
+          array.push(row)
+        }
+      })
+    setOpen(open);
+    toggle()
+    setItemsUpdate(array[0])
   };
 
   return (
     <React.Fragment>
-      <Modal show={signUpModal} onHide={toggleSignUp}>
+      <Modal show={open} onHide={toggleSignUp}>
         <Modal.Body><FormUpdate
           title={`ACTUALIZAR ${itemsmenuprincipal?.toUpperCase()}`}
           validated={validated}
@@ -43,7 +42,7 @@ const ActionColumn = ({ row }) => {
       </Modal>
       {
         permisos?.update === 'S' ? (
-          <Link to="#" className="action-icon" onClick={() => toggleSignUp()}>
+          <Link to="#" className="action-icon" onClick={() => toggleSignUp(row.cells[0].value)}>
             {' '}
             <i className="mdi mdi-square-edit-outline"></i>
           </Link>) : ''
@@ -58,12 +57,15 @@ const ActionColumn = ({ row }) => {
     </React.Fragment>
   );
 };
-const Material = (props) => {
+const AnalisisPreciosUnitarios = (props) => {
+
   const {
-    validated, Spinners, itemsmenuprincipal,
-    signUpModalAdd, setSignUpModalAdd,PERMISOS_USER,
-    sizePerPageList, StatusColumn, isLoading, query
+    validated, Spinners,itemsmenuprincipal,
+    signUpModalAdd, setSignUpModalAdd, query,
+    sizePerPageList, StatusColumn, isLoading,PERMISOS_USER
   } = useContext(DashboardContext);
+  const permisos = PERMISOS_USER || [{}];
+
   const columns = [
     {
       Header: 'ID',
@@ -71,25 +73,26 @@ const Material = (props) => {
       sort: true,
     },
     {
-      Header: 'Identificacion',
-      accessor: 'Identificacion',
-      sort: true,
-    },
-    {
-      Header: 'Email',
-      accessor: 'Email',
-      sort: true,
-    }, {
       Header: 'Nombre',
       accessor: 'Nombre',
+      sort: true,
+      with:20,
+    },
+    {
+      Header: 'Tipo Proyecto',
+      accessor: 'Tipo',
       sort: true,
     }, {
       Header: 'Direccion',
       accessor: 'Direccion',
+      sort: true,
+    }, {
+      Header: 'Cliente',
+      accessor: 'Cliente',
       sort: false,
     }, {
-      Header: 'Telefono',
-      accessor: 'Telefono',
+      Header: 'Estado',
+      accessor: 'Estado',
       sort: false,
     },
     {
@@ -110,9 +113,8 @@ const Material = (props) => {
     setSignUpModalAdd(!signUpModalAdd);
   };
   useEffect(() => {
-    query('GestionesBasicas', 'Cliente', [{ opcion: 'consultar', obj: 'Cliente' }]);
+    query('RegistrosAvanzados', 'Apu', [{ opcion: 'consultar', obj: 'Apu' }]);
   }, [query])
-  const permisos = PERMISOS_USER || [{}];
   return (
     <>
       <Row>
@@ -135,10 +137,9 @@ const Material = (props) => {
                   </Card>
                 </Col>
               </Row>
-
-              {!isLoading && props.datos.length > 0 && permisos?.query === 'S' ? (<Table
+              {/*!isLoading && props?.datos?.length>0 && permisos?.query === 'S'? (<Table
                 columns={columns}
-                data={props.datos}
+                data={props?.datos}
                 pageSize={5}
                 sizePerPageList={sizePerPageList}
                 isSortable={true}
@@ -150,7 +151,7 @@ const Material = (props) => {
                 titulo={itemsmenuprincipal}
                 permisos={permisos}
                 toggleSignUp={toggleSignUp}
-              />) : <Suspense fallback={loading()}><Spinners /></Suspense>}
+              />) : <Suspense fallback={loading()}><Spinners /></Suspense>*/}
             </Card.Body>
           </Card>
         </Col>
@@ -159,4 +160,4 @@ const Material = (props) => {
   );
 };
 
-export default Material;
+export default AnalisisPreciosUnitarios;

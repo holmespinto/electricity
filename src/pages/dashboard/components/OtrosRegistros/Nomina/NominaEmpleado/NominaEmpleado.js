@@ -1,68 +1,67 @@
+/* eslint-disable array-callback-return */
 // @flow
-import React, { useContext,Suspense } from 'react';
-import { Row, Col, Card,Collapse } from 'react-bootstrap';
+import React, { useContext, Suspense } from 'react';
+import { Row, Col, Card, Collapse } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { DashboardContext } from '../../../../../../layouts/context/DashboardContext';
 import FormAdd from './FormAdd';
-import Table from '../../../../../../components/Table';
+import Table from '../../../../../../pages/dashboard/components/Table';
 const loading = () => <div className="text-center"></div>;
 
 const ActionColumnEmpleado = ({ row }) => {
   const {
-    setItemsUpdate, itemsNomina, openNominaEmpleado, setOpenNominaEmpleado, toggle
+    setItemsUpdate, itemsNomina, open, setOpen, toggle
   } = useContext(DashboardContext);
 
   const toggleUpUpdateEmpleado = (id) => {
 
     const Empleado = itemsNomina?.data?.Empleado || [{}];
-    const EmpleadoNomina =  [];
-    //const Nomina = itemsNomina?.data?.Nomina || [{}];
+    const EmpleadoNomina = [];
+
     const Conceptos = itemsNomina?.data?.Conceptos || [{}];
     const TodasNomina = itemsNomina?.data?.TodasNomina || [{}];
 
 
-    const nominaActiva=[]
-    // eslint-disable-next-line array-callback-return
-    if(id>0)
-    // eslint-disable-next-line array-callback-return
-    TodasNomina?.map((row, i) => {
-      if (row.Estado === 'Procesando') {
-        nominaActiva.push(row)
-      }
-    })
- const DatosEmpleado=[]
-    // eslint-disable-next-line array-callback-return
+    const nominaActiva = []
+
+    if (id > 0)
+      TodasNomina?.map((row, i) => {
+        if (row.Estado === 'Procesando') {
+          nominaActiva.push(row)
+        }
+      })
+    const DatosEmpleado = []
     Empleado?.map((row, i) => {
       if (row.id === id) {
         DatosEmpleado.push(row)
       }
     })
-    // eslint-disable-next-line array-callback-return
+
     itemsNomina?.data?.EmpleadoNomina?.map((row, i) => {
-      //console.log('row',row)
-      if (row?.Empleado === id && row?.IdNomina===nominaActiva[0]?.id) {
+      if (row?.Empleado === id && row?.IdNomina === nominaActiva[0]?.id) {
         EmpleadoNomina.push(row)
       }
     })
 
-    const obj={
+    const obj = {
       "data": {
-        "Empleado":DatosEmpleado[0],
+        "Empleado": DatosEmpleado[0],
         "Nomina": nominaActiva[0],
-        "EmpleadoNomina":EmpleadoNomina,
-        "Conceptos":Conceptos,
-        "isLoading":true,
-      }}
+        "EmpleadoNomina": EmpleadoNomina,
+        "Conceptos": Conceptos,
+        "isLoading": true,
+      }
+    }
 
     setItemsUpdate(obj)
-    setOpenNominaEmpleado(!openNominaEmpleado);
+    setOpen(open);
     toggle()
     //console.log('toggleUpUpdate',obj?.data)
   };
 
   return (
     <React.Fragment>
-      <Link to="#" className="action-icon" data-bs-toggle="collapse"onClick={() => toggleUpUpdateEmpleado(row.cells[0].value)}>
+      <Link to="#" className="action-icon" data-bs-toggle="collapse" onClick={() => toggleUpUpdateEmpleado(row.cells[0].value)}>
         {' '}
         <i className="mdi mdi-square-edit-outline"></i>
       </Link>
@@ -73,10 +72,13 @@ const ActionColumnEmpleado = ({ row }) => {
 const NominaEmpleado = (props) => {
 
   const {
-    sizePerPageList, isLoading,itemsNomina,ItemsUpdate,
-    openNominaEmpleado
+    sizePerPageList, isLoading, itemsNomina, ItemsUpdate,
+    open,  Spinners
   } = useContext(DashboardContext);
 
+  //const permisos = PERMISOS_USER || [{}];
+
+  const datos = itemsNomina?.data?.Empleado || [];
   const columns = [
     {
       Header: 'ID',
@@ -113,26 +115,26 @@ const NominaEmpleado = (props) => {
       Cell: ActionColumnEmpleado,
     },
   ];
-  //console.log('open',open,ItemsUpdate)
+
   return (
     <>
       <Row>
         <Col>
           <Card>
             <Card.Body>
-            <Collapse in={openNominaEmpleado} appear>
-            <div>
-              <Row>
-                <Col sm={12} >
-                  <FormAdd EmpleadoId={ItemsUpdate}/>
-                </Col>
-              </Row>
-              </div>
-                </Collapse>
+              <Collapse in={open} appear>
+                <div>
+                  <Row>
+                    <Col sm={12} >
+                      <FormAdd EmpleadoId={ItemsUpdate} />
+                    </Col>
+                  </Row>
+                </div>
+              </Collapse>
 
-              {!isLoading && itemsNomina?.data?.Empleado?.length>0? (<Table
+              {!isLoading && datos?.length > 0? (<Table
                 columns={columns}
-                data={itemsNomina?.data?.Empleado}
+                data={datos}
                 pageSize={5}
                 sizePerPageList={sizePerPageList}
                 isSortable={true}
@@ -140,8 +142,7 @@ const NominaEmpleado = (props) => {
                 theadClass="table-light"
                 searchBoxClass="mt-2 mb-3"
                 isSearchable={true}
-                nametable={props.accion}
-              />) : <Suspense fallback={loading()}>Esperando...</Suspense>}
+              />) : <Suspense fallback={loading()}><Spinners /></Suspense>}
 
             </Card.Body>
           </Card>

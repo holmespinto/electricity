@@ -1,3 +1,4 @@
+/* eslint-disable array-callback-return */
 import React,{useContext} from 'react';
 import { DashboardContext } from '../../../../../layouts/context/DashboardContext';
 /* custon FormUpdate */
@@ -5,6 +6,19 @@ import Fields from './Fields';
 const FormUpdate = (props) => {
   const { itemUrl, itemsmenuprincipal,itemsUpdate, } = useContext(DashboardContext);
 
+  let Padres = [];
+  const obj ={
+    value:'0',
+    label:'Registrar como nueva Categoria'
+  }
+  Padres.push(obj)
+  itemsUpdate?.TipoCategorias?.map((row, i) =>{
+          const obj ={
+            value:row.id,
+            label:row.Categoria
+          }
+          Padres.push(obj)
+      })
 
   return (
   <React.Fragment>
@@ -14,8 +28,9 @@ const FormUpdate = (props) => {
         title={props.title}
         validated={props.validated}
         opcion={'update'}
-        textBtn={'Actualizar registros de Usuario'}
+        textBtn={'Actualizar Producto'}
         ItemsUpdate={[itemsUpdate]}
+        Padres={Padres}
       />
   </React.Fragment>
     );
