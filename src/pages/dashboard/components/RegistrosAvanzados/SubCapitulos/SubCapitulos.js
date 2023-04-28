@@ -186,7 +186,7 @@ const SubCapitulos = (props) => {
                 searchBoxClass="mt-2 mb-3"
                 isSearchable={true}
                 nametable={props.accion}
-                titulo={' Registrar SubCapitulo'}
+                titulo={' Registrar APU'}
                 permisos={permisos}
                 toggleSignUp={toggleSignUp}
               />) : <Suspense fallback={loading()}><Spinners /></Suspense>}

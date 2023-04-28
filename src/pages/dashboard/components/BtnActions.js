@@ -14,7 +14,7 @@ const BtnActions = (props) => {
         <OverlayTrigger trigger={['hover', 'focus']} placement="left" overlay={popover}>
           {
             props.permisos === 'S' ? (
-              <Link key={props.key} to="#" className="action-icon " onClick={() => props.toggleSignUp(props.row,props.titulo)}>
+              <Link key={props.key} to="#" className="action-icon " onClick={() => props.toggleActions(props.row,props.titulo)}>
                 <i className={`${props.icon} pt-2`}></i>
               </Link>) : ''
           }

@@ -17,6 +17,7 @@ import { DashboardContext } from '../../../layouts/context/DashboardContext';
     onPermisos(itemsmenuprincipal);
   }, [itemsmenuprincipal, onPermisos]);
 
+ ///console.log('index',Trans)
 
   return (
 

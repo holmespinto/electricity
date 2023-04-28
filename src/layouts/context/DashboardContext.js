@@ -25,6 +25,7 @@ const DashboardProvider = ({ children }) => {
   const [openNomin, setOpenNomina] = useState(false);
   const [signUpModalAdd, setSignUpModalAdd] = useState(false);
   const [signUpNomina, setSignUpNomina] = useState(false);
+  const [openActions, setActions] = useState(false);
   const [itemsUpProductos, setSignUpProductos] = useState(false);
   const [open, setOpen] = useState(false);
 
@@ -42,8 +43,21 @@ const DashboardProvider = ({ children }) => {
   const [itemsCategorias, setCategorias] = useState([]);
   const [itemsSubCategorias, setSubCategorias] = useState([]);
   const [itemsApu, setApu] = useState([]);
+  const [itemsapuTransport, setApuTrasporte] = useState([]);
   const [PERMISOS_USER, setpermisos] = useState([{}]);
+// función para obtener el valor de una cookie
+function getCookie(name) {
+  var value = "; " + document.cookie;
+  var parts = value.split("; " + name + "=");
+  if (parts.length === 2) {
+    return JSON.parse(parts.pop().split(";").shift());
+  }
+}
 
+// función para eliminar una cookie
+function deleteCookie(name) {
+  document.cookie = name + '=; expires=Thu, 01 Jan 1970 00:00:01 GMT; path=/;';
+}
   const toggle = () => {
     setOpen((prevState) => !prevState);
   };
@@ -139,30 +153,43 @@ const DashboardProvider = ({ children }) => {
           switch (datos[0]?.obj) {
             case "Usuarios":
               setIUsuarios(response)
+              break;
             case "Roles":
               setRoles(response)
+              break;
             case "Empleado":
               setEmpleado(response)
+              break;
             case "GenerarNomina":
               setNomina(response)
+              break;
             case "ControlDiario":
               setControlDiario(response)
+              break;
             case "OrdenCompra":
               setOrdenCompra(response)
+              break;
             case "Cliente":
               setCliente(response)
+              break;
             case "Proyecto":
               setProyecto(response)
+              break;
             case "Empleado":
               setEmpleado(response)
+              break;
             case 'Productos':
               setProductos(response)
+              break;
             case 'Categorias':
               setCategorias(response)
+              break;
             case 'SubCategorias':
               setSubCategorias(response)
+              break;
             case 'Apu':
               setApu(response)
+            break;
               default:
               setItemsQuery(response)
           }
@@ -253,6 +280,7 @@ const DashboardProvider = ({ children }) => {
     signUpNomina, setSignUpNomina,
     open, setOpen, toggle,
     openNomin, setOpenNomina,
+    openActions, setActions,
 
     itemsUsuarios, setIUsuarios,
     itemsUpdate, setItemsUpdate,
@@ -270,6 +298,8 @@ const DashboardProvider = ({ children }) => {
     itemsCategorias, setCategorias,
     itemsSubCategorias, setSubCategorias,
     itemsApu, setApu,
+    itemsapuTransport, setApuTrasporte,
+    getCookie,deleteCookie,
     onPermisos, PERMISOS_USER
   };
   return (

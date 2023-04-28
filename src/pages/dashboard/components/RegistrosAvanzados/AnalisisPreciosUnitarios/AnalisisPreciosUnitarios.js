@@ -1,10 +1,11 @@
+/* eslint-disable no-lone-blocks */
 /* eslint-disable array-callback-return */
 // @flow
 import React, { useContext, Suspense, useEffect } from 'react';
 import { Row, Col, Card, Modal,Pagination } from 'react-bootstrap';
 import { DashboardContext } from '../../../../../layouts/context/DashboardContext';
 import BtnActions from '../../BtnActions';
-import FormAdd from './FormAdd';
+import FormAdd from '../SubCapitulos/FormAdd';
 import OptionsActions from './OptionsActions';
 import Table from '../../../../../components/Table';
 const loading = () => <div className="text-center"></div>;
@@ -13,61 +14,65 @@ const loading = () => <div className="text-center"></div>;
 const ActionColumn = ({ row }) => {
 
   const {
-    setOpen, toggle, setItemsUpdate,
-    open, itemsApu, PERMISOS_USER
+    openActions, setActions,
+     toggle, setItemsUpdate,
+     itemsApu, PERMISOS_USER
   } = useContext(DashboardContext);
 
   const permisos = PERMISOS_USER || [{}];
-  const Apus = itemsApu?.data?.Apus || [];
+  //itemsapuTransport, setApuTrasporte
 
-  const toggleSignUp = (id,opcion) => {
+  const SubCategorias = itemsApu?.data?.SubCategorias || [];
+
+ const toggleActions = (id,opcion) => {
+
+  let trans= itemsApu?.data?.Transportes?.filter((item) => {
+    return item.IdApu === id;
+  });
+  const Productos = opcion==='TRANSPORTE'?trans:itemsApu?.data?.Productos;
     let array = [];
+    let productos= Productos?.filter((item) => {
+      return item.Producto === opcion;
+    });
     if (id > 0)
-    Apus?.map((row, i) => {
+    SubCategorias?.map((row, i) => {
       const obj ={
         id: row.id,
-        Objetivo: row.Objetivo,
-        Total: row.Total,
+        IdApu: row.IdApu,
+        Objetivo: row.Descripcion,
+        Total: row.Cantidad,
+        Codigo: row.Codigo,
+        Unidad: row.Unidad,
+        ValorUnitario: row.ValorUnitario,
+        idCategoria: row.idCategoria,
         Opcion: opcion,
+        Productos:productos,
       }
         if (row.id === id) {
           array.push(obj)
         }
       })
-    setOpen(open);
+
+    setActions(!openActions);
     toggle()
     setItemsUpdate(array[0])
   };
-
   return (
     <React.Fragment>
       <Row>
-        <Modal show={open} onHide={toggleSignUp}>
-          <Modal.Body><OptionsActions
-            title={'FORMULARIO'}
-          />
+        <Modal show={openActions} onHide={toggleActions}>
+          <Modal.Body>
+            <OptionsActions />
           </Modal.Body>
         </Modal>
       </Row>
-
       <Row>
       <Pagination className="pagination-rounded mx-auto" size="sm">
-      <Pagination.Prev className="mx-auto mt-0 mb-0 ">
-          <BtnActions
-            permisos={permisos?.update}
-            key={`APU_${row.cells[0].value}`}
-            toggleSignUp={toggleSignUp}
-            row={row.cells[0].value}
-            titulo={'APU'}
-            descripcion={'Registre las Categoria y Subcategorias de la APU'}
-            icon={'mdi mdi-comment-text-multiple-outline'}
-          />
-       </Pagination.Prev>
        <Pagination.Item>
         <BtnActions
             permisos={permisos?.update}
             key={`EQUIPOS_${row.cells[0].value}`}
-            toggleSignUp={toggleSignUp}
+            toggleActions={toggleActions}
             row={row.cells[0].value}
             titulo={'EQUIPOS'}
             descripcion={'Registrar Equipos o Herramientas'}
@@ -78,7 +83,7 @@ const ActionColumn = ({ row }) => {
         <BtnActions
             permisos={permisos?.update}
             key={`MATERIALES_${row.cells[0].value}`}
-            toggleSignUp={toggleSignUp}
+            toggleActions={toggleActions}
             row={row.cells[0].value}
             titulo={'MATERIALES'}
             descripcion={'Registrar Materiales'}
@@ -89,7 +94,7 @@ const ActionColumn = ({ row }) => {
         <BtnActions
             permisos={permisos?.update}
             key={`TRANSPORTE_${row.cells[0].value}`}
-            toggleSignUp={toggleSignUp}
+            toggleActions={toggleActions}
             row={row.cells[0].value}
             titulo={'TRANSPORTE'}
             descripcion={'Registrar Transporte'}
@@ -100,7 +105,7 @@ const ActionColumn = ({ row }) => {
         <BtnActions
             permisos={permisos?.update}
             key={`MANOBRA_${row.cells[0].value}`}
-            toggleSignUp={toggleSignUp}
+            toggleActions={toggleActions}
             row={row.cells[0].value}
             titulo={'MANO DE OBRA'}
             descripcion={'Registrar Mano de Obras'}
@@ -111,7 +116,7 @@ const ActionColumn = ({ row }) => {
         <BtnActions
             permisos={permisos?.update}
             key={`VISTA_${row.cells[0].value}`}
-            toggleSignUp={toggleSignUp}
+            toggleActions={toggleActions}
             row={row.cells[0].value}
             titulo={'VISTA'}
             descripcion={'Vista previa de la APU'}
@@ -126,13 +131,14 @@ const ActionColumn = ({ row }) => {
 const AnalisisPreciosUnitarios = (props) => {
 
   const {
-    validated, Spinners, itemsApu,
+    validated, Spinners, itemsApu,setItemsAdd,
+    toggle,setOpen,open,
     signUpModalAdd, setSignUpModalAdd, query,
     sizePerPageList, isLoading, PERMISOS_USER
   } = useContext(DashboardContext);
   const permisos = PERMISOS_USER || [{}];
 
-  const Apus = itemsApu?.data?.Apus || [];
+  const Apus = itemsApu?.data?.SubCategorias || [];
 
   const columns = [
     {
@@ -141,8 +147,8 @@ const AnalisisPreciosUnitarios = (props) => {
       sort: true,
     },
     {
-      Header: 'Objetivo',
-      accessor: 'Objetivo',
+      Header: 'Descripcion',
+      accessor: 'Descripcion',
       sort: true,
       with: 20,
     },
@@ -155,7 +161,27 @@ const AnalisisPreciosUnitarios = (props) => {
     }
   ];
   const toggleSignUp = () => {
-    setSignUpModalAdd(!signUpModalAdd);
+    const TipoCategoria = itemsApu?.data?.Categorias || [{}];
+
+    let Categoria = [];
+    const obj ={
+      value:'0',
+      label:'Registrar como nueva Categoria'
+    }
+    if (TipoCategoria.length>0)
+    Categoria.push(obj)
+    TipoCategoria?.map((row, i) =>{
+            const obj ={
+              value:row.id,
+              label:row.Codigo +'.-'+ row.Categoria
+            }
+            Categoria.push(obj)
+        })
+      setItemsAdd(Categoria)
+      toggle()
+     setSignUpModalAdd(!signUpModalAdd);
+     setOpen(open);
+
   };
   useEffect(() => {
     query('RegistrosAvanzados', 'Apu', [{ opcion: 'consultar', obj: 'Apu' }]);
@@ -194,7 +220,7 @@ const AnalisisPreciosUnitarios = (props) => {
                 searchBoxClass="mt-2 mb-3"
                 isSearchable={true}
                 nametable={props.accion}
-                titulo={' Registrar Objetivos'}
+                titulo={' Crear APU'}
                 permisos={permisos}
                 toggleSignUp={toggleSignUp}
               />) : <Suspense fallback={loading()}><Spinners /></Suspense>}

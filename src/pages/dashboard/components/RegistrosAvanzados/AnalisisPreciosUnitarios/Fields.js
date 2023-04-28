@@ -1,35 +1,77 @@
-// @flow
-import React, {  useState,useContext } from 'react';
+/* eslint-disable react-hooks/exhaustive-deps */
+import React, { useState,useEffect,useContext} from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Redirect } from 'react-router-dom';
-import {Alert,Form,Col,Row,Button } from 'react-bootstrap';
+import { Button, Alert, Form, Col, Row } from 'react-bootstrap';
+//import FormInput from '../../../components/FormInput'
 import Select from 'react-select';
-import FormInput from '../../../components/FormInput'
-import { useTranslation } from 'react-i18next';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
+import { VerticalForm } from '../../../../../components/';
 //actions
 import { queryFormSend } from '../../../../../redux/actions';
-// components
-import { VerticalForm } from '../../../../../components/';
 import { DashboardContext } from '../../../../../layouts/context/DashboardContext';
 
-const Register = (props): React$Element<React$FragmentType> => {
-  const {setOpen,open} = useContext(DashboardContext);
-  const [items, setItems] = useState([{
-    Nombre: props?.ItemsUpdate?.length===1?props?.ItemsUpdate[0]?.Nombre:'',
-    TipoProyecto: props?.ItemsUpdate?.length===1?props?.ItemsUpdate[0]?.TipoProyecto:'',
-    Direccion: props?.ItemsUpdate?.length===1?props?.ItemsUpdate[0]?.Direccion:'',
-    Estado: props?.ItemsUpdate?.length===1?props?.ItemsUpdate[0]?.Estado:'',
-    accion: props?.accion,
-    opcion: props?.opcion,
-    tipo: props?.tipo,
-    id: props?.ItemsUpdate?.length===1?props?.ItemsUpdate[0]?.id:'',
-  }]);
-  const { t } = useTranslation();
-  const dispatch = useDispatch();
+function convertirACifraDecimal(numero) {
+  const cifraDecimal = numero.toFixed(2).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  return cifraDecimal;
+}
+function multiplicar(a,b){
+  return a*b
+}
 
-  const {queryForm, error,loading } = useSelector((state) => ({
+
+const Register = (props)=> {
+const {query,setActions} = useContext(DashboardContext);
+  const [detalles, setDetalles] = useState([]);
+  const data =  props?.Categorias||[];
+  const [items, setItems,openActions] = useState([{
+    id: '',
+    Nombre: '',
+    Unidad: '1',
+    Cantidad:1,
+    ValorUnitario:0,
+    ValorUnitarioDecimales: 0,
+    Total: 0,
+    TotalDecimales:0,
+    tipo:props.tipo,
+    opcion:props.opcion,
+    accion:props.accion,
+    Producto:props.producto,
+    IdApu:props.IdApu,
+  }]);
+
+
+  useEffect(() => {
+    let respose= data?.filter((item) => {
+      return item.value === items[0]?.Producto;
+  });
+ if(items){
+ const valorunitario =respose[0]?.ValorUnitario.length>0?convertirACifraDecimal(Number(respose[0]?.ValorUnitario)):1
+ const total =multiplicar(Number(respose[0]?.ValorUnitario),Number(items[0]?.Cantidad));
+
+  const obj ={
+    id: respose?.length === 1 ?respose[0]?.id : '0',
+    Codigo: respose?.length === 1 ?respose[0]?.Codigo : '',
+    Nombre: respose?.length === 1 ?respose[0]?.label : '',
+    Unidad:respose?.length === 1 ?respose[0]?.Unidad : '1',
+    Cantidad:items[0]?.Cantidad,
+    ValorUnitario: respose[0]?.ValorUnitario,
+    ValorUnitarioDecimales: valorunitario,
+    Total: total,
+    TotalDecimales: convertirACifraDecimal(Number(total)),
+    tipo:props.tipo,
+    opcion:props.opcion,
+    accion:props.accion,
+    Producto:props.producto,
+    IdApu:props.IdApu,
+  }
+  setDetalles(obj)
+}
+  }, [items])
+
+  const dispatch = useDispatch();
+  const { loading, queryForm, error } = useSelector((state) => ({
     loading: state.Queryform.loading,
     error: state.Queryform.error,
     queryForm: state.Queryform.queryForm,
@@ -41,17 +83,23 @@ const Register = (props): React$Element<React$FragmentType> => {
     })
   );
   const onSubmit = () => {
-    dispatch(queryFormSend(...items))
+
+    dispatch(queryFormSend(detalles))
+
     setTimeout(function () {
-      setOpen(!open)
+      query('RegistrosAvanzados', 'Apu', [{ opcion: 'consultar', obj: 'Apu' }]);
+      setActions(openActions);
     }, 2000);
   };
-console.log(items)
-   return (
+
+//console.log('props.ItemsUpdate',items)
+  return (
     <>
       {queryForm ? <Redirect to={`/${props?.accion}/${props?.tipo}`}></Redirect> : null}
-      <div className="text-center w-75 m-auto">
-        <h4 className="text-dark-50 text-center mt-0 fw-bold">{t(`${props?.textBtn}`)}</h4>
+      <div className="text-left mt-2 mb-4 btn-success text-white mx-auto">
+        <div class="row">
+          <div class="col-md-auto ml-auto font-13 mt-2 mb-2">{props?.NombreApu}</div>
+        </div>
       </div>
       {error && (
         <Alert variant="danger" className="my-2">
@@ -59,121 +107,101 @@ console.log(items)
         </Alert>
       )}
       <VerticalForm onSubmit={onSubmit} resolver={schemaResolver} defaultValues={{}}>
-      <Row>
-        <Col sm={12}>
-          <Form.Group className="mb-3" controlId="Nombre">
-          <FormInput
-              label="Nombre"
-              type="textarea"
-              name="Nombre"
-              rows="5"
-              containerClass={'mb-3'}
-              key="Nombre"
-              placeholder="Digite el Nombre"
-              value={items[0]?.Nombre}
-              onChange={(e) => setItems([{ ...items[0], Nombre: e.target.value }])}
-            />
-            <Form.Control.Feedback type="invalid">
-              Por favor, digite la Nombre.
-            </Form.Control.Feedback>
-          </Form.Group>
-        </Col>
-        </Row>
         <Row>
-        <Col sm={6}>
-          <Form.Group className="mb-3" controlId="TipoProyecto">
+        <Col sm={12}>
+            <Form.Group className="mb-3">
+              <Form.Label>Producto</Form.Label>
               <Select
                 type="select"
-                name="TipoProyecto"
+                name="Producto"
                 className="react-select"
                 classNamePrefix="react-select"
-                onChange={(e) => setItems([{ ...items[0], TipoProyecto: e.value}])}
-                options={[
-                  { value: items[0]?.TipoProyecto, TipoProyecto: '' + items[0]?.TipoProyecto + '' },
-                  { value: 'Interno', label: 'Interno' },
-                  { value: 'Externo', label: 'Externo' },
-                ]}
-                placeholder="Tipo Proyecto..."
-                selected={items[0]?.TipoProyecto}
+                 onChange={(e) => setItems([{
+                  ...items[0], Producto: e.value
+                }])}
+                options={data}
+                selected={data}
+                placeholder={`${props?.ItemsUpdate[0]?.Producto}`}
+              />
+            </Form.Group>
+          </Col>
+          </Row>
+        <Row>
+          <Col sm={6}>
+            <Form.Group className="mb-3" controlId="Unidad">
+              <Form.Label>Unidad de Medida</Form.Label>
+              <Form.Control
+                required
+                type="text"
+                containerClass={'mb-3'}
+                name="Unidad"
+                placeholder={detalles?.Unidad}
               />
               <Form.Control.Feedback type="invalid">
-              Por favor, digite el Tipo.
-            </Form.Control.Feedback>
-          </Form.Group>
-        </Col>
-        <Col sm={6}>
-          <Form.Group className="mb-3" controlId="Direccion">
+                Por favor, digite la Unidad.
+              </Form.Control.Feedback>
+            </Form.Group>
+          </Col>
+
+          <Col sm={6}>
+            <Form.Group className="mb-3" controlId="Cantidad">
+              <Form.Label>Cantidad</Form.Label>
+              <Form.Control
+                required
+                type="number"
+                name="Cantidad"
+                placeholder={detalles?.Cantidad}
+                value={items[0]?.Cantidad}
+                onChange={(e) => setItems([{ ...items[0], Cantidad: e.target.value }])}
+              />
+              <Form.Control.Feedback type="invalid">
+                Por favor, digite la Cantidad.
+              </Form.Control.Feedback>
+            </Form.Group>
+          </Col>
+        </Row>
+        <Row>
+          <Col sm={6}><Form.Group className="mb-3" controlId="ValorUnitario">
+            <Form.Label>Valor Unitario</Form.Label>
             <Form.Control
               required
               type="text"
-              name="Direccion"
-              placeholder="Digite la Direccion"
-              value={items[0]?.Direccion}
-              onChange={(e) => setItems([{ ...items[0], Direccion: e.target.value }])}
+              disabled
+              name="ValorUnitario"
+              placeholder={detalles?.ValorUnitarioDecimales}
+              value={detalles?.ValorUnitarioDecimales}
             />
-            <Form.Control.Feedback type="invalid">
-              Por favor, digite la Direccion.
-            </Form.Control.Feedback>
           </Form.Group>
-        </Col>
+          </Col>
+          <Col sm={6}><Form.Group className="mb-3" controlId="Total">
+            <Form.Label>Total</Form.Label>
+            <Form.Control
+              required
+              type="text"
+              disabled
+              name="ValorUnitario"
+              placeholder={detalles?.TotalDecimales}
+              value={detalles?.TotalDecimales}
+            />
+          </Form.Group>
+          </Col>
+
         </Row>
-      <Row>
-        <Col sm={6}>
-          <Form.Group className="mb-3" controlId="Cliente">
-          <Select
-                type="select"
-                name="Cliente"
-                className="react-select"
-                classNamePrefix="react-select"
-                onChange={(e) =>setItems([{ ...items[0], Cliente: e.value}])}
-                options={[
-                  { value: items[0]?.Cliente, Cliente: '' + items[0]?.Cliente + '' },
-                  { value: 'Cliente de Prueba 1', label: 'Cliente de Prueba 1' },
-                  { value: 'Cliente de Prueba 2', label: 'Cliente de Prueba 2' },
-                ]}
-                placeholder="Selecione el Cliente..."
-                selected={items[0]?.Cliente}
-              />
-            <Form.Control.Feedback type="invalid">
-              Por favor, digite el Cliente.
-            </Form.Control.Feedback>
-          </Form.Group>
-        </Col>
-        <Col sm={6}>
-        <Form.Group className="mb-3" controlId="Estado">
-            <FormInput
-                name="Estado"
-                type="select"
-                containerClass="mb-3"
-                className="form-select"
-                onChange={(e) => setItems([{ ...items[0], Estado: e.target.value }])}
-                key="Estado">
-                <option>--Estado--</option>
-                <option>Cotizando</option>
-                <option>Inicial</option>
-                <option>Liquidado</option>
-              </FormInput>
-            <Form.Control.Feedback type="invalid">
-              Por favor, digite el Estado.
-            </Form.Control.Feedback>
-          </Form.Group>
-        </Col>
-        </Row>
-      <Row>
-     <Col sm={3}> </Col>
-      <Col sm={9}>
-          <Form.Group className="mb-3 mb-3 mb-3 ">
-          <Button variant="primary" type="submit" disabled={loading}>
-            {(props?.textBtn)}
-          </Button>
-          </Form.Group>
-        </Col>
+        <Row>
+          <Col sm={9}></Col> <Col sm={3}>
+            <Form.Group className="mb-3 mb-3 mb-3 ">
+              <Button variant="primary" type="submit" disabled={loading}>
+                {(props?.textBtn)}
+              </Button>
+            </Form.Group>
+          </Col>
+
         </Row>
 
-        </VerticalForm>
+      </VerticalForm>
 
-</>
-);
+    </>
+  );
 };
 
 export default Register;

@@ -10,10 +10,10 @@ const FormAdd = (props) => {
       <Fields
         accion={itemUrl}
         tipo={itemsmenuprincipal}
-        title={'Registrar Categorias'}
+        title={'Registrar APU'}
         validated={props.validated}
         opcion={'add'}
-        textBtn={'Registrar Categorias'}
+        textBtn={'Registrar APU'}
         ItemsUpdate={[]}
         Padres={itemsAdd}
       />
