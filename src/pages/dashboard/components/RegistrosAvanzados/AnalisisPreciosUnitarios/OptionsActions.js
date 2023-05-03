@@ -4,6 +4,7 @@ import React,{useContext} from 'react';
 import { DashboardContext } from '../../../../../layouts/context/DashboardContext';
 /* custon FormUpdate */
 import Fields from './Fields';
+import VistaPrevia from './VistaPrevia';
 
 const OptionsActions = (props) => {
 
@@ -23,10 +24,11 @@ Productos?.map((row, i) => {
     }
     conteg.push(obj)
   })
-  //console.log('conteg',conteg)
+  // if{
+ //console.log('conteg',itemsUpdate?.Opcion)
   return (
   <React.Fragment>
-<Fields
+{(itemsUpdate?.Opcion!=='VISTA')?<Fields
         accion={itemUrl}
         tipo={'Apu'}
         NombreApu={itemsUpdate?.Objetivo}
@@ -35,7 +37,7 @@ Productos?.map((row, i) => {
         opcion={'add_producto_apu'}
         textBtn={'Adjuntar Equipo'}
         ItemsUpdate={[itemsUpdate]}
-        producto={itemsUpdate?.Opcion} />
+        producto={itemsUpdate?.Opcion} />:<div class="table-responsive-lg"><VistaPrevia  NombreApu={itemsUpdate?.Objetivo}/></div>}
   </React.Fragment>
     );
 }

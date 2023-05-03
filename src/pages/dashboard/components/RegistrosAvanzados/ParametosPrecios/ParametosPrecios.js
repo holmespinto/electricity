@@ -1,69 +1,54 @@
 /* eslint-disable no-lone-blocks */
 /* eslint-disable array-callback-return */
 // @flow
-import React, { useContext, Suspense, useEffect,useState } from 'react';
+import React, { useContext, Suspense, useEffect } from 'react';
 import { Row, Col, Card, Modal,Pagination } from 'react-bootstrap';
 import { DashboardContext } from '../../../../../layouts/context/DashboardContext';
 import BtnActions from '../../BtnActions';
-import FormAdd from '../SubCapitulos/FormAdd';
+import FormAdd from './FormAdd';
 import OptionsActions from './OptionsActions';
 import Table from '../../../../../components/Table';
 const loading = () => <div className="text-center"></div>;
 
 
 const ActionColumn = ({ row }) => {
+
   const {
     openActions, setActions,
-     toggle, setItemsUpdate,
-     itemsApu, PERMISOS_USER
+     toggle, setParametroPrecio,
+     itemsParametroPrecio, PERMISOS_USER
   } = useContext(DashboardContext);
 
-
-
   const permisos = PERMISOS_USER || [{}];
-  //itemsapuTransport, setApuTrasporte
-
-  const SubCategorias = itemsApu?.data?.SubCategorias || [];
 
  const toggleActions = (id,opcion) => {
 
-  let trans= itemsApu?.data?.Transportes?.filter((item) => {
-    return item.IdApu === id;
+  const Parametros = itemsParametroPrecio?.data?.ParametroPrecios;
+  let param= Parametros?.filter((item) => {
+    return item.id === id;
   });
-  const Productos = opcion==='TRANSPORTE'?trans:itemsApu?.data?.Productos;
-    let array = [];
-    let productos= Productos?.filter((item) => {
-      return item.Producto === opcion;
-    });
+let Array=[];
     if (id > 0)
-    SubCategorias?.map((row, i) => {
+    param?.map((row, i) => {
       const obj ={
         id: row.id,
-        IdApu: row.IdApu,
-        Objetivo: row.Descripcion,
-        Total: row.Cantidad,
-        Codigo: row.Codigo,
-        Unidad: row.Unidad,
-        ValorUnitario: row.ValorUnitario,
-        idCategoria: row.idCategoria,
+        Parametro: row.Parametro,
+        Valor: row.Valor,
         Opcion: opcion,
-        Productos:productos,
       }
         if (row.id === id) {
-          array.push(obj)
+          Array.push(obj)
         }
       })
 
-
-
-    toggle()
-    setItemsUpdate(array[0])
     setActions(!openActions);
+    toggle()
+    setParametroPrecio(Array[0])
   };
   return (
     <React.Fragment>
       <Row>
-        <Modal show={openActions} onHide={toggleActions} fullscreen={true} animation={true}>
+        <Modal show={openActions} onHide={toggleActions}>
           <Modal.Body>
             <OptionsActions />
           </Modal.Body>
@@ -71,77 +56,47 @@ const ActionColumn = ({ row }) => {
       </Row>
       <Row>
       <Pagination className="pagination-rounded mx-auto" size="sm">
+      <Pagination.Item>
+        <BtnActions
+            permisos={permisos?.update}
+            key={`ACTUALZAR_${row.cells[0].value}`}
+            toggleActions={toggleActions}
+            row={row.cells[0].value}
+            titulo={'ACTUALZAR'}
+            descripcion={'Actualizar Registro'}
+            icon={'mdi mdi-square-edit-outline'}
+          />
+        </Pagination.Item>
        <Pagination.Item>
         <BtnActions
             permisos={permisos?.update}
-            key={`EQUIPOS_${row.cells[0].value}`}
+            key={`ELIMINAR_${row.cells[0].value}`}
             toggleActions={toggleActions}
             row={row.cells[0].value}
-            titulo={'EQUIPOS'}
-            descripcion={'Registrar Equipos o Herramientas'}
-            icon={'mdi mdi-account-hard-hat'}
+            titulo={'ELIMINAR'}
+            descripcion={'Eliminar Registro'}
+            icon={'mdi mdi-delete'}
           />
         </Pagination.Item>
-        <Pagination.Item>
-        <BtnActions
-            permisos={permisos?.update}
-            key={`MATERIALES_${row.cells[0].value}`}
-            toggleActions={toggleActions}
-            row={row.cells[0].value}
-            titulo={'MATERIALES'}
-            descripcion={'Registrar Materiales'}
-            icon={'mdi mdi-alpha-m-circle'}
-          />
-        </Pagination.Item>
-        <Pagination.Item>
-        <BtnActions
-            permisos={permisos?.update}
-            key={`TRANSPORTE_${row.cells[0].value}`}
-            toggleActions={toggleActions}
-            row={row.cells[0].value}
-            titulo={'TRANSPORTE'}
-            descripcion={'Registrar Transporte'}
-            icon={'mdi mdi-ambulance'}
-          />
-        </Pagination.Item>
-        <Pagination.Item>
-        <BtnActions
-            permisos={permisos?.update}
-            key={`MANOBRA_${row.cells[0].value}`}
-            toggleActions={toggleActions}
-            row={row.cells[0].value}
-            titulo={'MANO DE OBRA'}
-            descripcion={'Registrar Mano de Obras'}
-            icon={'mdi mdi-allergy'}
-          />
-        </Pagination.Item>
-        <Pagination.Item>
-        <BtnActions
-            permisos={permisos?.update}
-            key={`VISTA_${row.cells[0].value}`}
-            toggleActions={toggleActions}
-            row={row.cells[0].value}
-            titulo={'VISTA'}
-            descripcion={'Vista previa de la APU'}
-            icon={'mdi mdi-eye-check'}
-          />
-        </Pagination.Item>
+
         </Pagination>
       </Row>
     </React.Fragment>
   );
 };
-const AnalisisPreciosUnitarios = (props) => {
+const ParametosPrecios = (props) => {
 
   const {
-    validated, Spinners, itemsApu,setItemsAdd,
+    validated, Spinners,
+    itemsParametroPrecios,
+    setItemsAdd,
     toggle,setOpen,open,
     signUpModalAdd, setSignUpModalAdd, query,
     sizePerPageList, isLoading, PERMISOS_USER
   } = useContext(DashboardContext);
   const permisos = PERMISOS_USER || [{}];
 
-  const Apus = itemsApu?.data?.SubCategorias || [];
+  const ParametroPrecios = itemsParametroPrecios?.data?.ParametrosPrecios || [];
 
   const columns = [
     {
@@ -150,8 +105,13 @@ const AnalisisPreciosUnitarios = (props) => {
       sort: true,
     },
     {
-      Header: 'Descripcion',
-      accessor: 'Descripcion',
+      Header: 'Parametro',
+      accessor: 'Parametro',
+      sort: true,
+      with: 20,
+    },    {
+      Header: 'Valor',
+      accessor: 'valor',
       sort: true,
       with: 20,
     },
@@ -164,19 +124,19 @@ const AnalisisPreciosUnitarios = (props) => {
     }
   ];
   const toggleSignUp = () => {
-    const TipoCategoria = itemsApu?.data?.Categorias || [{}];
+    const TipoCategoria = itemsParametroPrecios?.data?.ParametrosPrecios || [{}];
 
     let Categoria = [];
     const obj ={
       value:'0',
-      label:'Registrar como nueva Categoria'
+      label:'Registrar como nueva Configuración'
     }
     if (TipoCategoria.length>0)
     Categoria.push(obj)
     TipoCategoria?.map((row, i) =>{
             const obj ={
               value:row.id,
-              label:row.Codigo +'.-'+ row.Categoria
+              label:row.Parametro +'.-'+ row.Valor
             }
             Categoria.push(obj)
         })
@@ -187,9 +147,9 @@ const AnalisisPreciosUnitarios = (props) => {
 
   };
   useEffect(() => {
-    query('RegistrosAvanzados', 'Apu', [{ opcion: 'consultar', obj: 'Apu' }]);
+    query('RegistrosAvanzados', 'ParametroPrecio', [{ opcion: 'consultar', obj: 'ParametroPrecio' }]);
   }, [query])
-
+  console.log(ParametroPrecios)
   return (
     <>
       <Row>
@@ -212,9 +172,9 @@ const AnalisisPreciosUnitarios = (props) => {
                   </Card>
                 </Col>
               </Row>
-              {!isLoading && Apus?.length > 0 && permisos?.query === 'S' ? (<Table
+              {!isLoading && ParametroPrecios?.length > 0 && permisos?.query === 'S' ? (<Table
                 columns={columns}
-                data={Apus}
+                data={ParametroPrecios}
                 pageSize={5}
                 sizePerPageList={sizePerPageList}
                 isSortable={true}
@@ -223,7 +183,7 @@ const AnalisisPreciosUnitarios = (props) => {
                 searchBoxClass="mt-2 mb-3"
                 isSearchable={true}
                 nametable={props.accion}
-                titulo={' Crear APU'}
+                titulo={' Crear Configuración'}
                 permisos={permisos}
                 toggleSignUp={toggleSignUp}
               />) : <Suspense fallback={loading()}><Spinners /></Suspense>}
@@ -235,4 +195,4 @@ const AnalisisPreciosUnitarios = (props) => {
   );
 };
 
-export default AnalisisPreciosUnitarios;
+export default ParametosPrecios;

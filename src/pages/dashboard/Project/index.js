@@ -41,7 +41,7 @@ import { DashboardContext } from '../../../layouts/context/DashboardContext';
                 accion={'OtrosRegistros'}
                 tipo={itemsmenuprincipal}
               /></>);
-           case 'APU':case 'Categorias':case 'SubCategorias':case 'Configuraciones':
+           case 'APU':case 'Categorias':case 'EditorPUA':case 'ParametosPrecios':
             return (<><RegistrosAvanzados
               accion={'RegistrosAvanzados'}
               tipo={itemsmenuprincipal}

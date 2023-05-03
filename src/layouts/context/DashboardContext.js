@@ -43,6 +43,7 @@ const DashboardProvider = ({ children }) => {
   const [itemsCategorias, setCategorias] = useState([]);
   const [itemsSubCategorias, setSubCategorias] = useState([]);
   const [itemsApu, setApu] = useState([]);
+  const [itemsParametroPrecios, setParametroPrecio] = useState([]);
   const [itemsapuTransport, setApuTrasporte] = useState([]);
   const [PERMISOS_USER, setpermisos] = useState([{}]);
 // función para obtener el valor de una cookie
@@ -184,11 +185,14 @@ function deleteCookie(name) {
             case 'Categorias':
               setCategorias(response)
               break;
-            case 'SubCategorias':
+            case 'EditorPUA':
               setSubCategorias(response)
               break;
             case 'Apu':
               setApu(response)
+            break;
+            case 'ParametroPrecio':
+              setParametroPrecio(response)
             break;
               default:
               setItemsQuery(response)
@@ -247,7 +251,7 @@ function deleteCookie(name) {
                 }
               })
 
-           perm.length > 0?setpermisos(perm[0]):setpermisos([{
+           perm?.length > 0?setpermisos(perm[0]):setpermisos([{
             "query": "N",
             "add": "N",
             "update": "N",
@@ -299,6 +303,7 @@ function deleteCookie(name) {
     itemsSubCategorias, setSubCategorias,
     itemsApu, setApu,
     itemsapuTransport, setApuTrasporte,
+    itemsParametroPrecios, setParametroPrecio,
     getCookie,deleteCookie,
     onPermisos, PERMISOS_USER
   };

@@ -149,7 +149,7 @@ const SubCapitulos = (props) => {
 
   useEffect(() => {
     {
-      query('RegistrosAvanzados','SubCategorias',[{opcion:'consultar',obj:'SubCategorias'}]);
+      query('RegistrosAvanzados','EditorPUA',[{opcion:'consultar',obj:'EditorPUA'}]);
     }
   }, [props.tipo, query])
 
