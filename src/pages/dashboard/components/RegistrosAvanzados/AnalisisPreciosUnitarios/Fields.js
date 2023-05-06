@@ -98,7 +98,7 @@ const {query,setActions} = useContext(DashboardContext);
       {queryForm ? <Redirect to={`/${props?.accion}/${props?.tipo}`}></Redirect> : null}
       <div className="text-left mt-2 mb-4 btn-success text-white mx-auto">
         <div class="row">
-          <div class="col-md-auto ml-auto font-13 mt-2 mb-2">{props?.NombreApu}</div>
+          <div class="col-md-auto ml-auto font-13 mt-2 mb-2">{props?.producto}-{props?.NombreApu}</div>
         </div>
       </div>
       {error && (

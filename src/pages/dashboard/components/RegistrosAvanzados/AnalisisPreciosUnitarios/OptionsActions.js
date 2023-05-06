@@ -1,9 +1,12 @@
+/* eslint-disable no-unreachable */
+/* eslint-disable no-lone-blocks */
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable array-callback-return */
 import React,{useContext} from 'react';
 import { DashboardContext } from '../../../../../layouts/context/DashboardContext';
 /* custon FormUpdate */
 import Fields from './Fields';
+import LoadImg from './LoadImg';
 import VistaPrevia from './VistaPrevia';
 
 const OptionsActions = (props) => {
@@ -24,22 +27,38 @@ Productos?.map((row, i) => {
     }
     conteg.push(obj)
   })
-  // if{
- //console.log('conteg',itemsUpdate?.Opcion)
+
   return (
-  <React.Fragment>
-{(itemsUpdate?.Opcion!=='VISTA')?<Fields
-        accion={itemUrl}
-        tipo={'Apu'}
-        NombreApu={itemsUpdate?.Objetivo}
-        IdApu={itemsUpdate?.id}
-        Categorias={conteg}
-        opcion={'add_producto_apu'}
-        textBtn={'Adjuntar Equipo'}
-        ItemsUpdate={[itemsUpdate]}
-        producto={itemsUpdate?.Opcion} />:<div class="table-responsive-lg"><VistaPrevia  NombreApu={itemsUpdate?.Objetivo}/></div>}
-  </React.Fragment>
-    );
+    <React.Fragment>
+
+    {(() => {
+        switch (itemsUpdate?.Opcion) {
+        case "VISTA":
+              return (<><VistaPrevia/></>)
+        case "IMAGEN":
+                return (<><LoadImg
+                  producto={itemsUpdate?.Opcion}
+                  accion={itemUrl}
+                  tipo={'Apu'}
+                  opcion={'add_imagen_apu'}
+                  NombreApu={itemsUpdate?.Objetivo}
+                  IdApu={itemsUpdate?.id}
+                  textBtn={'Enviar Imagen'}
+                  /></>)
+        default:
+          return (<><Fields
+          accion={itemUrl}
+          tipo={'Apu'}
+          NombreApu={itemsUpdate?.Objetivo}
+          IdApu={itemsUpdate?.id}
+          Categorias={conteg}
+          opcion={'add_producto_apu'}
+          textBtn={'Adjuntar Equipo'}
+          ItemsUpdate={[itemsUpdate]}
+          producto={itemsUpdate?.Opcion} /></>)
+        }
+      })()}
+</React.Fragment>);
 }
 export default OptionsActions;
 

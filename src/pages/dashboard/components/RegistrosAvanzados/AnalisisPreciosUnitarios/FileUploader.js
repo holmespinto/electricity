@@ -58,6 +58,7 @@ const FileUploader = (props: FileUploaderProps): React$Element<any> => {
         const newFiles = [...selectedFiles];
         newFiles.splice(newFiles.indexOf(file), 1);
         setSelectedFiles(newFiles);
+        props.setFiles([]);
     };
 
     return (
@@ -68,7 +69,11 @@ const FileUploader = (props: FileUploaderProps): React$Element<any> => {
                         <div className="dz-message needsclick" {...getRootProps()}>
                             <input {...getInputProps()} />
                             <i className="h3 text-muted dripicons-cloud-upload"></i>
-                            <h5>Arrastre el archivo o haga click para buscarlo.</h5>
+                            <h5>Drop files here or click to upload.</h5>
+                            <span className="text-muted font-13">
+                                (This is just a demo dropzone. Selected files are <strong>not</strong> actually
+                                uploaded.)
+                            </span>
                         </div>
                     </div>
                 )}

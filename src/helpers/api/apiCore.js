@@ -94,6 +94,28 @@ class APICore {
     return params;
   };
 
+  sendFile = (url, data) => {
+    const sendRequest = async () => {
+      try {
+        const config = {
+          method: 'POST',
+          body: JSON.stringify(data),
+          headers: {
+              ...axios.defaults.headers,
+              'enctype': 'multipart/form-data',
+              Authorization: `Basic ${encodeBasic(environments.loginAPI, environments.passwordAPI)}`,
+          },
+      };
+      const response = await fetch(`${environments.baseURL}${url}`, config);
+      const resp = JSON.parse(await response.text());
+      return resp;
+
+      } catch (err) {
+          console.error(err);
+      }
+  };
+  return sendRequest();
+  };
   /**
    * post given data to url
    */

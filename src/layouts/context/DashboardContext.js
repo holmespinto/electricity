@@ -134,6 +134,20 @@ function deleteCookie(name) {
     status: 'Deactivated',
   }];
 
+  const queryFile = useCallback((queryDatos,dataFile) => {
+    const url = `accion=selectedFile&tipo=selectedFile&opcion=add_imagen_apu&${queryDatos}`;
+    const datosMaterial = api.sendFile(url,dataFile);
+    datosMaterial?.then(function (resp) {
+        Swal.fire('' + resp[0].menssage + '');
+    }).catch((error) => console.error('Error:', error))
+      .finally(() => {
+        setTimeout(function () {
+        setLoading(false)
+        },1000);
+      });
+
+  }, []);
+
   const query = useCallback((itemUrl, itemsmenuprincipal, opcion) => {
     setLoading(true)
     let varibles;
@@ -305,6 +319,7 @@ function deleteCookie(name) {
     itemsapuTransport, setApuTrasporte,
     itemsParametroPrecios, setParametroPrecio,
     getCookie,deleteCookie,
+    queryFile,
     onPermisos, PERMISOS_USER
   };
   return (

@@ -118,6 +118,17 @@ const ActionColumn = ({ row }) => {
         <Pagination.Item>
         <BtnActions
             permisos={permisos?.update}
+            key={`IMAGEN_${row.cells[0].value}`}
+            toggleActions={toggleActions}
+            row={row.cells[0].value}
+            titulo={'IMAGEN'}
+            descripcion={'Subir una imagen'}
+            icon={'mdi mdi-panorama'}
+          />
+        </Pagination.Item>
+        <Pagination.Item>
+        <BtnActions
+            permisos={permisos?.update}
             key={`VISTA_${row.cells[0].value}`}
             toggleActions={toggleActions}
             row={row.cells[0].value}
@@ -126,6 +137,7 @@ const ActionColumn = ({ row }) => {
             icon={'mdi mdi-eye-check'}
           />
         </Pagination.Item>
+
         </Pagination>
       </Row>
     </React.Fragment>
