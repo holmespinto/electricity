@@ -1,7 +1,7 @@
 /* eslint-disable no-lone-blocks */
 /* eslint-disable array-callback-return */
 // @flow
-import React, { useContext, Suspense, useEffect,useState } from 'react';
+import React, { useContext, Suspense, useEffect } from 'react';
 import { Row, Col, Card, Modal,Pagination } from 'react-bootstrap';
 import { DashboardContext } from '../../../../../layouts/context/DashboardContext';
 import BtnActions from '../../BtnActions';
@@ -154,12 +154,33 @@ const AnalisisPreciosUnitarios = (props) => {
   const permisos = PERMISOS_USER || [{}];
 
   const Apus = itemsApu?.data?.SubCategorias || [];
-
+/* product column render */
+const ProductColumn = ({ row }) => {
+  const img=row.original.image?row.original.image:'https://robohash.org/doloribusatconsequatur.png?size=100x100&set=set1'
+  return (
+      <React.Fragment>
+         <img
+              src={`${img}`}
+              alt={`${img}`}
+              title={row.original.image}
+              className="rounded me-3"
+              height="48"
+          />
+      </React.Fragment>
+  );
+};
   const columns = [
     {
       Header: 'ID',
       accessor: 'id',
       sort: true,
+    },
+    {
+      Header: 'Imagen',
+      accessor: 'image',
+      sort: true,
+      with: 20,
+      Cell: ProductColumn,
     },
     {
       Header: 'Descripcion',

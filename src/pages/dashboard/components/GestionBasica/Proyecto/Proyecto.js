@@ -1,10 +1,10 @@
 /* eslint-disable array-callback-return */
 // @flow
 import React, { useContext, Suspense, useEffect } from 'react';
-import { Row, Col, Card,  Modal } from 'react-bootstrap';
+import { Row, Col, Card,  Modal,Pagination } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { DashboardContext } from '../../../../../layouts/context/DashboardContext';
-//import { GestionBasicaContext } from '../../../../layouts/context/GestionBasicaContext';
+import BtnActions from '../../BtnActions';
 import FormAdd from './FormAdd';
 import FormUpdate from './FormUpdate';
 import Table from '../../../../../components/Table';
@@ -18,6 +18,11 @@ const ActionColumn = ({ row }) => {
     open, itemsmenuprincipal, itemsProyecto,PERMISOS_USER
   } = useContext(DashboardContext);
   const permisos = PERMISOS_USER || [{}];
+
+
+  const toggleUrl = (id) => {
+  console.log(id)
+  }
   const toggleSignUp = (id) => {
     let array = [];
     if (id > 0)
@@ -35,25 +40,48 @@ const ActionColumn = ({ row }) => {
     <React.Fragment>
       <Modal show={open} onHide={toggleSignUp}>
         <Modal.Body><FormUpdate
-          title={`ACTUALIZAR ${itemsmenuprincipal?.toUpperCase()}`}
+          title={`FORMULARIO PARA LA EDICION DE PROYECTOS${itemsmenuprincipal?.toUpperCase()}`}
           validated={validated}
         />
         </Modal.Body>
       </Modal>
-      {
-        permisos?.update === 'S' ? (
-          <Link to="#" className="action-icon" onClick={() => toggleSignUp(row.cells[0].value)}>
-            {' '}
-            <i className="mdi mdi-square-edit-outline"></i>
-          </Link>) : ''
-      }
-      {
-        permisos?.delete === 'S' ? (
-          <Link to="#" className="action-icon" onClick={() => eliminar(row.cells[0].value)}>
-            {' '}
-            <i className="mdi mdi-delete"></i>
-          </Link>) : ''}
-
+      <Row>
+      <Pagination className="pagination-rounded mx-auto" size="sm">
+       <Pagination.Item>
+        <BtnActions
+            permisos={permisos?.update}
+            key={`EDITAR_${row.cells[0].value}`}
+            toggleActions={toggleSignUp}
+            row={row.cells[0].value}
+            titulo={'EDITAR'}
+            descripcion={'Editar Proyecto'}
+            icon={'mdi mdi-square-edit-outline'}
+          />
+        </Pagination.Item>
+        <Pagination.Item>
+        <BtnActions
+            permisos={permisos?.update}
+            key={`ELIMINAR_${row.cells[0].value}`}
+            toggleActions={eliminar}
+            row={row.cells[0].value}
+            titulo={'ELIMINAR'}
+            descripcion={'Registrar Proyecto'}
+            icon={'mdi mdi-delete'}
+          />
+        </Pagination.Item>
+        <Pagination.Item>
+        <BtnActions
+            permisos={permisos?.update}
+            key={`ASIGNARAPU_${row.cells[0].value}`}
+            toggleActions={toggleUrl}
+            row={row.cells[0].value}
+            titulo={'ASIGNAR'}
+            descripcion={'Asignar APU'}
+            icon={'mdi mdi-alpha-a-circle-outline'}
+          />
+        </Pagination.Item>
+          </Pagination>
+          </Row>
     </React.Fragment>
   );
 };
