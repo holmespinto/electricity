@@ -3,8 +3,8 @@
 /* eslint-disable no-duplicate-case */
 /* eslint-disable no-fallthrough */
 import React, { useContext,Suspense, useEffect } from 'react';
-import { Row, Col, Card, Modal } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
+import { Row, Col, Card, Modal,Pagination } from 'react-bootstrap';
+import BtnActions from '../../BtnActions';
 import { DashboardContext } from '../../../../../layouts/context/DashboardContext';
 import FormAdd from './FormAdd';
 import FormUpdate from './FormUpdate';
@@ -61,19 +61,32 @@ const ActionColumn = ({ row }) => {
         />
         </Modal.Body>
       </Modal>
-      {
-        permisos?.update === 'S' ? (
-          <Link to="#" className="action-icon" onClick={() => toggleSignUp(row.cells[0].value)}>
-            {' '}
-            <i className="mdi mdi-square-edit-outline"></i>
-          </Link>) : ''
-      }
-      {
-        permisos?.delete === 'S' ? (
-          <Link to="#" className="action-icon" onClick={() => eliminar(row.cells[0].value)}>
-            {' '}
-            <i className="mdi mdi-delete"></i>
-          </Link>) : ''}
+      <Row>
+      <Pagination className="pagination-rounded mx-auto" size="sm">
+       <Pagination.Item>
+        <BtnActions
+            permisos={permisos?.update}
+            key={`EDITAR_${row.cells[0].value}`}
+            toggleActions={toggleSignUp}
+            row={row.cells[0].value}
+            titulo={'EDITAR'}
+            descripcion={'Editar Proyecto'}
+            icon={'mdi mdi-square-edit-outline'}
+          />
+        </Pagination.Item>
+        <Pagination.Item>
+        <BtnActions
+            permisos={permisos?.update}
+            key={`ELIMINAR_${row.cells[0].value}`}
+            toggleActions={eliminar}
+            row={row.cells[0].value}
+            titulo={'ELIMINAR'}
+            descripcion={'Registrar Proyecto'}
+            icon={'mdi mdi-delete'}
+          />
+        </Pagination.Item>
+          </Pagination>
+          </Row>
     </React.Fragment>
   );
 };
@@ -175,7 +188,7 @@ const SubCapitulos = (props) => {
                   </Card>
                 </Col>
               </Row>
-              { /*datos?.length>0 && permisos?.query === 'S'*/ datos?.length>0? (<Table
+              {permisos?.query === 'S' && datos?.length>0? (<Table
                 columns={columns}
                 data={datos}
                 pageSize={5}
@@ -186,7 +199,7 @@ const SubCapitulos = (props) => {
                 searchBoxClass="mt-2 mb-3"
                 isSearchable={true}
                 nametable={props.accion}
-                titulo={' Registrar APU'}
+                titulo={' Listado APU'}
                 permisos={permisos}
                 toggleSignUp={toggleSignUp}
               />) : <Suspense fallback={loading()}><Spinners /></Suspense>}

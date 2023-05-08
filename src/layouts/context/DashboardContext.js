@@ -286,8 +286,9 @@ function deleteCookie(name) {
   const data = {
     itemsMenuCallBack,
     setLoading,
+    setitemsMenuPrincipal,
     isLoading,
-    itemsmenuprincipal,
+    itemsmenuprincipal,setitemsUrl,
     itemUrl, setItems, items,
     eliminar,
     signUpModal, setSignUpModal,

@@ -8,6 +8,7 @@ import OtrosRegistros from '../../../pages/dashboard/components/OtrosRegistros/O
 import RegistrosAvanzados from '../../../pages/dashboard/components/RegistrosAvanzados/RegistrosAvanzados';
 //import Informes from '../../../pages/dashboard/components/Informes/Informes';
 import OtrasConsultas from '../../../pages/dashboard/components/OtrasConsultas/OtrasConsultas';
+import TarjetasReferencias from '../../../pages/dashboard/components/TarjetasReferencias/TarjetasReferencias';
 import { DashboardContext } from '../../../layouts/context/DashboardContext';
 
  const ProjectDashboard = () => {
@@ -17,7 +18,7 @@ import { DashboardContext } from '../../../layouts/context/DashboardContext';
     onPermisos(itemsmenuprincipal);
   }, [itemsmenuprincipal, onPermisos]);
 
- ///console.log('index',Trans)
+console.log('index',itemsmenuprincipal)
 
   return (
 
@@ -48,6 +49,11 @@ import { DashboardContext } from '../../../layouts/context/DashboardContext';
             /></>);
           case 'RegistrarAPU':
             return (<>{'RegistrarAPU'}</>);
+          case 'asignarApu':
+            return (<><TarjetasReferencias
+              accion={'GestionBasica'}
+              tipo={itemsmenuprincipal}
+            /></>);
           default:
             return (
               <>{''}</>

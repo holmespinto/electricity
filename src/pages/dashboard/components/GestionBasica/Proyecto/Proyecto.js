@@ -2,9 +2,9 @@
 // @flow
 import React, { useContext, Suspense, useEffect } from 'react';
 import { Row, Col, Card,  Modal,Pagination } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
 import { DashboardContext } from '../../../../../layouts/context/DashboardContext';
 import BtnActions from '../../BtnActions';
+import BtnLink from '../../BtnLink';
 import FormAdd from './FormAdd';
 import FormUpdate from './FormUpdate';
 import Table from '../../../../../components/Table';
@@ -20,9 +20,6 @@ const ActionColumn = ({ row }) => {
   const permisos = PERMISOS_USER || [{}];
 
 
-  const toggleUrl = (id) => {
-  console.log(id)
-  }
   const toggleSignUp = (id) => {
     let array = [];
     if (id > 0)
@@ -40,7 +37,7 @@ const ActionColumn = ({ row }) => {
     <React.Fragment>
       <Modal show={open} onHide={toggleSignUp}>
         <Modal.Body><FormUpdate
-          title={`FORMULARIO PARA LA EDICION DE PROYECTOS${itemsmenuprincipal?.toUpperCase()}`}
+          title={`FORMULARIO PARA LA EDICION DE ${itemsmenuprincipal?.toUpperCase()}`}
           validated={validated}
         />
         </Modal.Body>
@@ -70,11 +67,11 @@ const ActionColumn = ({ row }) => {
           />
         </Pagination.Item>
         <Pagination.Item>
-        <BtnActions
+        <BtnLink
             permisos={permisos?.update}
             key={`ASIGNARAPU_${row.cells[0].value}`}
-            toggleActions={toggleUrl}
             row={row.cells[0].value}
+            url={'/dashboard/Informes/asignarApu?'}
             titulo={'ASIGNAR'}
             descripcion={'Asignar APU'}
             icon={'mdi mdi-alpha-a-circle-outline'}
