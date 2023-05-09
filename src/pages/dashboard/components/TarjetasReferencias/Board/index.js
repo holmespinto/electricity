@@ -1,24 +1,23 @@
+/* eslint-disable array-callback-return */
 /* eslint-disable react-hooks/exhaustive-deps */
 // @flow
-import React, { useState } from 'react';
+import React, { useState,useContext } from 'react';
 import { useForm } from 'react-hook-form';
-import { Row, Col, OverlayTrigger, Tooltip, Modal, Button } from 'react-bootstrap';
+import { Row, Col, OverlayTrigger, Tooltip, Modal } from 'react-bootstrap';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
+import { DashboardContext } from '../../../../../layouts/context/DashboardContext';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import classNames from 'classnames';
 // components
-import HyperDatepicker from '../../../../../components/Datepicker';
-import { FormInput } from '../../../../../components/';
-import { convertirACifraDecimal } from '../../../../../utils/convertirACifraDecimal';
+import VistaPrevia from '../../RegistrosAvanzados/AnalisisPreciosUnitarios/VistaPrevia';
+//import { FormInput } from '../../../../../components/';
+import { convertirACifraDecimal,multiplicar } from '../../../../../utils/convertirACifraDecimal';
 
 import TaskItem from './Task';
 import TaskItemB from './TaskItemB';
 import Pagination from '../Pagination'
-// dummy data
-//import { tasks } from './Data';
 
-import defaultAvatar from './avatar-1.jpg';
 
 
 type StateType = {
@@ -29,11 +28,17 @@ type StateType = {
   newTask: any,
   currentCout: any,
 };
-
+const defaultAvatar='https://robohash.org/doloribusatconsequatur.png?size=100x100&set=set1'
 // kanban
 const Kanban = (props): React$Element<React$FragmentType> => {
-  const tasks = props?.data || [{}];
-  const [currentCout, setCoutPage] = useState(0);
+ const {setItemsUpdate,add,update,borrar} = useContext(DashboardContext);
+  const idProyecto = props?.data?.data?.idProyecto || 0;
+  const tasks = props?.data?.data?.SubCategorias || [{}];
+  const ProductosApu = props?.data?.data?.ProductosApu || [{}];
+  const DatosProyect = props?.data?.data?.DatosProyect || [{}];
+
+
+  const [currentCout, setCoutPage] = useState({Total:0});
    const [currentPage, setCurrentPage] = useState(1);
   const [tasksPerPage, setTasksPerPage] = useState(4);
   const [searchTerm, setSearchTerm] = useState('');
@@ -62,17 +67,6 @@ const Kanban = (props): React$Element<React$FragmentType> => {
     })
   );
 
-  /*
-   * Form methods
-   */
-  const methods = useForm({ resolver: schemaResolver });
-  const {
-    handleSubmit,
-    register,
-    control,
-    formState: { errors },
-  } = methods;
-
   /**
    * Toggles the new task modal
    */
@@ -86,26 +80,38 @@ const Kanban = (props): React$Element<React$FragmentType> => {
   /**
    * Creates new empty task with given status
    */
-  const newTask = (status, queue) => {
+  const newTask = (status, queue,id) => {
+   let array=[]
+   const datosTask=state?.todoTasks.filter((t) => t.id ===id)
+    if (id > 0)
+    datosTask?.map((row, i) => {
+      const obj ={
+        id: row.id,
+        IdApu: row.id,
+        Objetivo: row.Descripcion,
+        Total: row.Cantidad,
+        Codigo: row.Codigo,
+        Unidad: row.Unidad,
+        ValorUnitario: row.ValorUnitario,
+        idCategoria: row.idCategoria,
+        Opcion: [],
+        Productos:ProductosApu,
+      }
+        if (row.id === id) {
+          array.push(obj)
+        }
+      })
     setState({
       ...state,
-      newTask: { dueDate: new Date(), image: defaultAvatar, status: status, queue: queue },
+      newTask: { dueDate: new Date(), image: defaultAvatar, status: status, queue: queue,id:id},
       newTaskModal: true,
+      datosTask:array[0]
     });
+    setItemsUpdate(array[0])
+
   };
 
-  /**
-   * When date changes
-   * @param {} date
-   */
-  const handleDateChange = (date) => {
-    if (state.newTask) {
-      setState({
-        ...state,
-        newTask: { ...state.newTask, dueDate: date },
-      });
-    }
-  };
+
 
   // a little function to help us with reordering the result
   const reorder = (list, startIndex, endIndex) => {
@@ -150,45 +156,14 @@ const Kanban = (props): React$Element<React$FragmentType> => {
       let localState = { ...state };
       localState[source.droppableId] = items;
       setState(localState);
+
     } else {
       const result = move(getList(source.droppableId), getList(destination.droppableId), source, destination);
       const localState = { ...state, ...result };
       setState(localState);
+      add(result.inprogressTasks[0].id,idProyecto)
+
     }
-  };
-
-  /**
-   * Handles the new task form submission
-   */
-  const handleNewTask = (event, values) => {
-    const formData = {
-      idCategoria: values.target['idCategoria'].value,
-      Descripcion: values.target['Descripcion'].value,
-      Unidad: values.target['Unidad'].value,
-      ValorUnitario: values.target['ValorUnitario'].value,
-      image: values.target['image'].value,
-      Codigo: values.target['Codigo'].value,
-    };
-    const newTask = {
-      ...state.newTask,
-      ...formData,
-      id: state.totalTasks + 1,
-      dueDate: state.newTask.dueDate.toLocaleDateString('en-US', {
-        year: 'numeric',
-        month: 'short',
-        day: 'numeric',
-      }),
-      currentCout: currentCout,
-    };
-
-    var localState = { ...state };
-    var tasks = localState[newTask.queue];
-    tasks.push(newTask);
-    localState[newTask.queue] = tasks;
-    localState['newTask'] = { dueDate: new Date(), image: '', status: '', queue: '' };
-    localState['newTaskModal'] = false;
-    localState['totalTasks'] = localState.totalTasks + 1;
-    setState(localState);
   };
 
   const currentTasks = state.todoTasks?.slice(indexOfFirstTask, indexOfLastTask);
@@ -202,30 +177,19 @@ const Kanban = (props): React$Element<React$FragmentType> => {
   })
 
 
-  console.log('',currentCout)
+  //console.log('DatosProyect',state)
   return (
     <React.Fragment>
+    <Row className="align-items-center"><Col className="col-auto text-secondary">{DatosProyect?.Objetivo?DatosProyect?.Objetivo:'Ingrese nuevamente a esta opcion'}</Col> </Row>
       <Row>
         <Col>
           <DragDropContext onDragEnd={onDragEnd}>
             <div className="board">
               {/* todo */}
-
               <Row>
-
                 <Droppable droppableId="todoTasks">
                   {(provided, snapshot) => (
-                    <><div><OverlayTrigger
-                      key="bottom"
-                      placement="bottom"
-                      overlay={<Tooltip>Add New Todo Task</Tooltip>}>
-                      <button
-                        className="btn btn-link p-0 text-secondary float-end shadow-none px-0 py-2"
-                        id="addNewTodo"
-                        onClick={() => newTask('Pending', 'todoTasks')}>
-                        <i className="mdi mdi-plus"></i>
-                      </button>
-                    </OverlayTrigger>
+                    <><div>
                     <div className={classNames('mt-2 mb-3')}>
                         <span className="d-flex align-items-center">
                             Search :{' '}
@@ -251,7 +215,7 @@ const Kanban = (props): React$Element<React$FragmentType> => {
                                 ref={provided.innerRef}
                                 {...provided.draggableProps}
                                 {...provided.dragHandleProps}>
-                                <TaskItem task={item} convertirACifraDecimal={convertirACifraDecimal}/>
+                                <TaskItem task={item} convertirACifraDecimal={convertirACifraDecimal} newTask={newTask}/>
                               </div>
                             )}
                           </Draggable>
@@ -277,22 +241,9 @@ const Kanban = (props): React$Element<React$FragmentType> => {
                 <Droppable droppableId="inprogressTasks">
                   {(provided, snapshot) => (
                     <><div>
-
-                      <OverlayTrigger
-                        key="bottom"
-                        placement="bottom"
-                        overlay={<Tooltip>Add New In-progress Task</Tooltip>}>
-                        <button
-                          className="btn btn-link p-0 text-secondary float-end shadow-none px-0 py-2"
-                          id="addInprogressTask"
-                          onClick={() => newTask('Inprogress', 'inprogressTasks')}>
-                          <i className="mdi mdi-plus"></i>
-                        </button>
-                      </OverlayTrigger>
-
                       <span className="d-flex align-items-center bg-primary pt-2"><h5 className="mt-0 task-header text-uppercase">
                         {state.inprogressTasks.length === 0?
-                          <p className="text-center text-muted pt-2 mb-0">No Tasks</p>:`+(${(state.inprogressTasks.length)})  Total General: $ ${convertirACifraDecimal(Number(currentCout))}`
+                          <p className="text-center text-muted pt-2 mb-0">No Tasks</p>:`+(${(state.inprogressTasks.length)})  Total General: $ ${convertirACifraDecimal(Number(currentCout.Total))}`
                         }
                       </h5></span>
                     </div>
@@ -307,7 +258,17 @@ const Kanban = (props): React$Element<React$FragmentType> => {
                                 ref={provided.innerRef}
                                 {...provided.draggableProps}
                                 {...provided.dragHandleProps}>
-                                <TaskItemB task={item} setCoutPage={setCoutPage} currentCout={currentCout} convertirACifraDecimal={convertirACifraDecimal}/>
+                                <TaskItemB
+                                task={item}
+                                idProyecto={idProyecto}
+                                borrar={borrar}
+                                newTask={newTask}
+                                update={update}
+                                setCoutPage={setCoutPage}
+                                currentCout={currentCout.Total}
+                                convertirACifraDecimal={convertirACifraDecimal}
+                                multiplicar={multiplicar}
+                                />
 
                               </div>
                             )}
@@ -327,122 +288,10 @@ const Kanban = (props): React$Element<React$FragmentType> => {
       {state.newTask && (
         <Modal show={state.newTaskModal} onHide={toggleNewTaskModal} size="lg" centered>
           <Modal.Header closeButton>
-            <h4 className="modal-Description">Create New Task</h4>
+            <h4 className="modal-description">{state?.datosTask[0]?.Descripcion}</h4>
           </Modal.Header>
           <Modal.Body>
-            <form onSubmit={handleSubmit(handleNewTask)} className="p-2">
-              <FormInput
-                name="idCategoria"
-                label="Categoria"
-                type="select"
-                containerClass="mb-3"
-                className="form-select form-control-light"
-                register={register}
-                key="idCategoria"
-                errors={errors}
-                control={control}>
-                <option>Select</option>
-                <option>Hyper</option>
-                <option>CRM</option>
-                <option>iOS App</option>
-              </FormInput>
-
-              <Row>
-                <Col md={8}>
-                <FormInput
-                name="description"
-                label="Description"
-                type="textarea"
-                containerClass="mb-3"
-                className="form-control form-control-light"
-                rows="3"
-                register={register}
-                key="description"
-                errors={errors}
-                control={control}
-              />
-                </Col>
-                <Col md={4}>
-                  <FormInput
-                    name="Unidad"
-                    label="Unidad"
-                    type="select"
-                    containerClass="mb-3"
-                    className="form-select form-control-light"
-                    register={register}
-                    key="Unidad"
-                    errors={errors}
-                    control={control}>
-                    <option>Select</option>
-                    <option>Low</option>
-                    <option>Medium</option>
-                    <option>High</option>
-                  </FormInput>
-                </Col>
-              </Row>
-
-
-
-              <Row>
-                <Col md={6}>
-                  <FormInput
-                    name="Codigo"
-                    label="Assign To"
-                    type="select"
-                    containerClass="mb-3"
-                    className="form-select form-control-light"
-                    register={register}
-                    key="Codigo"
-                    errors={errors}
-                    control={control}>
-                    <option>Select</option>
-                    <option>Coderthemes</option>
-                    <option>Robert Carlile</option>
-                    <option>Louis Allen</option>
-                    <option>Sean White</option>
-                    <option>Riley Steele</option>
-                    <option>Zak Turnbull</option>
-                  </FormInput>
-                </Col>
-                <Col md={6}>
-                  <div className="form-group">
-                    <label className="form-label">Due Date</label> <br />
-                    <HyperDatepicker
-                      hideAddon={true}
-                      dateFormat="yyyy-MM-dd"
-                      value={state.newTask.dueDate}
-                      onChange={(date) => {
-                        handleDateChange(date);
-                      }}
-                    />
-                  </div>
-                </Col>
-              </Row>
-              <Row>
-              <Col md={4}>
-              <FormInput
-                name="ValorUnitario"
-                label="Valor Unitario"
-                type="text"
-                containerClass="mb-3"
-                className="form-control form-control-light"
-                register={register}
-                key="ValorUnitario"
-                errors={errors}
-                control={control}
-              />
-                </Col>
-              </Row>
-
-              <div className="text-end">
-                <Button variant="light" type="button" className="me-1" onClick={toggleNewTaskModal}>
-                  Cancel
-                </Button>
-                <Button variant="primary" type="submit">
-                  Create
-                </Button>
-              </div>
-            </form>
+          <VistaPrevia/>
           </Modal.Body>
         </Modal>
       )}

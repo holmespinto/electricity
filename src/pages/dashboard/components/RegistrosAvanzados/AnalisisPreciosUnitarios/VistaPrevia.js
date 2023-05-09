@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable array-callback-return */
 import React, { useContext} from 'react';
 import { Row, Col, Table } from 'react-bootstrap';
@@ -18,7 +19,7 @@ function convertirACifraDecimal(numero) {
 const DataTable = (props) => {
 
   let Datos= props?.Productos?.filter((item) => {
-    return item.IdApu=== props?.itemsUpdate?.id && item.Producto===props?.tipo;
+    return item.IdApu=== props?.itemsUpdate?.IdApu && item.Producto===props?.tipo;
   });
 
   const totales = []
@@ -61,8 +62,8 @@ const DataTable = (props) => {
       <div className="mt-2 mb-2  text-white mx-auto">
         <div class="row">
           <div class="col-sm-2 ml-auto font-13 mt-2 text-left btn-secondary"><p class="h5">{'SUB TOTAL'}</p></div>
-          <div class="col-sm-8 ml-auto font-13 mt-2 text-left btn-secondary"><p class="h5">{''}</p></div>
-          <div class="col-sm-2 ml-auto font-13 mt-2 text-right btn-secondary"><p class="h5">$ {convertirACifraDecimal(Number(resultado))}</p></div>
+          <div class="col-sm-8 ml-auto font-13 mt-2 text-left btn-secondary"><p class="h5">$ {convertirACifraDecimal(Number(resultado))}</p></div>
+          <div class="col-sm-2 ml-auto font-13 mt-2 text-right btn-secondary"><p class="h5">{''}</p></div>
         </div>
       </div>
       </>
@@ -84,8 +85,8 @@ const DataTotales= (props) => {
      <div className="text-left mt-2 mb-4 text-white mx-auto">
           <div class="row">
           <div class="col-sm-2 ml-auto font-13 mt-2 text-left btn-dark"><p class="h4">{'TOTAL COSTO DIRECTO'}</p></div>
-          <div class="col-sm-8 ml-auto font-13 mt-2 text-left btn-dark"><p class="h4">{''}</p></div>
-          <div class="col-sm-2 ml-auto font-13 mt-2 text-right btn-dark"><p class="h4">$ {convertirACifraDecimal(Number(resultado))}</p></div>
+          <div class="col-sm-8 ml-auto font-13 mt-2 text-left btn-dark"><p class="h4">$ {convertirACifraDecimal(Number(resultado))}</p></div>
+          <div class="col-sm-2 ml-auto font-13 mt-2 text-right btn-dark"><p class="h4">{''}</p></div>
         </div>
       </div></>
   );
@@ -94,6 +95,9 @@ const DataTotales= (props) => {
 const VistaPrevia  = (props) => {
   const {itemsUpdate,itemsApu} = useContext(DashboardContext);
   const Productos = itemsApu?.data?.ProductosApu || [];
+
+
+
 return (
 
     <React.Fragment>

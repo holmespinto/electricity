@@ -14,7 +14,7 @@ const GestionBasica = (props) => {
     itemsCliente,
     itemsEmpleado,itemsProductos
   } = useContext(DashboardContext);
-
+const proyectos = itemsProyecto?.data || [{}]
   return (
     <>
       {(() => {
@@ -41,7 +41,7 @@ const GestionBasica = (props) => {
             return (<><Proyecto
               accion={'GestionBasica'}
               tipo={props.tipo}
-              datos={itemsProyecto}/></>);
+              datos={proyectos}/></>);
           default:
             return (
               <>{''}</>

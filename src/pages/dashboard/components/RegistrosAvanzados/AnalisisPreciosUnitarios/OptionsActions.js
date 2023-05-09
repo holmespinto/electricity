@@ -17,6 +17,7 @@ const OptionsActions = (props) => {
 Productos?.map((row, i) => {
     const obj = {
       id: row.id,
+      IdApu: row.IdApu,
       Codigo: row.Codigo,
       value: row.id,
       label: row.Nombre,

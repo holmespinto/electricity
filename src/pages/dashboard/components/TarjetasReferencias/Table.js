@@ -1,7 +1,7 @@
 /* eslint-disable array-callback-return */
 // @flow
 import React, { useState } from 'react';
-import { Col, Row} from 'react-bootstrap';
+import { Col, Row } from 'react-bootstrap';
 //import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import {
   useTable,
@@ -84,9 +84,9 @@ const Table = (props: TableProps): React$Element<React$FragmentType> => {
     pagination && usePagination,
     isSelectable && useRowSelect
   );
-  let rows = pagination ? dataTable.page : dataTable.rows;
+  //let rows = pagination ? dataTable.page : dataTable.rows;
 
-//console.log('dataTable',rows)
+  //console.log('dataTable',rows)
   return (
     <>
       {isSearchable && (
@@ -99,16 +99,13 @@ const Table = (props: TableProps): React$Element<React$FragmentType> => {
       )}
 
       {pagination &&
-      <>
-      <Row>
-      <Col lg={5}> <Drop rows={dataTable} data={props.data}/></Col><Col lg={7}> <Basic/></Col>
-        </Row>
-        <Row>
+        <>
+          <Row>
+            <Col lg={5}> <Drop rows={dataTable} data={props.data} /></Col><Col lg={7}> <Basic /></Col>
+          </Row>
+          <Row>
             <Pagination tableProps={dataTable} sizePerPageList={props['sizePerPageList']} />
           </Row></>
-
-
-
       }
     </>
   );

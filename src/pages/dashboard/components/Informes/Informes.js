@@ -1,51 +1,36 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 // @flow
-import React, { useEffect, useContext } from 'react';
-import Material from '../GestionBasica/Material/Material';
-import Cliente from '../GestionBasica/Cliente/Cliente';
-import Proyecto from '../GestionBasica/Proyecto/Proyecto';
-import Empleado from '../GestionBasica/Empleado/Empleado';
+import React, {  useContext } from 'react';
+//import Material from '../GestionBasica/Material/Material';
+//import Cliente from '../GestionBasica/Cliente/Cliente';
+import GestionarProyecto from '../Informes/GestionarProyecto/GestionarProyecto';
+//import Empleado from '../GestionBasica/Empleado/Empleado';
 import { DashboardContext } from '../../../../layouts/context/DashboardContext';
 
 
-const GestionBasica = (props) => {
-  const {ConsultarListaDatos,items,query} = useContext(DashboardContext);
+const Informes = (props) => {
+const {itemsProyecto} = useContext(DashboardContext);
 
+/*
   useEffect(() => {
     ConsultarListaDatos(props.accion, props.tipo);
   }, [ConsultarListaDatos, props.accion, props.tipo]);
 
   useEffect(() => {
-    query(props.accion,'Cliente','consultar');
+    //query(props.accion,'Cliente','consultar');
   }, [props.accion,query]);
-
-
+*/
+const proyectos = itemsProyecto?.data || [{}]
   return (
     <>
       {(() => {
-        switch (props.tipo) {
-          case 'Material':case 'ManoObra':case 'Herramientas':
-            return (<><Material
-              accion={'GestionBasica'}
-              datos={items}
+        switch (props?.tipo) {
+          case 'GestionarProyecto':
+            return (<><GestionarProyecto
+              accion={'GestionarProyecto'}
               tipo={props.tipo}
-            /></>);
-          case 'Empleado':
-            return (<><Empleado
-              accion={'GestionBasica'}
-              tipo={props.tipo}
-              datos={items}
+              datos={proyectos}
               /></>);
-          case 'Cliente':
-            return (<><Cliente
-              accion={'GestionBasica'}
-              tipo={props.tipo}
-              datos={items}
-              /></>);
-          case 'ConsultaProyecto':
-            return (<><Proyecto
-              accion={'GestionBasica'}
-              tipo={props.tipo}
-              datos={items}/></>);
           default:
             return (
               <>{''}</>
@@ -56,4 +41,4 @@ const GestionBasica = (props) => {
   );
 };
 
-export default GestionBasica;
+export default Informes;

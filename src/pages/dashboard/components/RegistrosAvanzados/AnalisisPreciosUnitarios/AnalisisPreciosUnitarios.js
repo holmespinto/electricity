@@ -36,10 +36,11 @@ const ActionColumn = ({ row }) => {
       return item.Producto === opcion;
     });
     if (id > 0)
+    //updateApu(opcion,id)
     SubCategorias?.map((row, i) => {
       const obj ={
         id: row.id,
-        IdApu: row.IdApu,
+        IdApu: id,
         Objetivo: row.Descripcion,
         Total: row.Cantidad,
         Codigo: row.Codigo,
@@ -59,11 +60,12 @@ const ActionColumn = ({ row }) => {
     toggle()
     setItemsUpdate(array[0])
     setActions(!openActions);
+
   };
   return (
     <React.Fragment>
       <Row>
-        <Modal show={openActions} onHide={toggleActions} fullscreen={true} animation={true}>
+        <Modal show={openActions} onHide={toggleActions} fullscreen={false} animation={true}>
           <Modal.Body>
             <OptionsActions />
           </Modal.Body>

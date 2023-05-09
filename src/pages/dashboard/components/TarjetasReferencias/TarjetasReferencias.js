@@ -1,6 +1,6 @@
 /* eslint-disable array-callback-return */
 // @flow
-import React, { useContext, useEffect } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Row } from 'react-bootstrap';
 //import Table from './Table'
 import Kanban from './Board/'
@@ -32,24 +32,40 @@ type TarjetasReferenciasProps = {
     stock?: string,
   },
 };
-
+const pagesInSearch = () => {
+  const query = window.location.hash;
+  return query;
+};
 const TarjetasReferencias = (props: TarjetasReferenciasProps): React$Element<any> => {
-  const { query, itemsSubCategorias,PERMISOS_USER
+  const [idCategoria, setIdCategoria] = useState(0);
+
+  const { query, itemsApu,isLoading
   } = useContext(DashboardContext);
-  const SubCategorias = itemsSubCategorias?.data?.SubCategorias || [{}];
-  const permisos = PERMISOS_USER || [{}];
+  const nombresApus = itemsApu?.data?.Apus || [{}];
+  const SubCategorias = itemsApu?.data?.SubCategorias || [{}];
+  const ProductosApu = itemsApu?.data?.ProductosApu || [{}];
+
+  //const permisos = PERMISOS_USER || [{}];
   useEffect(() => {
-    query('RegistrosAvanzados', 'EditorPUA', [{ opcion: 'consultar', obj: 'EditorPUA' }]);
+    query('RegistrosAvanzados', 'Apu', [{ opcion: 'consultar', obj: 'Apu' }]);
+    //query('GestionesBasicas', 'Proyecto', [{ opcion: 'consultar', obj: 'Proyecto' }]);
+    const id = pagesInSearch();
+    let str = '#/dashboard/Informes/asignarApu?p=';
+    setIdCategoria(id?.replace(str, ''))
+
   }, [query])
 
+  const DatosProyect = nombresApus?.length>0?nombresApus?.filter((t) => t.id === idCategoria):[{}]
+  const Datos=[{"data":{SubCategorias:SubCategorias,ProductosApu:ProductosApu,DatosProyect:DatosProyect[0],idProyecto:idCategoria}}]
+//console.log('itemsProyecto',permisos)
 
   return (<>
     <Row>
-    {SubCategorias?.length>0?<Kanban data={SubCategorias} />:''}
+      {!isLoading && Datos?.length > 0? <Kanban  data={Datos[0]}  /> : ''}
     </Row>
 
-    </>
-    );
+  </>
+  );
 
 };
 

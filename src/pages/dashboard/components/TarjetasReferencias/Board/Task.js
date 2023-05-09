@@ -1,6 +1,6 @@
 // @flow
 import React from 'react';
-import { Card, Dropdown } from 'react-bootstrap';
+import { Card, Dropdown,Tooltip, OverlayTrigger } from 'react-bootstrap';
 import classNames from 'classnames';
 
 type TaskItemProps = {
@@ -49,25 +49,23 @@ const TaskItem = (props: TaskItemProps): React$Element<any> => {
                         variant="link"
                         className="text-muted card-drop arrow-none cursor-pointer p-0 shadow-none">
                         <i className="mdi mdi-dots-vertical font-18"></i>
-                    </Dropdown.Toggle>
-
-                    <Dropdown.Menu>
-                        <Dropdown.Item>
-                            <i className="mdi mdi-pencil me-1"></i>Edit
-                        </Dropdown.Item>
-                        <Dropdown.Item>
-                            <i className="mdi mdi-delete me-1"></i>Delete
-                        </Dropdown.Item>
-                        <Dropdown.Item divider />
-                        <Dropdown.Item>
-                            <i className="mdi mdi-plus-circle-outline me-1"></i>Add People
-                        </Dropdown.Item>
-                        <Dropdown.Item>
-                            <i className="mdi mdi-exit-to-app me-1"></i>Leave
-                        </Dropdown.Item>
-                    </Dropdown.Menu>
-                </Dropdown>
-
+                      </Dropdown.Toggle>
+                        <Dropdown.Menu>
+                          <Dropdown.Item>
+                            <OverlayTrigger
+                              key="bottom"
+                              placement="bottom"
+                              overlay={<Tooltip>Ver Productos Asignados</Tooltip>}>
+                              <button
+                                className="btn btn-link p-0 text-secondary float-end shadow-none px-0 py-2"
+                                id="addNewTodo"
+                                onClick={() => props.newTask('Pending', 'todoTasks', task.id)}>
+                                <i className="mdi mdi-exit-to-app me-1">Ver Productos</i>
+                              </button>
+                            </OverlayTrigger>
+                          </Dropdown.Item>
+                        </Dropdown.Menu>
+                      </Dropdown>
                 <p className="mb-0">
                     <img src={task.image?task.image:'https://robohash.org/doloribusatconsequatur.png?size=100x100&set=set1'} alt={task.Codigo} className="rounded-circle avatar-lg img-thumbnail w-25" style={{ height: '80px' }} />
                     <span className="align-middle"><b>{' $ '}{props.convertirACifraDecimal(Number(task.ValorUnitario))}</b></span>

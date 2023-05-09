@@ -7,6 +7,11 @@ import classNames from 'classnames';
 import encodeBasicUrl from '../../utils/encodeBasicUrl';
 import {Card } from 'react-bootstrap';
 import Spinner from '../../components/Spinner';
+import createResponseHandler from './createResponseHandler';
+import ConfirmacionEliminacionStrategy from './ConfirmacionEliminacionStrategy';
+import ConfirmacionAddStrategy from './ConfirmacionAddStrategy';
+import ConfirmacionUpdateStrategy from './ConfirmacionUpdateStrategy';
+import ConfirmacionBorrarStrategy from './ConfirmacionBorrarStrategy';
 
 import { APICore } from '../../helpers/api/apiCore';
 const api = new APICore();
@@ -28,7 +33,6 @@ const DashboardProvider = ({ children }) => {
   const [openActions, setActions] = useState(false);
   const [itemsUpProductos, setSignUpProductos] = useState(false);
   const [open, setOpen] = useState(false);
-
 
   const [itemsUpdate, setItemsUpdate] = useState([]);
   const [itemsAdd, setItemsAdd] = useState([]);
@@ -62,7 +66,9 @@ function deleteCookie(name) {
   const toggle = () => {
     setOpen((prevState) => !prevState);
   };
-
+  const updateApu = (id) => {
+      query('Informes', 'Apu', [{ opcion: 'consultar_idapu_vistaprevia', obj: 'Apu',IdApu:id}]);
+   };
   //DESGLOSAR URL PARA CADA OPCION DEL MENU
   const itemsMenuCallBack = useCallback((e) => {
 
@@ -79,7 +85,6 @@ function deleteCookie(name) {
 
   const Spinners = () => {
     const sizes = ['sm'];
-
     return (
         <Card>
             <Card.Body>
@@ -148,8 +153,10 @@ function deleteCookie(name) {
 
   }, []);
 
+
+//QUERY DE RESPUSTA DE CONSULTAS
   const query = useCallback((itemUrl, itemsmenuprincipal, opcion) => {
-    setLoading(true)
+    setLoading(true);
     let varibles;
     let datos = opcion;
     if (opcion) {
@@ -158,92 +165,59 @@ function deleteCookie(name) {
           .map((key) => key + '=' + datos[0][key])
           .join('&')
         : '';
+      varibles = queryString;
     }
-    varibles = queryString;
     const url = `accion=${itemUrl}&tipo=${itemsmenuprincipal}&${varibles}`;
     const datosMaterial = api.sendRequestData(`${url}`);
     datosMaterial?.then(function (response) {
       try {
-        (() => {
-          switch (datos[0]?.obj) {
-            case "Usuarios":
-              setIUsuarios(response)
-              break;
-            case "Roles":
-              setRoles(response)
-              break;
-            case "Empleado":
-              setEmpleado(response)
-              break;
-            case "GenerarNomina":
-              setNomina(response)
-              break;
-            case "ControlDiario":
-              setControlDiario(response)
-              break;
-            case "OrdenCompra":
-              setOrdenCompra(response)
-              break;
-            case "Cliente":
-              setCliente(response)
-              break;
-            case "Proyecto":
-              setProyecto(response)
-              break;
-            case "Empleado":
-              setEmpleado(response)
-              break;
-            case 'Productos':
-              setProductos(response)
-              break;
-            case 'Categorias':
-              setCategorias(response)
-              break;
-            case 'EditorPUA':
-              setSubCategorias(response)
-              break;
-            case 'Apu':
-              setApu(response)
-            break;
-            case 'ParametroPrecio':
-              setParametroPrecio(response)
-            break;
-              default:
-              setItemsQuery(response)
-          }
-        })()
+        const dataHandler = createResponseHandler(response, {
+          setIUsuarios,
+          setRoles,
+          setEmpleado,
+          setNomina,
+          setControlDiario,
+          setOrdenCompra,
+          setCliente,
+          setProyecto,
+          setProductos,
+          setCategorias,
+          setSubCategorias,
+          setApu,
+          setParametroPrecio,
+          setItemsQuery
+        });
+        const handler = dataHandler[datos[0]?.obj] || dataHandler.default;
+        handler();
       } catch (error) {
         console.error(error);
       }
-    }).catch((error) => console.error('Error:', error))
+    })
+      .catch((error) => console.error('Error:', error))
       .finally(() => {
         setTimeout(function () {
-        setLoading(false)
-        },1000);
+          setLoading(false);
+        }, 1000);
       });
-
   }, []);
+
   //ELEIMINAR REGISTRO
   const eliminar = useCallback((cel) => {
-    Swal.fire({
-      title: 'Desea eliminar el registro? ' + cel,
-      showCancelButton: true,
-    }).then((result) => {
-      /* Read more about isConfirmed, isDenied below */
-      if (result.isConfirmed) {
-        const url = `accion=${itemUrl}&tipo=${itemsmenuprincipal}&opcion=delete&id=${cel}`;
-        const respuesta = api.sendRequestData(`${url}`);
-        respuesta.then(function (resp) {
-          Swal.fire('' + resp[0].menssage + '');
-        })
-          .catch((error) => console.error('Error:', error))
-          .finally(() => {
-            setTimeout(function () {
-            }, 5000);
-          })
-      }
-    })
+    const estrategiaConfirmacion = new ConfirmacionEliminacionStrategy();
+    estrategiaConfirmacion.confirmar(cel, (cel) => {
+      const url = `accion=${itemUrl}&tipo=${itemsmenuprincipal}&opcion=delete&id=${cel}`;
+      const respuesta = api.sendRequestData(`${url}`);
+      respuesta.then(function (resp) {
+        Swal.fire('' + resp[0].menssage + '');
+      })
+        .catch((error) => console.error('Error:', error))
+        .finally(() => {
+          setTimeout(function () {
+          }, 5000);
+        });
+    });
   }, [itemUrl, itemsmenuprincipal]);
+
 
   const onPermisos = useCallback((itemUrl) => {
     setTimeout(function () {
@@ -282,6 +256,56 @@ function deleteCookie(name) {
     }, 1000);
   }, []);
 
+ //EDITOR DE APUS
+ const add = useCallback((cel,idProyecto) => {
+  const estrategiaConfirmacion = new ConfirmacionAddStrategy();
+  estrategiaConfirmacion.confirmar(cel, (cel) => {
+    const url = `accion=${itemUrl}&tipo=${itemsmenuprincipal}&opcion=add_apu&idApu=${cel}&idProyecto=${idProyecto}`;
+    const respuesta = api.sendRequestData(`${url}`);
+    respuesta.then(function (resp) {
+      Swal.fire('' + resp[0].menssage + '');
+    })
+      .catch((error) => console.error('Error:', error))
+      .finally(() => {
+        setTimeout(function () {
+        }, 5000);
+      });
+  });
+}, [itemUrl, itemsmenuprincipal]);
+
+ //ACTULIZAR  APUS ASIGNADAS
+ const update = useCallback((cel,idProyecto,valor) => {
+  const estrategiaConfirmacion = new ConfirmacionUpdateStrategy();
+  estrategiaConfirmacion.confirmar(cel, (cel) => {
+    const url = `accion=${itemUrl}&tipo=${itemsmenuprincipal}&opcion=update_apu&idApu=${cel}&idProyecto=${idProyecto}&valor=${valor}`;
+    const respuesta = api.sendRequestData(`${url}`);
+    respuesta.then(function (resp) {
+      Swal.fire('' + resp[0].menssage + '');
+    })
+      .catch((error) => console.error('Error:', error))
+      .finally(() => {
+        setTimeout(function () {
+        }, 5000);
+      });
+  });
+}, [itemUrl, itemsmenuprincipal]);
+
+ //ACTULIZAR  APUS ASIGNADAS
+ const borrar = useCallback((cel,idProyecto) => {
+  const estrategiaConfirmacion = new ConfirmacionBorrarStrategy();
+  estrategiaConfirmacion.confirmar(cel, (cel) => {
+    const url = `accion=${itemUrl}&tipo=${itemsmenuprincipal}&opcion=delete_apu&idApu=${cel}&idProyecto=${idProyecto}`;
+    const respuesta = api.sendRequestData(`${url}`);
+    respuesta.then(function (resp) {
+      Swal.fire('' + resp[0].menssage + '');
+    })
+      .catch((error) => console.error('Error:', error))
+      .finally(() => {
+        setTimeout(function () {
+        }, 5000);
+      });
+  });
+}, [itemUrl, itemsmenuprincipal]);
 
   const data = {
     itemsMenuCallBack,
@@ -320,8 +344,8 @@ function deleteCookie(name) {
     itemsapuTransport, setApuTrasporte,
     itemsParametroPrecios, setParametroPrecio,
     getCookie,deleteCookie,
-    queryFile,
-    onPermisos, PERMISOS_USER
+    queryFile,updateApu,
+    onPermisos, PERMISOS_USER,add,update,borrar
   };
   return (
     <>

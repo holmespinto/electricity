@@ -22,7 +22,7 @@ const ActionColumn = ({ row }) => {
   const permisos = PERMISOS_USER || [{}];
   const toggleSignUp = (id) => {
     let array = [];
-    console.log('itemsProductos',id)
+    //console.log('itemsProductos',id)
     if(id>0)
     itemsProductos?.map((row, i) =>{
            if(row.id===id){
