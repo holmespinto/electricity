@@ -33,7 +33,7 @@ const DashboardProvider = ({ children }) => {
   const [openActions, setActions] = useState(false);
   const [itemsUpProductos, setSignUpProductos] = useState(false);
   const [open, setOpen] = useState(false);
-
+  const [idCategoria, setIdCategoria] = useState(0);
   const [itemsUpdate, setItemsUpdate] = useState([]);
   const [itemsAdd, setItemsAdd] = useState([]);
   const [itemsRoles, setRoles] = useState([]);
@@ -49,6 +49,7 @@ const DashboardProvider = ({ children }) => {
   const [itemsApu, setApu] = useState([]);
   const [itemsParametroPrecios, setParametroPrecio] = useState([]);
   const [itemsapuTransport, setApuTrasporte] = useState([]);
+  const [itemsEditarProyecto, setEditarProyecto] = useState([]);
   const [PERMISOS_USER, setpermisos] = useState([{}]);
 // función para obtener el valor de una cookie
 function getCookie(name) {
@@ -185,7 +186,8 @@ function deleteCookie(name) {
           setSubCategorias,
           setApu,
           setParametroPrecio,
-          setItemsQuery
+          setItemsQuery,
+          setEditarProyecto
         });
         const handler = dataHandler[datos[0]?.obj] || dataHandler.default;
         handler();
@@ -306,7 +308,10 @@ function deleteCookie(name) {
       });
   });
 }, [itemUrl, itemsmenuprincipal]);
-
+const pagesInSearch = () => {
+  const query = window.location.hash;
+  return query;
+};
   const data = {
     itemsMenuCallBack,
     setLoading,
@@ -345,7 +350,9 @@ function deleteCookie(name) {
     itemsParametroPrecios, setParametroPrecio,
     getCookie,deleteCookie,
     queryFile,updateApu,
-    onPermisos, PERMISOS_USER,add,update,borrar
+    onPermisos, PERMISOS_USER,add,update,borrar,pagesInSearch,
+    itemsEditarProyecto, setEditarProyecto,
+    idCategoria, setIdCategoria
   };
   return (
     <>

@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable array-callback-return */
 // @flow
 import React, { useContext, Suspense, useEffect } from 'react';
@@ -20,10 +21,12 @@ const ActionColumn = ({ row }) => {
   const permisos = PERMISOS_USER || [{}];
 
 
+
   const toggleSignUp = (id) => {
+    const itemsPr = itemsProyecto || [];
     let array = [];
     if (id > 0)
-      itemsProyecto?.map((row, i) => {
+    itemsPr?.map((row, i) => {
         if (row.id === id) {
           array.push(row)
         }
@@ -141,9 +144,9 @@ const GestionarProyecto = (props) => {
   };
   useEffect(() => {
     query('GestionesBasicas', 'Proyecto', [{ opcion: 'consultar', obj: 'Proyecto' }]);
-  }, [query])
+  }, [])
 
-  //console.log(data?.length,permisos)
+   console.log('GestionarProyecto',data)
   return (
     <>
       <Row>

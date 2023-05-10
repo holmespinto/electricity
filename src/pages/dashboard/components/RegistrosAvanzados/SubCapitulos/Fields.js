@@ -45,15 +45,17 @@ const Register = (props): React$Element<React$FragmentType> => {
   const onSubmit = () => {
 
     dispatch(queryFormSend(...items))
+    setTimeout(function() {
+      if (window.location.hash === "#/dashboard/Informes/EditarProyecto?p=1" ) {
+        window.location.hash.reload()
+      }
+    }, 1000)
 
-    setTimeout(function () {
-      setOpen(open)
-    }, 2000);
   };
 
   return (
     <>
-      {queryForm ? <Redirect to={`/${props?.accion}/${props?.tipo}`}></Redirect> : null}
+      {queryForm ? <Redirect to={`#/dashboard/Informes/EditarProyecto`}></Redirect> : null}
       <Row>
         <Col sm={12}>
           <div className="text-center m-auto ">

@@ -18,7 +18,7 @@ const ProjectDashboard = () => {
     onPermisos(itemsmenuprincipal);
   }, [itemsmenuprincipal, onPermisos]);
 
-  console.log('index', itemsmenuprincipal)
+  //console.log('index', itemsmenuprincipal)
 
   return (
 
@@ -54,7 +54,7 @@ const ProjectDashboard = () => {
               accion={'GestionBasica'}
               tipo={itemsmenuprincipal}
             /></>);
-          case 'GestionarProyecto':
+          case 'GestionarProyecto':case 'EditarProyecto':
             return (<><Informes
               accion={'Informes'}
               tipo={itemsmenuprincipal}

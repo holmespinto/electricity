@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable array-callback-return */
 // @flow
 import React, { useContext, useEffect, useState } from 'react';
@@ -32,14 +33,11 @@ type TarjetasReferenciasProps = {
     stock?: string,
   },
 };
-const pagesInSearch = () => {
-  const query = window.location.hash;
-  return query;
-};
+
 const TarjetasReferencias = (props: TarjetasReferenciasProps): React$Element<any> => {
   const [idCategoria, setIdCategoria] = useState(0);
 
-  const { query, itemsApu,isLoading
+  const { query, itemsApu,isLoading,pagesInSearch
   } = useContext(DashboardContext);
   const nombresApus = itemsApu?.data?.Apus || [{}];
   const SubCategorias = itemsApu?.data?.SubCategorias || [{}];
@@ -57,7 +55,7 @@ const TarjetasReferencias = (props: TarjetasReferenciasProps): React$Element<any
 
   const DatosProyect = nombresApus?.length>0?nombresApus?.filter((t) => t.id === idCategoria):[{}]
   const Datos=[{"data":{SubCategorias:SubCategorias,ProductosApu:ProductosApu,DatosProyect:DatosProyect[0],idProyecto:idCategoria}}]
-//console.log('itemsProyecto',permisos)
+//
 
   return (<>
     <Row>

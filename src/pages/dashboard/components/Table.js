@@ -82,7 +82,7 @@ const Table = (props: TableProps): React$Element<React$FragmentType> => {
     const pagination = props['pagination'] || false;
     const isSelectable = props['isSelectable'] || false;
     const isExpandable = props['isExpandable'] || false;
-
+    console.log('isExpandable',isExpandable)
     const dataTable = useTable(
         {
             columns: props['columns'],
@@ -117,10 +117,10 @@ const Table = (props: TableProps): React$Element<React$FragmentType> => {
                     },
                     ...columns,
                 ]);
-
             isExpandable &&
                 hooks.visibleColumns.push((columns) => [
                     // Let's make a column for selection
+
                     {
                         // Build our expander column
                         id: 'expander', // Make sure it has an ID
@@ -130,6 +130,7 @@ const Table = (props: TableProps): React$Element<React$FragmentType> => {
                         Cell: ({ row }) =>
                             // Use the row.canExpand and row.getToggleRowExpandedProps prop getter
                             // to build the toggle for expanding a row
+
                             row.canExpand ? (
                                 <span
                                     {...row.getToggleRowExpandedProps({
@@ -165,7 +166,7 @@ const Table = (props: TableProps): React$Element<React$FragmentType> => {
             <div className="table-responsive">
                 <table
                     {...dataTable.getTableProps()}
-                    className={classNames('table table-centered react-table', props['tableClass'])}>
+                    className={classNames('table table-striped', props['tableClass'])}>
                     <thead className={props['theadClass']}>
                         {dataTable.headerGroups.map((headerGroup) => (
                             <tr {...headerGroup.getHeaderGroupProps()}>

@@ -8,6 +8,7 @@ const createResponseHandler = (response, setData) => {
     OrdenCompra: () => setData.setOrdenCompra(response),
     Cliente: () => setData.setCliente(response),
     Proyecto: () => setData.setProyecto(response),
+    EditarProyecto: () => setData.setEditarProyecto(response),
     Productos: () => setData.setProductos(response),
     Categorias: () => setData.setCategorias(response),
     EditorPUA: () => setData.setSubCategorias(response),
