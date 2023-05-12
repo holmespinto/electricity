@@ -6,7 +6,7 @@ import { Row, Col,  Modal } from 'react-bootstrap';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { DashboardContext } from '../../../../../layouts/context/DashboardContext';
 import classNames from 'classnames';
-import { Link } from 'react-router-dom';
+
 // components
 import VistaPrevia from '../../RegistrosAvanzados/AnalisisPreciosUnitarios/VistaPrevia';
 //import { FormInput } from '../../../../../components/';
@@ -15,6 +15,8 @@ import { convertirACifraDecimal,multiplicar } from '../../../../../utils/convert
 import TaskItem from './Task';
 import TaskItemB from './TaskItemB';
 import Pagination from '../Pagination'
+import HorizontalSteps from '../../HorizontalSteps/HorizontalSteps'
+import TitleProyect from '../../TitleProyect/TitleProyect'
 
 
 
@@ -166,39 +168,18 @@ const Kanban = (props): React$Element<React$FragmentType> => {
   //console.log('DatosProyect',state)
   return (
     <React.Fragment>
-                          <Row className="justify-content-center">
-                        <Col lg={7} md={10} sm={11}>
-                            <div className="horizontal-steps mt-2 mb-2 pb-3">
-                                <div className="horizontal-steps-content">
-                                    <div className="step-item">
-                                    <Link to={`/dashboard/Informes/asignarApu?p=${idProyecto}`} className="btn btn-link p-0 text-secondary shadow-none px-0 py-2">
-                                        <span
-                                            data-toggle="tooltip"
-                                            data-placement="bottom"
-                                            title=""
-                                            data-original-title="20/08/2018 07:24 PM">
-                                        </span>
-                                        </Link>
-                                    </div>
-                                    <div className="step-item current">
-                                    <Link to={`/dashboard/Informes/EditarProyecto?p=${idProyecto}`} className="btn btn-link p-0 text-secondary shadow-none px-0 py-2">
-                                        <span
-                                            data-toggle="tooltip"
-                                            data-placement="bottom"
-                                            title=""
-                                            data-original-title="21/08/2018 11:32 AM">Editar
-                                        </span>
-                                        </Link>
-                                    </div>
-                                </div>
+      <HorizontalSteps
+      contentInit={'current'}
+      contentEnd={''}
+      titleInit={''}
+      titleEnd={'Editar'}
+      idProyecto={idProyecto} />
 
-                                <div className="process-line" style={{ width: '33%' }}></div>
-                            </div>
-                        </Col>
-                    </Row>
-    <Row className="align-items-center"><Col className="col-auto text-secondary">{DatosProyect?.Objetivo?DatosProyect?.Objetivo:'Ingrese nuevamente a esta opcion'}</Col> </Row>
-
-
+    <Row>
+        <Col xl={12}>
+          <TitleProyect title={DatosProyect?.Objetivo?DatosProyect?.Objetivo:'Ingrese nuevamente a esta opcion'} />
+        </Col>
+      </Row>
       <Row>
         <Col>
           <DragDropContext onDragEnd={onDragEnd}>

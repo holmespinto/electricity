@@ -146,7 +146,7 @@ const GestionarProyecto = (props) => {
     query('GestionesBasicas', 'Proyecto', [{ opcion: 'consultar', obj: 'Proyecto' }]);
   }, [])
 
-   console.log('GestionarProyecto',data)
+   //console.log('GestionarProyecto',data)
   return (
     <>
       <Row>

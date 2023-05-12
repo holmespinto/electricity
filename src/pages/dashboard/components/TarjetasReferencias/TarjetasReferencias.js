@@ -46,7 +46,6 @@ const TarjetasReferencias = (props: TarjetasReferenciasProps): React$Element<any
   //const permisos = PERMISOS_USER || [{}];
   useEffect(() => {
     query('RegistrosAvanzados', 'Apu', [{ opcion: 'consultar', obj: 'Apu' }]);
-    //query('GestionesBasicas', 'Proyecto', [{ opcion: 'consultar', obj: 'Proyecto' }]);
     const id = pagesInSearch();
     let str = '#/dashboard/Informes/asignarApu?p=';
     setIdCategoria(id?.replace(str, ''))
