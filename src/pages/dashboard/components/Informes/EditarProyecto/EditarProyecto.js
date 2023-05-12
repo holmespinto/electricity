@@ -2,7 +2,7 @@
 /* eslint-disable array-callback-return */
 // @flow
 import React, { useContext, Suspense, useEffect } from 'react';
-import { Row, Col, Card, Pagination, Modal, Dropdown,Tooltip, OverlayTrigger } from 'react-bootstrap';
+import { Row, Col, Card, Pagination, Modal} from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { DashboardContext } from '../../../../../layouts/context/DashboardContext';
 //import classNames from 'classnames';
@@ -49,7 +49,7 @@ const ActionColumn = ({ row }) => {
         setLoading(open);
         setSignUpModalAdd(signUpModalAdd);
         toggle()
-        console.log('SubCategorias',array[0])
+        //console.log('SubCategorias',array[0])
     };
 
   return (

@@ -1,5 +1,5 @@
 // @flow
-import React, { useState, useContext } from 'react';
+import React, { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Redirect } from 'react-router-dom';
 import { Button, Alert, Form, Col, Row } from 'react-bootstrap';
@@ -11,10 +11,10 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { queryFormSend } from '../../../../../redux/actions';
 // components
 import { VerticalForm } from '../../../../../components/';
-import { DashboardContext } from '../../../../../layouts/context/DashboardContext';
+//import { DashboardContext } from '../../../../../layouts/context/DashboardContext';
 
 const Register = (props): React$Element<React$FragmentType> => {
-  const { setOpen, open } = useContext(DashboardContext);
+  //const { setOpen, open } = useContext(DashboardContext);
   const [items, setItems] = useState([{
     Categoria: props?.ItemsUpdate?.length === 1 ? props?.ItemsUpdate[0]?.Nombre : '',
     idCategoria: props?.ItemsUpdate?.length === 1 ? props?.ItemsUpdate[0]?.idCategoria : '',

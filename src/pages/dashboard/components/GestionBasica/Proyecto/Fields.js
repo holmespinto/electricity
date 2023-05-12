@@ -46,7 +46,7 @@ const Register = (props): React$Element<React$FragmentType> => {
       setOpen(!open)
     }, 2000);
   };
-console.log(items)
+//console.log(items)
    return (
     <>
       {queryForm ? <Redirect to={`/${props?.accion}/${props?.tipo}`}></Redirect> : null}

@@ -43,7 +43,7 @@ const ExcelToJson = ({
       };
     }
   };
-   console.log(validar);
+   //console.log(validar);
   return (
       <React.Fragment>
           <Row>

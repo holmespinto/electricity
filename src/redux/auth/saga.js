@@ -28,7 +28,7 @@ function* login({ payload: { username, password } }) {
         setAuthorization(user['token']);
         yield put(authApiResponseSuccess(AuthActionTypes.LOGIN_USER, user));
     } catch (error) {
-        console.log(error);
+        //console.log(error);
         yield put(authApiResponseError(AuthActionTypes.LOGIN_USER, error));
         api.setLoggedInUser(null);
         setAuthorization(null);

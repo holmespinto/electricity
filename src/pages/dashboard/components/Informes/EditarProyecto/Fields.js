@@ -22,7 +22,7 @@ function multiplicar(a,b){
 
 
 const Register = (props)=> {
-const {query,setActions,openActions} = useContext(DashboardContext);
+const {setActions,openActions} = useContext(DashboardContext);
   const [detalles, setDetalles] = useState([]);
 
   const obj = props?.ItemsUpdate[0]?.length > 0 ? props?.ItemsUpdate[0] : []
@@ -64,7 +64,7 @@ const {query,setActions,openActions} = useContext(DashboardContext);
     accion:props.accion,
     IdApu:props.IdApu,
   }
-  console.log('objs',objs)
+  //console.log('objs',objs)
   setDetalles(objs)
 }
   }, [items])

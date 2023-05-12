@@ -5,8 +5,6 @@ import React, { useState,useContext } from 'react';
 import { Row, Col,  Modal } from 'react-bootstrap';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { DashboardContext } from '../../../../../layouts/context/DashboardContext';
-import * as yup from 'yup';
-import { yupResolver } from '@hookform/resolvers/yup';
 import classNames from 'classnames';
 import { Link } from 'react-router-dom';
 // components
@@ -40,7 +38,7 @@ const Kanban = (props): React$Element<React$FragmentType> => {
 
   const [currentCout, setCoutPage] = useState({Total:0});
    const [currentPage, setCurrentPage] = useState(1);
-  const [tasksPerPage, setTasksPerPage] = useState(4);
+  const [tasksPerPage] = useState(4);
   const [searchTerm, setSearchTerm] = useState('');
 
   const indexOfLastTask = currentPage * tasksPerPage;
@@ -54,18 +52,6 @@ const Kanban = (props): React$Element<React$FragmentType> => {
     newTask: null,
   });
 
-  /*
-   * Form validation schema
-   */
-  const schemaResolver = yupResolver(
-    yup.object().shape({
-      idCategoria: yup.string().required(),
-      Descripcion: yup.string().required(),
-      Unidad: yup.string().required(),
-      ValorUnitario: yup.string().required(),
-      Codigo: yup.string().required(),
-    })
-  );
 
   /**
    * Toggles the new task modal
