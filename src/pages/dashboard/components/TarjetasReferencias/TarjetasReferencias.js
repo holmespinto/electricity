@@ -42,6 +42,7 @@ const TarjetasReferencias = (props: TarjetasReferenciasProps): React$Element<any
   const nombresApus = itemsApu?.data?.Apus || [{}];
   const SubCategorias = itemsApu?.data?.SubCategorias || [{}];
   const ProductosApu = itemsApu?.data?.ProductosApu || [{}];
+  const ProyectosApu = itemsApu?.data?.ProyectosApu || [{}];
 
   //const permisos = PERMISOS_USER || [{}];
   useEffect(() => {
@@ -53,7 +54,8 @@ const TarjetasReferencias = (props: TarjetasReferenciasProps): React$Element<any
   }, [query])
 
   const DatosProyect = nombresApus?.length>0?nombresApus?.filter((t) => t.id === idCategoria):[{}]
-  const Datos=[{"data":{SubCategorias:SubCategorias,ProductosApu:ProductosApu,DatosProyect:DatosProyect[0],idProyecto:idCategoria}}]
+  const apusProyecto = ProyectosApu?.length>0?ProyectosApu?.filter((t) => t.IdProyecto === idCategoria):[{}]
+  const Datos=[{"data":{SubCategorias:SubCategorias,ProductosApu:ProductosApu,DatosProyect:DatosProyect[0],idProyecto:idCategoria,ProyectosApu:apusProyecto}}]
 //
 
   return (<>

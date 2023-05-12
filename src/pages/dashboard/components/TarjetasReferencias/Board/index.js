@@ -35,8 +35,9 @@ const Kanban = (props): React$Element<React$FragmentType> => {
   const idProyecto = props?.data?.data?.idProyecto || 0;
   const tasks = props?.data?.data?.SubCategorias || [{}];
   const ProductosApu = props?.data?.data?.ProductosApu || [{}];
+  const ApusProyecto = props?.data?.data?.ProyectosApu || [{}];
   const DatosProyect = props?.data?.data?.DatosProyect || [{}];
-
+//ApusProyecto:ApusProyecto,Apus:Apus
 
   const [currentCout, setCoutPage] = useState({Total:0});
    const [currentPage, setCurrentPage] = useState(1);
@@ -48,7 +49,7 @@ const Kanban = (props): React$Element<React$FragmentType> => {
 
   const [state, setState] = useState < StateType > ({
     todoTasks: tasks.filter((t) => t.status === 'Pending'),
-    inprogressTasks: tasks.filter((t) => t.status === 'Inprogress'),
+    inprogressTasks: ApusProyecto?.filter((t) => t.status === 'Inprogress'),
     totalTasks: tasks.length,
     newTaskModal: false,
     newTask: null,
@@ -159,8 +160,8 @@ const Kanban = (props): React$Element<React$FragmentType> => {
     setCurrentPage(pageNumber);
   };
   const filteredTasks = currentTasks.filter(task => {
-    const Descripcion = task.Descripcion.toLowerCase();
-    const Codigo = task.Codigo.toLowerCase();
+    const Descripcion = task?.Descripcion?.toLowerCase();
+    const Codigo = task?.Codigo?.toLowerCase();
     return Descripcion.includes(searchTerm.toLowerCase()) || Codigo.includes(searchTerm.toLowerCase());
   })
 

@@ -1,7 +1,7 @@
 /* eslint-disable array-callback-return */
 /* eslint-disable no-duplicate-case */
 /* eslint-disable no-fallthrough */
-import React, { createContext, useState, useCallback } from 'react';
+import React, { createContext, useState, useCallback,useEffect } from 'react';
 import Swal from 'sweetalert2'
 import classNames from 'classnames';
 import encodeBasicUrl from '../../utils/encodeBasicUrl';
@@ -51,6 +51,8 @@ const DashboardProvider = ({ children }) => {
   const [itemsapuTransport, setApuTrasporte] = useState([]);
   const [itemsEditarProyecto, setEditarProyecto] = useState([]);
   const [PERMISOS_USER, setpermisos] = useState([{}]);
+
+
 // función para obtener el valor de una cookie
 function getCookie(name) {
   var value = "; " + document.cookie;
@@ -308,11 +310,27 @@ function deleteCookie(name) {
       });
   });
 }, [itemUrl, itemsmenuprincipal]);
+
 const pagesInSearch = () => {
   const query = window.location.hash;
   return query;
 };
+
+
+const AdvertenciaLocalStorage = () => {
+  useEffect(() => {
+    const seccionEnLocalStorage = sessionStorage.getItem('hyper_user');
+
+    if (!seccionEnLocalStorage) {
+      return window.location.hash = '#/account/logout';
+    }
+  }, []);
+
+
+};
+
   const data = {
+    AdvertenciaLocalStorage,
     itemsMenuCallBack,
     setLoading,
     setitemsMenuPrincipal,

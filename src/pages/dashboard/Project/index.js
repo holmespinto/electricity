@@ -12,14 +12,14 @@ import TarjetasReferencias from '../../../pages/dashboard/components/TarjetasRef
 import { DashboardContext } from '../../../layouts/context/DashboardContext';
 
 const ProjectDashboard = () => {
-  const { itemsmenuprincipal, onPermisos } = useContext(DashboardContext)
+  const { itemsmenuprincipal, onPermisos,AdvertenciaLocalStorage } = useContext(DashboardContext)
 
   useEffect(() => {
     onPermisos(itemsmenuprincipal);
   }, [itemsmenuprincipal, onPermisos]);
 
   //console.log('index', itemsmenuprincipal)
-
+  AdvertenciaLocalStorage();
   return (
 
     <React.Fragment>
