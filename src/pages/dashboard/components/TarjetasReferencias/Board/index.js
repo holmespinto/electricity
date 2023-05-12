@@ -2,13 +2,13 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 // @flow
 import React, { useState,useContext } from 'react';
-import { useForm } from 'react-hook-form';
-import { Row, Col, OverlayTrigger, Tooltip, Modal } from 'react-bootstrap';
+import { Row, Col,  Modal } from 'react-bootstrap';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { DashboardContext } from '../../../../../layouts/context/DashboardContext';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import classNames from 'classnames';
+import { Link } from 'react-router-dom';
 // components
 import VistaPrevia from '../../RegistrosAvanzados/AnalisisPreciosUnitarios/VistaPrevia';
 //import { FormInput } from '../../../../../components/';
@@ -180,7 +180,39 @@ const Kanban = (props): React$Element<React$FragmentType> => {
   //console.log('DatosProyect',state)
   return (
     <React.Fragment>
+                          <Row className="justify-content-center">
+                        <Col lg={7} md={10} sm={11}>
+                            <div className="horizontal-steps mt-2 mb-2 pb-3">
+                                <div className="horizontal-steps-content">
+                                    <div className="step-item">
+                                    <Link to={`/dashboard/Informes/asignarApu?p=${idProyecto}`} className="btn btn-link p-0 text-secondary shadow-none px-0 py-2">
+                                        <span
+                                            data-toggle="tooltip"
+                                            data-placement="bottom"
+                                            title=""
+                                            data-original-title="20/08/2018 07:24 PM">
+                                        </span>
+                                        </Link>
+                                    </div>
+                                    <div className="step-item current">
+                                    <Link to={`/dashboard/Informes/EditarProyecto?p=${idProyecto}`} className="btn btn-link p-0 text-secondary shadow-none px-0 py-2">
+                                        <span
+                                            data-toggle="tooltip"
+                                            data-placement="bottom"
+                                            title=""
+                                            data-original-title="21/08/2018 11:32 AM">Editar
+                                        </span>
+                                        </Link>
+                                    </div>
+                                </div>
+
+                                <div className="process-line" style={{ width: '33%' }}></div>
+                            </div>
+                        </Col>
+                    </Row>
     <Row className="align-items-center"><Col className="col-auto text-secondary">{DatosProyect?.Objetivo?DatosProyect?.Objetivo:'Ingrese nuevamente a esta opcion'}</Col> </Row>
+
+
       <Row>
         <Col>
           <DragDropContext onDragEnd={onDragEnd}>
@@ -243,11 +275,11 @@ const Kanban = (props): React$Element<React$FragmentType> => {
                     <><div>
                       <span className="d-flex align-items-center bg-primary pt-2"><h5 className="mt-0 task-header text-uppercase">
                         {state.inprogressTasks.length === 0?
-                          <p className="text-center text-muted pt-2 mb-0">No Tasks</p>:`+(${(state.inprogressTasks.length)})  Total General: $ ${convertirACifraDecimal(Number(currentCout.Total))}`
+                          <p className="text-center text-muted pt-2 mb-0">HAGA CLIK SOTENIDO EN LA TARJETA DE LA APU Y ARRASTRELA HACIA ABAJO,AL AREA GRIS, PARA ADJUNTARLA AL PROYECTO</p>:`+(${(state.inprogressTasks.length)})  Total General: $ ${convertirACifraDecimal(Number(currentCout.Total))}`
                         }
                       </h5></span>
                     </div>
-                      <div ref={provided.innerRef} className="tasks">
+                      <div ref={provided.innerRef} className="tasks bg-secondary w-auto shadow-none h-auto">
 
 
                         {state.inprogressTasks.map((item, index) => (

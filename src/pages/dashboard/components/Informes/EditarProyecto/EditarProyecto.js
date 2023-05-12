@@ -153,7 +153,7 @@ const EditarProyecto = (props) => {
   useEffect(() => {
     query('Informes', 'EditarProyecto', [{ opcion: 'consultar', obj: 'EditarProyecto' }]);
   }, [])
-  console.log('Apus', Apus)
+  //console.log('Apus', Apus)
 
   const BasicTable = (props) => {
     //console.log('BasicTable', props)
@@ -172,11 +172,44 @@ const EditarProyecto = (props) => {
   };
   return (
     <>
+          <Row className="justify-content-left">
+                        <Col lg={7} md={10} sm={11}>
+                            <div className="horizontal-steps mt-2 mb-2 pb-2">
+                                <div className="horizontal-steps-content">
+                                    <div className="step-item current">
+                                    <Link to={`/dashboard/Informes/asignarApu?p=${props?.idProyecto}`} className="btn btn-link p-0 text-secondary shadow-none px-0 py-2">
+                                        <span
+                                            data-toggle="tooltip"
+                                            data-placement="bottom"
+                                            title="Adjuntar APU"
+                                            data-original-title="20/08/2018 07:24 PM">
+                                              APU
+                                        </span>
+                                        </Link>
+                                    </div>
+                                    <div className="step-item">
+                                    <Link to={`/dashboard/Informes/EditarProyecto?p=${props?.idProyecto}`} className="btn btn-link p-0 text-secondary shadow-none px-0 py-2">
+                                        <span
+                                            data-toggle="tooltip"
+                                            data-placement="bottom"
+                                            title=""
+                                            data-original-title="21/08/2018 11:32 AM">
+
+                                        </span>
+                                        </Link>
+                                    </div>
+                                </div>
+
+                                <div className="process-line" style={{ width: '33%' }}></div>
+                            </div>
+                        </Col>
+                    </Row>
       <Row>
         <Col xl={12}>
           <BasicTable data={proyectos[0]} />
         </Col>
       </Row>
+
       <Row>
         <Col>
           <Card>

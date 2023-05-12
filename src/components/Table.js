@@ -1,6 +1,7 @@
 // @flow
 import React, { useRef, useEffect, forwardRef } from 'react';
 import {Button } from 'react-bootstrap';
+import PdfComponent from '../pages/dashboard/components/ButtonExportar/PdfComponent';
 import {
     useTable,
     useSortBy,
@@ -165,7 +166,7 @@ const Table = (props: TableProps): React$Element<React$FragmentType> => {
     return (
         <>
             <div className="row justify-content-start">
-            <div class="col-4">
+            <div class="col-8">
              {isSearchable && (
                 <GlobalFilter
                     preGlobalFilteredRows={dataTable.preGlobalFilteredRows}
@@ -174,9 +175,13 @@ const Table = (props: TableProps): React$Element<React$FragmentType> => {
                     searchBoxClass={props['searchBoxClass']}
                 />
             )}</div>
-                <div class="col-12">
-                {isVisible && (<ButtonExportar numtable={table}/> )}
+                {isVisible && (<>
+                <div class="col-2">
+                <ButtonExportar numtable={table}/>
                 </div>
+                <div class="col-2 p-2">
+                <PdfComponent nombre={table}/>
+                </div></>)}
             </div>
 
             <div className="table-responsive">

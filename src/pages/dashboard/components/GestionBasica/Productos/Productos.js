@@ -165,6 +165,7 @@ const Productos = (props) => {
                 sizePerPageList={sizePerPageList}
                 isSortable={true}
                 pagination={true}
+                isVisible={true}
                 theadClass="table-light"
                 searchBoxClass="mt-2 mb-3"
                 isSearchable={true}

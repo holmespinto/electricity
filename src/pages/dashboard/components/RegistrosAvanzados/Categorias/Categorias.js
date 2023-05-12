@@ -175,6 +175,7 @@ const Categorias = (props) => {
                 theadClass="table-light"
                 searchBoxClass="mt-2 mb-3"
                 isSearchable={true}
+                isVisible={true}
                 nametable={props.accion}
                 titulo={itemsmenuprincipal}
                 permisos={permisos}

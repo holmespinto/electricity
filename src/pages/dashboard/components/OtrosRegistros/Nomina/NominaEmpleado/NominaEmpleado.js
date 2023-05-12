@@ -138,6 +138,7 @@ const NominaEmpleado = (props) => {
                 pageSize={5}
                 sizePerPageList={sizePerPageList}
                 isSortable={true}
+                isVisible={true}
                 pagination={true}
                 theadClass="table-light"
                 searchBoxClass="mt-2 mb-3"

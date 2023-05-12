@@ -7,6 +7,7 @@ import BtnActions from '../../BtnActions';
 import FormAdd from './FormAdd';
 import FormUpdate from './FormUpdate';
 import Table from '../../../../../components/Table';
+
 const loading = () => <div className="text-center"></div>;
 const ActionColumn = ({ row }) => {
 
@@ -128,9 +129,12 @@ const Proyecto = (props) => {
   useEffect(() => {
     query('GestionesBasicas', 'Proyecto', [{ opcion: 'consultar', obj: 'Proyecto' }]);
   }, [query])
+
+
   return (
     <>
       <Row>
+
         <Col>
           <Card>
             <Card.Body>
@@ -155,6 +159,7 @@ const Proyecto = (props) => {
                 data={props?.datos}
                 pageSize={5}
                 sizePerPageList={sizePerPageList}
+                isVisible={true}
                 isSortable={true}
                 pagination={true}
                 theadClass="table-light"

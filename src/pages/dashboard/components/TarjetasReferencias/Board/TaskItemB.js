@@ -48,14 +48,14 @@ const TaskItemB = (props: TaskItemProps): React$Element<any> => {
     //
 
     return (
-        <Card className="mb-0">
+        <Card className="mb-0 bg-info tex-white">
             <Card.Body className="p-3">
-                <p className="mb-0">
-                <small className="float-end text-muted">{'$ '}{props.convertirACifraDecimal(Number(task.ValorUnitario))}</small>
+                <p className="mb-0 text-white">
+                <small className="float-end text-white">{'$ '}{props.convertirACifraDecimal(Number(task.ValorUnitario))}</small>
                 <br/>
                 </p>
                 <h5 className="mt-2 mb-2 badge bg-primary text-wrap text-capitalize lh-1 text-start">
-                    <a href="/" className="card-descripcion">
+                    <a href="/" className="card-descripcion text-white">
                         {task.Descripcion.toLowerCase().replace(/\w\S*/g, (w) => (w.replace(/^\w/, (c) => c.toUpperCase())))}
                     </a>
                 </h5>
@@ -80,11 +80,11 @@ const TaskItemB = (props: TaskItemProps): React$Element<any> => {
                 </span>
 
                 </p>
-                <Dropdown className="float-end" align="end">
+                <Dropdown className="float-end " align="end">
                     <Dropdown.Toggle
                         variant="link"
-                        className="text-muted card-drop arrow-none cursor-pointer p-0 shadow-none">
-                        <i className="mdi mdi-dots-vertical font-18"></i>
+                        className="tex-white card-drop arrow-none cursor-pointer p-0 ">
+                        <i className="mdi mdi-dots-vertical font-18 tex-white"></i>
                     </Dropdown.Toggle>
 
                     <Dropdown.Menu>
