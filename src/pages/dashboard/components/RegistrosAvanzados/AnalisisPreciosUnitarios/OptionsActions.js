@@ -12,6 +12,8 @@ import VistaPrevia from './VistaPrevia';
 const OptionsActions = (props) => {
 
  const {itemsUpdate,itemUrl} = useContext(DashboardContext);
+
+
  const Productos = itemsUpdate?.Productos|| [];
   const conteg = []
 Productos?.map((row, i) => {

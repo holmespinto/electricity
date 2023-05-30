@@ -2,8 +2,6 @@ import React from 'react';
 import { Row, Col, Tab, Card, Nav} from 'react-bootstrap';
 import classnames from 'classnames';
 import NominaEmpleado from '../NominaEmpleado/NominaEmpleado';
-
-
 const tabItems = [
   {
     id: 1,
@@ -12,7 +10,6 @@ const tabItems = [
     text: 'En esta sección se Genera la Nomina',
   }
 ];
-
 const MenuNomina = (props) => {
 
 return (
@@ -47,8 +44,11 @@ return (
                                    <Col sm="12 mt-1">
                                   <NominaEmpleado
                                      tipo={props.tipo}
+                                     permisos={props.permisos}
                                     accion={props.accion}
+                                    datos={props.datos}
                                     EmpleadoNomina={props?.datos?.EmpleadoNomina}
+                                    itemsNomina={props?.itemsNomina}
                                     />
 
                                   </Col>
@@ -75,5 +75,4 @@ return (
     </React.Fragment>
   );
 };
-
 export default MenuNomina;

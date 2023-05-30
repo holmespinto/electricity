@@ -1,18 +1,68 @@
-import React from 'react';
-
-import { Button, Form, Row, Col } from 'react-bootstrap';
+import React,{useContext,useState} from 'react';
+import { Redirect } from 'react-router-dom';
+import { useSelector, useDispatch } from 'react-redux';
+import { Alert,Button, Form, Row, Col } from 'react-bootstrap';
 import FormInput from '../../../components/FormInput';
+import { VerticalForm } from '../../../../../components/';
+import { DashboardContext } from '../../../../../layouts/context/DashboardContext';
+import { queryFormSend } from '../../../../../redux/actions';
+import * as yup from 'yup';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { useOtrosRegistros } from '../../../../../hooks/useOtrosRegistros';
 
-const ClienteFields = (props) => {
+const Fields = (props) => {
+  const {query} = useOtrosRegistros()
+const {setOpen,open} = useContext(DashboardContext);
+
+const [items, setItems] = useState([{
+  Identificacion: props?.items?.Identificacion ? props?.items?.Identificacion : '',
+  Email: props?.items?.Email ? props?.items?.Email : '',
+  Nombre: props?.items?.Nombre ? props?.items?.Nombre :'',
+  Direccion: props?.items?.Direccion ? props?.items?.Direccion :'',
+  Telefono: props?.items?.Telefono ? props?.items?.Telefono :'',
+  accion: props?.accion,
+  opcion: props?.opcion,
+  tipo: props?.tipo,
+  id: props?.items?.id ? props?.items?.id:'',
+}]);
+
+const dispatch = useDispatch();
+
+const {loading,queryForm, error } = useSelector((state) => ({
+  loading: state.Queryform.loading,
+  error: state.Queryform.error,
+  queryForm: state.Queryform.queryForm,
+}));
+
+
+const schemaResolver = yupResolver(
+  yup.object().shape({
+  })
+);
+
+const onSubmit = () => {
+
+  dispatch(queryFormSend(...items))
+
+  setTimeout(function () {
+    query('GestionesBasicas', 'Cliente', [{ opcion: 'consultar', obj: 'Cliente' }]);
+    setOpen(open)
+  }, 1000);
+};
 
   return (
+
   <React.Fragment>
-    <div className="text-center mt-2 mb-4 btn-success">
-      <br />
-      <span className="text-white">{props.title}</span>
-      <br />
-    </div>
-    <Form validated={props.validated}>
+      {queryForm ? <Redirect to={`/${props?.accion}/${props?.tipo}`}></Redirect> : null}
+      <div className="text-center w-75 m-auto">
+        <h4 className="text-black-50 text-center mt-0 fw-bold">{`${props?.title}`}</h4>
+      </div>
+      {error && (
+        <Alert variant="danger" className="my-2">
+          {error}
+        </Alert>
+      )}
+      <VerticalForm onSubmit={onSubmit} resolver={schemaResolver} defaultValues={{}}>
       <Row>
         <Col sm={6}>
           <Form.Group className="mb-3" controlId="Identificacion">
@@ -22,8 +72,8 @@ const ClienteFields = (props) => {
               type="number"
               name="Identificacion"
               placeholder="Digite la Identificacion"
-              value={props.items[0]?.Identificacion}
-              onChange={(e) =>props.setItems([{...props.items[0], Identificacion: e.target.value }])}
+              value={items[0]?.Identificacion}
+              onChange={(e) => setItems([{ ...items[0], Identificacion: e.target.value }])}
             />
 
             <Form.Control.Feedback type="invalid">
@@ -40,8 +90,8 @@ const ClienteFields = (props) => {
               containerClass={'mb-3'}
               name="Email"
               placeholder="Digite el email"
-              value={props.items[0]?.Email}
-              onChange={(e) => props.setItems([{...props.items[0], Email: e.target.value }])}
+              value={items[0]?.Email}
+              onChange={(e) => setItems([{ ...items[0], Email: e.target.value }])}
             />
             <Form.Control.Feedback type="invalid">
               Por favor, digite el email.
@@ -53,15 +103,15 @@ const ClienteFields = (props) => {
         <Col sm={6}>
           <Form.Group className="mb-3" controlId="Nombre">
             <FormInput
-              label="Nombre"
+              label="Nombres"
               type="text"
-              name="Nombre"
+              name="Nombres"
               rows="5"
               containerClass={'mb-3'}
-              key="Nombre"
+              key="Nombres"
               placeholder="Digite el Nombre"
-              value={props.items[0]?.Nombre}
-              onChange={(e) =>props.setItems([{...props.items[0], Nombre: e.target.value }])}
+              value={items[0]?.Nombre}
+              onChange={(e) => setItems([{ ...items[0], Nombre: e.target.value }])}
             />
 
             <Form.Control.Feedback type="invalid">
@@ -70,48 +120,47 @@ const ClienteFields = (props) => {
           </Form.Group>
         </Col>
         <Col sm={6}>
-          <Form.Group className="mb-3" controlId="Direccion">
-            <Form.Label>Dirección</Form.Label>
-            <Form.Control
-              required
-              type="text"
-              name="Direccion"
-              placeholder="Digite la Direccion"
-              value={props.items[0]?.Direccion}
-              onChange={(e) => props.setItems([{...props.items[0], Direccion: e.target.value }])}
-            />
-            <Form.Control.Feedback type="invalid">
-              Por favor, digite la Direccion.
-            </Form.Control.Feedback>
-          </Form.Group>
-        </Col>
-      </Row>
-      <Row>
-        <Col sm={6}>
-        <Form.Group className="mb-3" controlId="Telefono">
-            <Form.Label>Teléfono</Form.Label>
+          <Form.Group className="mb-3" controlId="Telefono">
+            <Form.Label>Telefono</Form.Label>
             <Form.Control
               required
               type="number"
               name="Telefono"
               placeholder="Digite el Telefono"
-              value={props.items[0]?.Telefono}
-              onChange={(e) => props.setItems([{...props.items[0], Telefono: e.target.value }])}
+              value={items[0]?.Telefono}
+              onChange={(e) => setItems([{ ...items[0], Telefono: e.target.value }])}
             />
             <Form.Control.Feedback type="invalid">
               Por favor, digite el Telefono.
             </Form.Control.Feedback>
           </Form.Group>
-        </Col>
-        <Col sm={6}></Col>
-        </Row>
+          </Col>
+      </Row>
+      <Row>
+      <Col sm={12}>
+          <Form.Group className="mb-3" controlId="Direccion">
+            <Form.Label>Telefono</Form.Label>
+            <Form.Control
+              required
+              type="text"
+              name="Direccion"
+              placeholder="Digite el Direccion"
+              value={items[0]?.Direccion}
+              onChange={(e) => setItems([{ ...items[0], Direccion: e.target.value }])}
+            />
+            <Form.Control.Feedback type="invalid">
+              Por favor, digite el Direccion.
+            </Form.Control.Feedback>
+          </Form.Group>
+          </Col>
+      </Row>
       <div className="button-list">
-        <Button type="button" disabled={props.items.message ? 'true' : ''} onClick={props?.accion}>
-          +
-        </Button>
+      <Button variant="primary" type="submit" disabled={loading}>
+            {(props?.title)}
+          </Button>
       </div>
-    </Form>
+      </VerticalForm>
     </React.Fragment>
     );
 }
-export default ClienteFields;
+export default Fields;

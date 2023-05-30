@@ -5,8 +5,6 @@ import { Link } from 'react-router-dom';
 import { DashboardContext } from '../../../../../../layouts/context/DashboardContext';
 import FormAdd from './FormAdd'
 import Table from '../../../../../../pages/dashboard/components/Table';
-//const loading = () => <div className="text-center"></div>;
-
 const ActionColumn = ({ row }) => {
   const {
     eliminar,
@@ -14,10 +12,11 @@ const ActionColumn = ({ row }) => {
 
   return (
     <React.Fragment>
+      {(row.cells[0].value >0)?
       <Link to="#" className="action-icon" onClick={() => eliminar(row.cells[0].value)}>
         {' '}
         <i className="mdi mdi-delete"></i>
-      </Link>
+      </Link> :''}
     </React.Fragment>
   );
 };
@@ -26,7 +25,6 @@ const LiquidarNomina = (props) => {
   const DatosEmpleadoNomina = props?.EmpleadoNomina[0] || [{}];
   const DatosEmpleado = props?.Empleado || [{}];
   const {
-    //validated,
     setOpenNomina, openNomin,
   } = useContext(DashboardContext);
 
@@ -66,7 +64,7 @@ const LiquidarNomina = (props) => {
     setOpenNomina(!openNomin);
 
   };
-  //console.log('listNomina', DatosEmpleado)
+
   return (
     <>
       <Row>
@@ -77,7 +75,7 @@ const LiquidarNomina = (props) => {
                 DatosEmpleado?.Identificacion >0 ?
                   <FormAdd
                     title={`GESTIONAR NOMINA`}
-                    Empleado={props?.Empleado}
+                    Empleado={DatosEmpleado}
                     Nomina={props?.Nomina}
                     Conceptos={props?.Conceptos}
                     DatosEmpleadoNomina={DatosEmpleadoNomina}

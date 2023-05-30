@@ -4,7 +4,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { Redirect } from 'react-router-dom';
 import { Button, Alert, Form, Col, Row } from 'react-bootstrap';
 import FormInput from '../../../components/FormInput'
-import Select from 'react-select';
+
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 //actions
@@ -12,12 +12,13 @@ import { queryFormSend } from '../../../../../redux/actions';
 // components
 import { VerticalForm } from '../../../../../components/';
 import { DashboardContext } from '../../../../../layouts/context/DashboardContext';
+import { useGestionPrecios } from '../../../../../hooks/useGestionPrecios';
 
 const Register = (props): React$Element<React$FragmentType> => {
+  const {query} = useGestionPrecios()
   const { setOpen, open } = useContext(DashboardContext);
   const [items, setItems] = useState([{
-    Categoria: props?.ItemsUpdate?.length === 1 ? props?.ItemsUpdate[0]?.Nombre : '',
-    TipoCategoria: props?.ItemsUpdate?.length === 1 ? props?.ItemsUpdate[0]?.IdTipoCategoria : '',
+    Categoria: props?.ItemsUpdate[0]?.Categoria,
     accion: props?.accion,
     opcion: props?.opcion,
     tipo: props?.tipo,
@@ -41,6 +42,7 @@ const Register = (props): React$Element<React$FragmentType> => {
 
     setTimeout(function () {
       setOpen(open)
+      query('RegistrosAvanzados','Categorias',[{opcion:'consultar',obj:'Categorias'}]);
     }, 2000);
   };
 
@@ -79,25 +81,6 @@ const Register = (props): React$Element<React$FragmentType> => {
               </Form.Control.Feedback>
             </Form.Group>
           </Col>
-        </Row>
-        <Row>
-          <Col sm={12}>
-            <Form.Group className="mb-3">
-            <Form.Label>Tipo de Categoria</Form.Label>
-              <Select
-                type="select"
-                name="TipoCategoria"
-                className="react-select"
-                classNamePrefix="react-select"
-                onChange={(e) => setItems([{
-                  ...items[0], TipoCategoria: e.value
-                }])}
-                options={props?.Padres}
-                selected={props?.ItemsUpdate[0]?.TipoCategoria}
-                placeholder={`${props?.ItemsUpdate[0]?.Nombre}`}
-              />
-            </Form.Group>
-            </Col>
         </Row>
         <Row>
         <Col sm={9}> </Col>

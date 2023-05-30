@@ -1,71 +1,101 @@
+/* eslint-disable no-lone-blocks */
+/* eslint-disable react-hooks/exhaustive-deps */
 // @flow
-import React, { useContext, Suspense, useEffect } from 'react';
-import { Row, Col, Card,  Modal } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
+import React, { useContext, useEffect } from 'react';
+import { Row, Col, Card,  Modal, Pagination } from 'react-bootstrap';
 import { DashboardContext } from '../../../../../layouts/context/DashboardContext';
 import FormAdd from './FormAdd';
 import FormUpdate from './FormUpdate';
 import Table from '../../../../../components/Table';
-const loading = () => <div className="text-center"></div>;
-const ActionColumn = ({ row }) => {
+import MensajeAlert from '../../PermisoAlert/PermisoAlert';
+import BtnActions from '../../BtnActions';
+import Swal from 'sweetalert2';
+import { useGestionBasica } from '../../../../../hooks/useGestionBasica';
 
+const ActionColumn = ({ row }) => {
   const {
     eliminar,
     validated,
-    signUpModal,
-    setSignUpModal,
-    setItems, itemsmenuprincipal,PERMISOS_USER
+    setOpen,
+    setItemsUpdate,
+    open, itemsmenuprincipal
   } = useContext(DashboardContext);
-  const permisos = PERMISOS_USER || [{}];
-  const toggleSignUp = () => {
-    if (row.cells[0].value > 0)
-      setSignUpModal(!signUpModal);
-    setItems([{
-      id: row.cells[0].value ? row.cells[0].value : row.cells[0].value,
-      Identificacion: row.cells[1].value ? row.cells[1].value : row.cells[1].value,
-      Nombres: row.cells[2].value ? row.cells[2].value : row.cells[2].value,
-      Apellidos: row.cells[3].value ? row.cells[3].value : row.cells[3].value,
-      Email: row.cells[4].value ? row.cells[4].value : row.cells[4].value,
-      Telefono: row.cells[5].value ? row.cells[5].value : row.cells[5].value,
-      Cargo: row.cells[6].value ? row.cells[6].value : row.cells[6].value,
-      Salario: row.cells[7].value ? row.cells[7].value : row.cells[7].value,
-      status: row.cells[8].value ? row.cells[8].value : row.cells[8].value,
-    }])
+
+
+   const toggleSignUp = (id) => {
+    let permiso = sessionStorage.getItem('PERMISO');
+    const localPermiso = JSON.parse(permiso);
+    if (localPermiso?.update === 'S') {
+
+      if(Number(row.cells[0].row.values.id)===Number(id))
+        setItemsUpdate(row.cells[0].row.values)
+        setOpen(true);
+    } else {
+      Swal.fire('USTED NO TIENE PERMISOS HABILITADOS PARA ESTA OPCION');
+    }
   };
 
+  let permiso = sessionStorage.getItem('PERMISO');
+  const localPermiso = JSON.parse(permiso);
   return (
     <React.Fragment>
-      <Modal show={signUpModal} onHide={toggleSignUp}>
+      <Modal show={open} onHide={toggleSignUp}>
         <Modal.Body><FormUpdate
-          title={`ACTUALIZAR ${itemsmenuprincipal?.toUpperCase()}`}
+          title={`FORMULARIO PARA LA EDICION DE ${itemsmenuprincipal?.toUpperCase()}`}
           validated={validated}
         />
         </Modal.Body>
       </Modal>
-      {
-        permisos?.update === 'S' ? (
-          <Link to="#" className="action-icon" onClick={() => toggleSignUp()}>
-            {' '}
-            <i className="mdi mdi-square-edit-outline"></i>
-          </Link>) : ''
-      }
-      {
-        permisos?.delete === 'S' ? (
-          <Link to="#" className="action-icon" onClick={() => eliminar(row.cells[0].value)}>
-            {' '}
-            <i className="mdi mdi-delete"></i>
-          </Link>) : ''}
+      <Row>
+        <Pagination className="pagination-rounded mx-auto" size="sm">
+          <Pagination.Item>
+
+           {
+           (localPermiso?.update === 'S')?
+            <BtnActions
+              permisos={'S'}
+              key={`EDITAR_${row.cells[0].value}`}
+              toggleActions={toggleSignUp}
+              row={row.cells[0].value}
+              titulo={'EDITAR'}
+              descripcion={'Editar Proyecto'}
+              icon={'mdi mdi-square-edit-outline'}
+            />:''
+           }
+          </Pagination.Item>
+          <Pagination.Item>
+          {
+           (localPermiso?.update === 'S')?
+            <BtnActions
+              permisos={'S'}
+              key={`ELIMINAR_${row.cells[0].value}`}
+              toggleActions={eliminar}
+              row={row.cells[0].value}
+              titulo={'ELIMINAR'}
+              descripcion={'Registrar Proyecto'}
+              icon={'mdi mdi-delete'}
+            />:''
+          }
+          </Pagination.Item>
+        </Pagination>
+      </Row>
+
     </React.Fragment>
   );
 };
 const Empleado = (props) => {
+  const permisos = props?.permisos || {};
+  const {itemsEmpleados,query} = useGestionBasica()
+  const datos = itemsEmpleados?.data || [{}];
   const {
-    validated, Spinners, itemsmenuprincipal,
+    validated, itemsmenuprincipal,
     signUpModalAdd, setSignUpModalAdd,
-    query, sizePerPageList, StatusColumn, isLoading,PERMISOS_USER
+    sizePerPageList, StatusColumn,
   } = useContext(DashboardContext);
-  const Empleados = props?.datos?.length > 0 ? props?.datos : []
-  const permisos = PERMISOS_USER || [{}];
+
+
+
+
   const columns = [
     {
       Header: 'ID',
@@ -117,7 +147,7 @@ const Empleado = (props) => {
     },
   ];
   const toggleSignUp = () => {
-    setSignUpModalAdd(!signUpModalAdd);
+    {permisos?.add === 'S' ? setSignUpModalAdd(!signUpModalAdd) : Swal.fire('USTED NO TIENE PERMISOS HABILITADOS PARA ESTA OPCION')}
   };
   useEffect(() => {
     query('GestionesBasicas', 'Empleado', [{ opcion: 'consultar', obj: 'Empleado' }]);
@@ -142,11 +172,11 @@ const Empleado = (props) => {
                       </Modal>
                     </Card.Body>
                   </Card>
-                </Col>>
+                </Col>
               </Row>
-              {!isLoading && Empleados.length > 0 && permisos?.query === 'S' ? (<Table
+              {datos?.length > 0 && permisos?.query === 'S' ?  (<Table
                 columns={columns}
-                data={Empleados}
+                data={datos}
                 pageSize={5}
                 sizePerPageList={sizePerPageList}
                 isSortable={true}
@@ -157,9 +187,8 @@ const Empleado = (props) => {
                 isSearchable={true}
                 nametable={props.accion}
                 titulo={itemsmenuprincipal}
-                permisos={permisos}
                 toggleSignUp={toggleSignUp}
-              />) : <Suspense fallback={loading()}><Spinners /></Suspense>}
+              />) : <MensajeAlert />}
             </Card.Body>
           </Card>
         </Col>

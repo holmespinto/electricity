@@ -13,7 +13,6 @@ const FormAdd = () => {
       "isLoading":false,
     }}
   const objetNomina = itemsUpdate || [obj];
-  //console.log('NominaEmpleado-FormAdd-objetNomina',objetNomina)
   return (
     <React.Fragment>
        <Fields

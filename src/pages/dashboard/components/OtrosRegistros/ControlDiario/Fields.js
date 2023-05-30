@@ -1,16 +1,69 @@
-import React from 'react';
-import { Button, Form, Row, Col } from 'react-bootstrap';
+import React,{useContext,useState} from 'react';
+import { Redirect } from 'react-router-dom';
+import { useSelector, useDispatch } from 'react-redux';
+import { Alert,Button, Form, Row, Col } from 'react-bootstrap';
 import FormInput from '../../../components/FormInput';
+import { VerticalForm } from '../../../../../components/';
+import { DashboardContext } from '../../../../../layouts/context/DashboardContext';
+import { queryFormSend } from '../../../../../redux/actions';
+import * as yup from 'yup';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { useOtrosRegistros } from '../../../../../hooks/useOtrosRegistros';
+
 const Fields = (props) => {
+  const {query} = useOtrosRegistros()
+const {setActions,openActions} = useContext(DashboardContext);
+
+const [items, setItems] = useState([{
+  Ciudad: props?.items?.Ciudad ? props?.items?.Ciudad : '',
+  Concepto: props?.items?.Concepto ? props?.items?.Concepto : '',
+  Fecha: props?.items?.Fecha ? props?.items?.Fecha :'',
+  Paga: props?.items?.Paga ? props?.items?.Paga :'',
+  Valor: props?.items?.Valor ? props?.items?.Valor :'',
+  ValorLetras: props?.items?.ValorLetras ? props?.items?.ValorLetras :'',
+  accion: props?.accion,
+  opcion: props?.opcion,
+  tipo: props?.tipo,
+  id: props?.items?.id ? props?.items?.id:'',
+}]);
+
+const dispatch = useDispatch();
+
+const {loading,queryForm, error } = useSelector((state) => ({
+  loading: state.Queryform.loading,
+  error: state.Queryform.error,
+  queryForm: state.Queryform.queryForm,
+}));
+
+
+const schemaResolver = yupResolver(
+  yup.object().shape({
+  })
+);
+
+const onSubmit = () => {
+
+  dispatch(queryFormSend(...items))
+
+  setTimeout(function () {
+    query('GestionBasica', 'ControlDiario', [{ opcion: 'consultar', obj: 'ControlDiario' }]);
+    setActions(openActions);
+  }, 2000);
+};
+
   return (
 
   <React.Fragment>
-    <div className="text-center mt-2 mb-4 btn-success">
-      <br />
-      <span className="text-white">{props?.title}</span>
-      <br />
-    </div>
-    <Form validated={props?.validated}>
+      {queryForm ? <Redirect to={`/${props?.accion}/${props?.tipo}`}></Redirect> : null}
+      <div className="text-center w-75 m-auto">
+        <h4 className="text-dark-50 text-center mt-0 fw-bold">{`${props?.textBtn}`}</h4>
+      </div>
+      {error && (
+        <Alert variant="danger" className="my-2">
+          {error}
+        </Alert>
+      )}
+      <VerticalForm onSubmit={onSubmit} resolver={schemaResolver} defaultValues={{}}>
     <Row>
         <Col sm={6}>
           <Form.Group className="mb-3" controlId="Ciudad">
@@ -20,8 +73,8 @@ const Fields = (props) => {
               type="text"
               name="Ciudad"
               placeholder="Digite la Ciudad"
-              value={props.items[0]?.Ciudad}
-              onChange={(e) => props.setItems([{ ...props.items[0], Ciudad: e.target.value }])}
+              value={items[0]?.Ciudad}
+              onChange={(e) => setItems([{ ...items[0], Ciudad: e.target.value }])}
             />
             <Form.Control.Feedback type="invalid">
               Por favor, digite la Ciudad.
@@ -38,8 +91,8 @@ const Fields = (props) => {
               containerClass={'mb-3'}
               key="Concepto"
               placeholder="Digite el Concepto"
-              value={props.items[0]?.Concepto}
-              onChange={(e) => props.setItems([{ ...props.items[0], Concepto: e.target.value }])}
+              value={items[0]?.Concepto}
+              onChange={(e) => setItems([{ ...items[0], Concepto: e.target.value }])}
             />
             <Form.Control.Feedback type="invalid">
               Por favor, digite el Concepto.
@@ -56,8 +109,8 @@ const Fields = (props) => {
                 name="Fecha"
                 containerClass={'mb-3'}
                 key="Fecha"
-                value={props.items[0]?.Fecha}
-                onChange={(e) => props.setItems([{ ...props.items[0], Fecha: e.target.value }])}
+                value={items[0]?.Fecha}
+                onChange={(e) => setItems([{ ...items[0], Fecha: e.target.value }])}
               />
             <Form.Control.Feedback type="invalid">
               Por favor, digite la Fecha.
@@ -74,8 +127,8 @@ const Fields = (props) => {
               containerClass={'mb-3'}
               key="ValorLetras"
               placeholder="Digite el Valor en Letras"
-              value={props.items[0]?.ValorLetras}
-              onChange={(e) => props.setItems([{ ...props.items[0], ValorLetras: e.target.value }])}
+              value={items[0]?.ValorLetras}
+              onChange={(e) => setItems([{ ...items[0], ValorLetras: e.target.value }])}
             />
             <Form.Control.Feedback type="invalid">
               Por favor, digite el Valor Letras.
@@ -92,8 +145,8 @@ const Fields = (props) => {
               type="text"
               name="Paga"
               placeholder="Digite el  pago a"
-              value={props.items[0]?.Paga}
-              onChange={(e) => props.setItems([{ ...props.items[0], Paga: e.target.value }])}
+              value={items[0]?.Paga}
+              onChange={(e) => setItems([{ ...items[0], Paga: e.target.value }])}
             />
             <Form.Control.Feedback type="invalid">
               Por favor, digite el Pago a.
@@ -108,8 +161,8 @@ const Fields = (props) => {
               type="number"
               name="Valor"
               placeholder="Digite el Valor"
-              value={props.items[0]?.Valor}
-              onChange={(e) => props.setItems([{ ...props.items[0], Valor: e.target.value }])}
+              value={items[0]?.Valor}
+              onChange={(e) => setItems([{ ...items[0], Valor: e.target.value }])}
             />
             <Form.Control.Feedback type="invalid">
               Por favor, digite el Valor.
@@ -118,11 +171,11 @@ const Fields = (props) => {
         </Col>
         </Row>
       <div className="button-list">
-        <Button type="button" disabled={props.items[0]?.message?.length<0 ? 'true' : ''} onClick={(e) => {props.accion(e,props.items)}}>
-          +
-        </Button>
+      <Button variant="primary" type="submit" disabled={loading}>
+            {(props?.title)}
+          </Button>
       </div>
-    </Form>
+      </VerticalForm>
     </React.Fragment>
     );
 }

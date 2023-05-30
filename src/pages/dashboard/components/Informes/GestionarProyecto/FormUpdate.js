@@ -9,13 +9,13 @@ const FormUpdate = (props) => {
   return (
   <React.Fragment>
       <Fields
-        accion={itemUrl}
-        tipo={itemsmenuprincipal}
-        title={props.title}
-        validated={props.validated}
-        opcion={'update'}
-        textBtn={'Actualizar registros de Usuario'}
-        ItemsUpdate={[itemsUpdate]}
+         items={itemsUpdate[0]}
+         title={'Actualizar una ControDiarios'}
+         textBtn={'Registrar ControDiarios'}
+         accion={itemUrl}
+         tipo={itemsmenuprincipal}
+         opcion={'update'}
+         validated={props.validated}
       />
   </React.Fragment>
     );

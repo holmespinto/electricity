@@ -1,30 +1,32 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable array-callback-return */
 // @flow
-import React, { useContext, Suspense, useEffect } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { Row, Col, Card,  Modal,Pagination } from 'react-bootstrap';
 import { DashboardContext } from '../../../../../layouts/context/DashboardContext';
-import BtnActions from '../../BtnActions';
+//import BtnActions from '../../BtnActions';
 import BtnLink from '../../BtnLink';
 import FormAdd from './FormAdd';
 import FormUpdate from './FormUpdate';
 import Table from '../../../../../components/Table';
-const loading = () => <div className="text-center"></div>;
+import Swal from 'sweetalert2';
+import PermisoAlert from '../../PermisoAlert/PermisoAlert';
+import { useGestionBasica } from '../../../../../hooks/useGestionBasica';
+
 const ActionColumn = ({ row }) => {
 
   const {
-    eliminar,
     validated,
     setOpen, toggle, setItemsUpdate,
-    open, itemsmenuprincipal, itemsProyecto,PERMISOS_USER
+    open, itemsmenuprincipal, itemsProyecto
   } = useContext(DashboardContext);
-  const permisos = PERMISOS_USER || [{}];
-
-
 
   const toggleSignUp = (id) => {
-    const itemsPr = itemsProyecto || [];
     let array = [];
+    let permiso = sessionStorage.getItem('PERMISO');
+    const localPermiso = JSON.parse(permiso);
+    if (localPermiso?.update === 'S') {
+    const itemsPr = itemsProyecto || [];
     if (id > 0)
     itemsPr?.map((row, i) => {
         if (row.id === id) {
@@ -34,6 +36,9 @@ const ActionColumn = ({ row }) => {
     setOpen(open);
     toggle()
     setItemsUpdate(array[0])
+  } else {
+    Swal.fire('USTED NO TIENE PERMISOS HABILITADOS PARA ESTA OPCION');
+  }
   };
 
   return (
@@ -47,31 +52,9 @@ const ActionColumn = ({ row }) => {
       </Modal>
       <Row>
       <Pagination className="pagination-rounded mx-auto" size="sm">
-       <Pagination.Item>
-        <BtnActions
-            permisos={permisos?.update}
-            key={`EDITAR_${row.cells[0].value}`}
-            toggleActions={toggleSignUp}
-            row={row.cells[0].value}
-            titulo={'EDITAR'}
-            descripcion={'Editar Proyecto'}
-            icon={'mdi mdi-square-edit-outline'}
-          />
-        </Pagination.Item>
-        <Pagination.Item>
-        <BtnActions
-            permisos={permisos?.update}
-            key={`ELIMINAR_${row.cells[0].value}`}
-            toggleActions={eliminar}
-            row={row.cells[0].value}
-            titulo={'ELIMINAR'}
-            descripcion={'Registrar Proyecto'}
-            icon={'mdi mdi-delete'}
-          />
-        </Pagination.Item>
         <Pagination.Item>
         <BtnLink
-            permisos={permisos?.update}
+            permisos={'S'}
             key={`ASIGNARAPU_${row.cells[0].value}`}
             row={row.cells[0].value}
             url={'/dashboard/Informes/asignarApu?'}
@@ -86,15 +69,14 @@ const ActionColumn = ({ row }) => {
   );
 };
 const GestionarProyecto = (props) => {
-
+  const {itemsProyectos,query} = useGestionBasica()
+  const permisos = props?.permisos || {};
   const {
-    validated, Spinners,query,
+    validated,
     signUpModalAdd, setSignUpModalAdd,
-    sizePerPageList, StatusColumn, isLoading,PERMISOS_USER
+    sizePerPageList, StatusColumn, isLoading,
   } = useContext(DashboardContext);
-  const data = props?.datos || []
-  const permisos = PERMISOS_USER || [{}];
-
+  const data = itemsProyectos?.data || []
 
   const columns = [
     {
@@ -146,7 +128,6 @@ const GestionarProyecto = (props) => {
     query('GestionesBasicas', 'Proyecto', [{ opcion: 'consultar', obj: 'Proyecto' }]);
   }, [])
 
-   //console.log('GestionarProyecto',data)
   return (
     <>
       <Row>
@@ -183,7 +164,7 @@ const GestionarProyecto = (props) => {
                 titulo={'GestionarProyecto'}
                 permisos={permisos}
                 toggleSignUp={toggleSignUp}
-              />) : <Suspense fallback={loading()}><Spinners /></Suspense>}
+              />) : <PermisoAlert/>}
             </Card.Body>
           </Card>
         </Col>

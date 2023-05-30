@@ -68,14 +68,13 @@ const Register = (props): React$Element<React$FragmentType> => {
         //query('OtrosRegistros','GenerarNomina',[{opcion:'consultar',obj:'GenerarNomina'}]);
       }, 2000);
   };
-
    return (
     <>
       {queryForm ? <Redirect to={`/${props?.accion}/${props?.tipo}`}></Redirect> : null}
-      <div className="text-left mt-2 mb-4 btn-success text-white mx-auto">
+      <div className="text-left mt-2 mb-4 btn-success text-black mx-auto">
         <div class="row">
           <div class="col-md-4 text-muted font-13">Nombres y Apellidos:</div>
-          <div class="col-md-4 ml-auto">{props?.Empleado?.Nombres} {props?.Empleado?.Apellidos}</div>
+          <div class="col-md-4 ml-auto"><label>{props?.Empleado?.Nombres} {props?.Empleado?.Apellidos}</label></div>
         </div>
         <div class="row">
           <div class="col-md-4 text-muted font-13">Identificacion:</div>

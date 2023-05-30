@@ -1,19 +1,21 @@
 /* eslint-disable array-callback-return */
 // @flow
-import React, { useContext, Suspense } from 'react';
+import React, { useContext } from 'react';
 import { Row, Col, Card, Collapse } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { DashboardContext } from '../../../../../../layouts/context/DashboardContext';
 import FormAdd from './FormAdd';
 import Table from '../../../../../../pages/dashboard/components/Table';
-const loading = () => <div className="text-center"></div>;
 
+import PermisoAlert from '../../../PermisoAlert/PermisoAlert';
 const ActionColumnEmpleado = ({ row }) => {
   const {
-    setItemsUpdate, itemsNomina, open, setOpen, toggle
-  } = useContext(DashboardContext);
+    setItemsUpdate,open, setOpen, toggle  } = useContext(DashboardContext);
 
   const toggleUpUpdateEmpleado = (id) => {
+
+    let menuNomina = localStorage.getItem('menuNomina');
+    const itemsNomina = JSON.parse(menuNomina);
 
     const Empleado = itemsNomina?.data?.Empleado || [{}];
     const EmpleadoNomina = [];
@@ -71,14 +73,12 @@ const ActionColumnEmpleado = ({ row }) => {
 
 const NominaEmpleado = (props) => {
 
-  const {
-    sizePerPageList, isLoading, itemsNomina, ItemsUpdate,
-    open,  Spinners
+  const datos = props?.datos || [{}];
+
+  const permisos = props?.permisos || {};
+  const {sizePerPageList, isLoading,open,
   } = useContext(DashboardContext);
 
-  //const permisos = PERMISOS_USER || [{}];
-
-  const datos = itemsNomina?.data?.Empleado || [];
   const columns = [
     {
       Header: 'ID',
@@ -126,13 +126,15 @@ const NominaEmpleado = (props) => {
                 <div>
                   <Row>
                     <Col sm={12} >
-                      <FormAdd EmpleadoId={ItemsUpdate} />
+                      <FormAdd EmpleadoId={1} />
                     </Col>
                   </Row>
                 </div>
               </Collapse>
 
-              {!isLoading && datos?.length > 0? (<Table
+              {!isLoading && datos?.length > 0 && permisos?.query === 'S' ? (
+                localStorage.setItem('menuNomina',JSON.stringify(props.itemsNomina)),
+              <Table
                 columns={columns}
                 data={datos}
                 pageSize={5}
@@ -143,7 +145,7 @@ const NominaEmpleado = (props) => {
                 theadClass="table-light"
                 searchBoxClass="mt-2 mb-3"
                 isSearchable={true}
-              />) : <Suspense fallback={loading()}><Spinners /></Suspense>}
+              />):<PermisoAlert />}
 
             </Card.Body>
           </Card>

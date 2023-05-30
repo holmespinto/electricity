@@ -1,70 +1,105 @@
-/* eslint-disable no-fallthrough */
-/* eslint-disable no-undef */
-/* eslint-disable react-hooks/exhaustive-deps */
-import React, { useContext, useEffect } from 'react';
+/* eslint-disable no-duplicate-case */
+/* eslint-disable no-unreachable */
+import React, {useContext } from 'react';
 import Title from '../../../pages/dashboard/components/Title';
+import { DashboardContext } from '../../../layouts/context/DashboardContext';
+import {usePermisos} from '../../../hooks/usePermisos';
+// COMPONETS
+
+import PermisoAlert from '../components/PermisoAlert/PermisoAlert';
 import GestionBasica from '../../../pages/dashboard/components/GestionBasica/GestionBasica';
 import OtrosRegistros from '../../../pages/dashboard/components/OtrosRegistros/OtrosRegistros';
-import RegistrosAvanzados from '../../../pages/dashboard/components/RegistrosAvanzados/RegistrosAvanzados';
+import TarjetasReferencias from '../../../pages/dashboard/components/TarjetasReferencias/TarjetasReferencias';
 import Informes from '../../../pages/dashboard/components/Informes/Informes';
 import OtrasConsultas from '../../../pages/dashboard/components/OtrasConsultas/OtrasConsultas';
-import TarjetasReferencias from '../../../pages/dashboard/components/TarjetasReferencias/TarjetasReferencias';
-import { DashboardContext } from '../../../layouts/context/DashboardContext';
+import RegistrosAvanzados from '../../../pages/dashboard/components/RegistrosAvanzados/RegistrosAvanzados';
 
 const ProjectDashboard = () => {
-  const { itemsmenuprincipal, onPermisos,AdvertenciaLocalStorage } = useContext(DashboardContext)
-
-  useEffect(() => {
-    onPermisos(itemsmenuprincipal);
-  }, [itemsmenuprincipal, onPermisos]);
-
-  //console.log('index', itemsmenuprincipal)
+  const { itemsmenuprincipal, AdvertenciaLocalStorage } = useContext(DashboardContext)
   AdvertenciaLocalStorage();
-  return (
+    const { permisos,initPermiso } = usePermisos(itemsmenuprincipal);
 
+  return (
     <React.Fragment>
       <Title />
+
       {(() => {
         switch (itemsmenuprincipal) {
           case 'Productos': case 'Cliente': case 'Proyecto': case 'Empleado':
-            return (<><GestionBasica
+            return <>
+             { initPermiso === 1 ?
+            <GestionBasica
               accion={'GestionBasica'}
               tipo={itemsmenuprincipal}
-            /></>);
-          case 'ControlDiario': case 'OrdenCompra': case 'GenerarNomina': case 'Usuarios': case 'Roles': case 'ConfigNomina':
-            return (<><OtrosRegistros
+              permisos={permisos}
+            />:<PermisoAlert/>}
+            </>
+            break;
+          case 'ControlDiario':
+          case 'OrdenCompra':
+          case 'GenerarNomina':
+          case 'Usuarios':
+          case 'Roles':
+          case 'ConfigNomina':
+          case 'Nomina':
+            return <>
+            <OtrosRegistros
               accion={'OtrosRegistros'}
               tipo={itemsmenuprincipal}
-            /></>);
-          // eslint-disable-next-line no-duplicate-case
+              permisos={permisos}
+            />
+            </>
+            break;
           case 'ControlDiario': case 'OrdenCompra': case 'OrdenCompra':
-            return (<><OtrasConsultas
+            return <>
+           { initPermiso === 1 ?
+            <OtrasConsultas
               accion={'OtrosRegistros'}
               tipo={itemsmenuprincipal}
-            /></>);
-          case 'APU': case 'Categorias': case 'EditorPUA': case 'ParametosPrecios':
-            return (<><RegistrosAvanzados
+              permisos={permisos}
+            />:<PermisoAlert/>}
+            </>
+            break;
+          case 'APU':
+          case 'Categorias':
+          case 'EditorPUA':
+          case 'ParametosPrecios':
+            return <>
+            { initPermiso === 1 ?
+            (<RegistrosAvanzados
               accion={'RegistrosAvanzados'}
               tipo={itemsmenuprincipal}
-            /></>);
-          case 'RegistrarAPU':
-            return (<>{'RegistrarAPU'}</>);
+              permisos={permisos}
+            />):<PermisoAlert/>}
+            </>
+            break;
           case 'asignarApu':
-            return (<><TarjetasReferencias
+            return <>
+            <TarjetasReferencias
               accion={'GestionBasica'}
               tipo={itemsmenuprincipal}
-            /></>);
-          case 'GestionarProyecto':case 'EditarProyecto':
-            return (<><Informes
+              permisos={permisos}
+            />
+            </>
+            break;
+          case 'GestionarProyecto':
+          case 'EditarProyecto':
+            return <>
+            { initPermiso === 1 ?
+            <Informes
               accion={'Informes'}
               tipo={itemsmenuprincipal}
-            /></>);
+              permisos={permisos}
+            />:<PermisoAlert/>}
+            </>
+            break;
           default:
             return (
               <>{''}</>
             );
         }
-      })()}
+      })()
+      }
     </React.Fragment>
   );
 };

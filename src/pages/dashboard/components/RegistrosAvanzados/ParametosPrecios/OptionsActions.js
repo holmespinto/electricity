@@ -14,7 +14,7 @@ const OptionsActions = (props) => {
 <Fields
         accion={itemUrl}
         tipo={'ParametrosPrecios'}
-        opcion={'add'}
+        opcion={'update'}
         textBtn={'Registrar'}
         titulo={'Formulario para el Registro de Configuraciones'}
         ItemsUpdate={[itemsUpdate]} />

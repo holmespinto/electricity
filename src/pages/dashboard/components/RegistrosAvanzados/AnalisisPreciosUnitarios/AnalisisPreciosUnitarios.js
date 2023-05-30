@@ -1,66 +1,74 @@
 /* eslint-disable no-lone-blocks */
 /* eslint-disable array-callback-return */
 // @flow
-import React, { useContext, Suspense, useEffect } from 'react';
-import { Row, Col, Card, Modal,Pagination } from 'react-bootstrap';
+import React, { useContext, useEffect } from 'react';
+import { Row, Col, Card, Modal, Pagination } from 'react-bootstrap';
 import { DashboardContext } from '../../../../../layouts/context/DashboardContext';
 import BtnActions from '../../BtnActions';
 import FormAdd from '../SubCapitulos/FormAdd';
 import OptionsActions from './OptionsActions';
 import Table from '../../../../../components/Table';
-const loading = () => <div className="text-center"></div>;
-
-
+import Swal from 'sweetalert2';
+import MensajeAlert from '../../PermisoAlert/PermisoAlert';
+import { useGestionPrecios } from '../../../../../hooks/useGestionPrecios';
 const ActionColumn = ({ row }) => {
   const {
     openActions, setActions,
-     toggle, setItemsUpdate,
-     itemsApu, PERMISOS_USER
+    toggle, setItemsUpdate,
   } = useContext(DashboardContext);
 
-
-
-  const permisos = PERMISOS_USER || [{}];
-  //itemsapuTransport, setApuTrasporte
-
-  const SubCategorias = itemsApu?.data?.SubCategorias || [];
-
- const toggleActions = (id,opcion) => {
-
-  let trans= itemsApu?.data?.Transportes?.filter((item) => {
-    return item.IdApu === id;
-  });
-  const Productos = opcion==='TRANSPORTE'?trans:itemsApu?.data?.Productos;
+  const toggleActions = (id, opcion) => {
     let array = [];
-    let productos= Productos?.filter((item) => {
-      return item.Producto === opcion;
-    });
-    if (id > 0)
-    //updateApu(opcion,id)
-    SubCategorias?.map((row, i) => {
-      const obj ={
-        id: row.id,
-        IdApu: id,
-        Objetivo: row.Descripcion,
-        Total: row.Cantidad,
-        Codigo: row.Codigo,
-        Unidad: row.Unidad,
-        ValorUnitario: row.ValorUnitario,
-        idCategoria: row.idCategoria,
-        Opcion: opcion,
-        Productos:productos,
-      }
-        if (row.id === id) {
-          array.push(obj)
-        }
-      })
+    let permiso = sessionStorage.getItem('PERMISO');
+    const localPermiso = JSON.parse(permiso);
+
+    let localSubCategorias= localStorage.getItem('SubCategorias');
+    const SubCategorias = JSON.parse(localSubCategorias);
+
+    let localTransportes = localStorage.getItem('Transportes');
+    const Transportes = JSON.parse(localTransportes);
+
+    const localProductos = localStorage.getItem('Productos');
+    const ItemsProductos = JSON.parse(localProductos);
 
 
+    if (localPermiso?.update === 'S') {
 
-    toggle()
-    setItemsUpdate(array[0])
-    setActions(!openActions);
+      let trans = Transportes?.filter((item) => {
+        return item.IdApu === id;
+      });
+      const Productos = opcion === 'TRANSPORTE' ? trans : ItemsProductos;
 
+      let productos = Productos?.filter((item) => {
+        return item.Producto === opcion;
+      });
+
+      if (id > 0)
+        //updateApu(opcion,id)
+        SubCategorias?.map((row, i) => {
+          const obj = {
+            id: row.id,
+            IdApu: id,
+            Objetivo: row.Descripcion,
+            Total: row.Cantidad,
+            Codigo: row.Codigo,
+            Unidad: row.Unidad,
+            ValorUnitario: row.ValorUnitario,
+            idCategoria: row.idCategoria,
+            Opcion: opcion,
+            Productos: productos,
+          }
+          if (row.id === id) {
+            array.push(obj)
+          }
+        })
+
+      toggle()
+      setItemsUpdate(array[0])
+      setActions(!openActions);
+    } else {
+      Swal.fire('USTED NO TIENE PERMISOS HABILITADOS PARA ESTA OPCION');
+    }
   };
   return (
     <React.Fragment>
@@ -72,73 +80,73 @@ const ActionColumn = ({ row }) => {
         </Modal>
       </Row>
       <Row>
-      <Pagination className="pagination-rounded mx-auto" size="sm">
-       <Pagination.Item>
-        <BtnActions
-            permisos={permisos?.update}
-            key={`EQUIPOS_${row.cells[0].value}`}
-            toggleActions={toggleActions}
-            row={row.cells[0].value}
-            titulo={'EQUIPOS'}
-            descripcion={'Registrar Equipos o Herramientas'}
-            icon={'mdi mdi-account-hard-hat'}
-          />
-        </Pagination.Item>
-        <Pagination.Item>
-        <BtnActions
-            permisos={permisos?.update}
-            key={`MATERIALES_${row.cells[0].value}`}
-            toggleActions={toggleActions}
-            row={row.cells[0].value}
-            titulo={'MATERIALES'}
-            descripcion={'Registrar Materiales'}
-            icon={'mdi mdi-alpha-m-circle'}
-          />
-        </Pagination.Item>
-        <Pagination.Item>
-        <BtnActions
-            permisos={permisos?.update}
-            key={`TRANSPORTE_${row.cells[0].value}`}
-            toggleActions={toggleActions}
-            row={row.cells[0].value}
-            titulo={'TRANSPORTE'}
-            descripcion={'Registrar Transporte'}
-            icon={'mdi mdi-ambulance'}
-          />
-        </Pagination.Item>
-        <Pagination.Item>
-        <BtnActions
-            permisos={permisos?.update}
-            key={`MANOBRA_${row.cells[0].value}`}
-            toggleActions={toggleActions}
-            row={row.cells[0].value}
-            titulo={'MANO DE OBRA'}
-            descripcion={'Registrar Mano de Obras'}
-            icon={'mdi mdi-allergy'}
-          />
-        </Pagination.Item>
-        <Pagination.Item>
-        <BtnActions
-            permisos={permisos?.update}
-            key={`IMAGEN_${row.cells[0].value}`}
-            toggleActions={toggleActions}
-            row={row.cells[0].value}
-            titulo={'IMAGEN'}
-            descripcion={'Subir una imagen'}
-            icon={'mdi mdi-panorama'}
-          />
-        </Pagination.Item>
-        <Pagination.Item>
-        <BtnActions
-            permisos={permisos?.update}
-            key={`VISTA_${row.cells[0].value}`}
-            toggleActions={toggleActions}
-            row={row.cells[0].value}
-            titulo={'VISTA'}
-            descripcion={'Vista previa de la APU'}
-            icon={'mdi mdi-eye-check'}
-          />
-        </Pagination.Item>
+        <Pagination className="pagination-rounded mx-auto" size="sm">
+          <Pagination.Item>
+            <BtnActions
+              permisos={'S'}
+              key={`EQUIPOS_${row.cells[0].value}`}
+              toggleActions={toggleActions}
+              row={row.cells[0].value}
+              titulo={'EQUIPOS'}
+              descripcion={'Registrar Equipos o Herramientas'}
+              icon={'mdi mdi-account-hard-hat'}
+            />
+          </Pagination.Item>
+          <Pagination.Item>
+            <BtnActions
+              permisos={'S'}
+              key={`MATERIALES_${row.cells[0].value}`}
+              toggleActions={toggleActions}
+              row={row.cells[0].value}
+              titulo={'MATERIALES'}
+              descripcion={'Registrar Materiales'}
+              icon={'mdi mdi-alpha-m-circle'}
+            />
+          </Pagination.Item>
+          <Pagination.Item>
+            <BtnActions
+              permisos={'S'}
+              key={`TRANSPORTE_${row.cells[0].value}`}
+              toggleActions={toggleActions}
+              row={row.cells[0].value}
+              titulo={'TRANSPORTE'}
+              descripcion={'Registrar Transporte'}
+              icon={'mdi mdi-ambulance'}
+            />
+          </Pagination.Item>
+          <Pagination.Item>
+            <BtnActions
+              permisos={'S'}
+              key={`MANOBRA_${row.cells[0].value}`}
+              toggleActions={toggleActions}
+              row={row.cells[0].value}
+              titulo={'MANO DE OBRA'}
+              descripcion={'Registrar Mano de Obras'}
+              icon={'mdi mdi-allergy'}
+            />
+          </Pagination.Item>
+          <Pagination.Item>
+            <BtnActions
+              permisos={'S'}
+              key={`IMAGEN_${row.cells[0].value}`}
+              toggleActions={toggleActions}
+              row={row.cells[0].value}
+              titulo={'IMAGEN'}
+              descripcion={'Subir una imagen'}
+              icon={'mdi mdi-panorama'}
+            />
+          </Pagination.Item>
+          <Pagination.Item>
+            <BtnActions
+              permisos={'S'}
+              key={`VISTA_${row.cells[0].value}`}
+              toggleActions={toggleActions}
+              row={row.cells[0].value}
+              titulo={'VISTA'}
+              descripcion={'Vista previa de la APU'}
+              icon={'mdi mdi-eye-check'}
+            />
+          </Pagination.Item>
 
         </Pagination>
       </Row>
@@ -146,31 +154,34 @@ const ActionColumn = ({ row }) => {
   );
 };
 const AnalisisPreciosUnitarios = (props) => {
-
+  localStorage.removeItem('Productos')
+  localStorage.removeItem('Transportes')
+  localStorage.removeItem('SubCategorias')
+  const {itemsApu,query} = useGestionPrecios()
+  const permisos = props?.permisos || {};
   const {
-    validated, Spinners, itemsApu,setItemsAdd,
-    toggle,setOpen,open,
-    signUpModalAdd, setSignUpModalAdd, query,
-    sizePerPageList, isLoading, PERMISOS_USER
+    validated,
+    signUpModalAdd, setSignUpModalAdd,
+    sizePerPageList, isLoading
   } = useContext(DashboardContext);
-  const permisos = PERMISOS_USER || [{}];
+
 
   const Apus = itemsApu?.data?.SubCategorias || [];
-/* product column render */
-const ProductColumn = ({ row }) => {
-  const img=row.original.image?row.original.image:'https://robohash.org/doloribusatconsequatur.png?size=100x100&set=set1'
-  return (
+  /* product column render */
+  const ProductColumn = ({ row }) => {
+    const img = row.original.image ? row.original.image : 'https://robohash.org/doloribusatconsequatur.png?size=100x100&set=set1'
+    return (
       <React.Fragment>
-         <img
-              src={`${img}`}
-              alt={`${img}`}
-              title={row.original.image}
-              className="rounded me-3"
-              height="48"
-          />
+        <img
+          src={`${img}`}
+          alt={`${img}`}
+          title={row.original.image}
+          className="rounded me-3"
+          height="48"
+        />
       </React.Fragment>
-  );
-};
+    );
+  };
   const columns = [
     {
       Header: 'ID',
@@ -199,27 +210,7 @@ const ProductColumn = ({ row }) => {
     }
   ];
   const toggleSignUp = () => {
-    const TipoCategoria = itemsApu?.data?.Categorias || [{}];
-
-    let Categoria = [];
-    const obj ={
-      value:'0',
-      label:'Registrar como nueva Categoria'
-    }
-    if (TipoCategoria.length>0)
-    Categoria.push(obj)
-    TipoCategoria?.map((row, i) =>{
-            const obj ={
-              value:row.id,
-              label:row.Codigo +'.-'+ row.Categoria
-            }
-            Categoria.push(obj)
-        })
-      setItemsAdd(Categoria)
-      toggle()
-     setSignUpModalAdd(!signUpModalAdd);
-     setOpen(open);
-
+    {permisos?.add === 'S' ? setSignUpModalAdd(!signUpModalAdd) : Swal.fire('USTED NO TIENE PERMISOS HABILITADOS PARA ESTA OPCION')}
   };
   useEffect(() => {
     query('RegistrosAvanzados', 'Apu', [{ opcion: 'consultar', obj: 'Apu' }]);
@@ -247,7 +238,12 @@ const ProductColumn = ({ row }) => {
                   </Card>
                 </Col>
               </Row>
-              {!isLoading && Apus?.length > 0 && permisos?.query === 'S' ? (<Table
+              {!isLoading && Apus?.length > 0 && permisos?.query === 'S' ? (
+
+                  localStorage.setItem('Productos',JSON.stringify(itemsApu?.data?.Productos)),
+                  localStorage.setItem('Transportes',JSON.stringify(itemsApu?.data?.Transportes)),
+                  localStorage.setItem('SubCategorias',JSON.stringify(itemsApu?.data?.SubCategorias)),
+                <Table
                 columns={columns}
                 data={Apus}
                 pageSize={5}
@@ -261,7 +257,7 @@ const ProductColumn = ({ row }) => {
                 titulo={' Crear APU'}
                 permisos={permisos}
                 toggleSignUp={toggleSignUp}
-              />) : <Suspense fallback={loading()}><Spinners /></Suspense>}
+              />) : <MensajeAlert/>}
             </Card.Body>
           </Card>
         </Col>

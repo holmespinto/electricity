@@ -1,83 +1,100 @@
 /* eslint-disable no-lone-blocks */
 /* eslint-disable array-callback-return */
-/* eslint-disable no-duplicate-case */
-/* eslint-disable no-fallthrough */
-import React, { useContext, Suspense, useEffect } from 'react';
-import { Row, Col, Card,  Modal } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
+import React, { useContext, useEffect } from 'react';
+import { Row, Col, Card, Modal, Pagination } from 'react-bootstrap';
 import { DashboardContext } from '../../../../../layouts/context/DashboardContext';
 import FormAdd from './FormAdd';
 import FormUpdate from './FormUpdate';
 import Table from '../../../../../components/Table';
-const loading = () => <div className="text-center"></div>;
-const ActionColumn = ({ row }) => {
+import Swal from 'sweetalert2'
 
+import BtnActions from '../../BtnActions';
+import PermisoAlert from '../../PermisoAlert/PermisoAlert';
+import { useGestionBasica } from '../../../../../hooks/useGestionBasica';
+
+const ActionColumn = ({ row }) => {
   const {
     eliminar,
     validated,
-    setItemsUpdate,toggle,
-    setOpen,itemsProductos,
-    open, itemsmenuprincipal, PERMISOS_USER
+    toggle,
+    setOpen,
+    setItemsUpdate,
+    open, itemsmenuprincipal
   } = useContext(DashboardContext);
-  const permisos = PERMISOS_USER || [{}];
-  const toggleSignUp = (id) => {
-    let array = [];
-    //console.log('itemsProductos',id)
-    if(id>0)
-    itemsProductos?.map((row, i) =>{
-           if(row.id===id){
-            const obj ={
-              id:row.id,
-              Nombre:row.Nombre,
-              Unidad:row.Unidad,
-              Cantidad:row.Cantidad,
-              ValorUnitario:row.ValorUnitario,
-              Producto:row.Producto
-            }
-            array.push(obj)
-           }
-        })
-      setItemsUpdate(array[0])
+
+
+   const toggleSignUp = (id) => {
+    let permiso = sessionStorage.getItem('PERMISO');
+    const localPermiso = JSON.parse(permiso);
+    if (localPermiso?.update === 'S') {
+
+      if(row.cells[0].row.values.id===id)
+      setItemsUpdate(row?.cells[0]?.row?.values)
       setOpen(open);
       toggle()
-
+    } else {
+      Swal.fire('USTED NO TIENE PERMISOS HABILITADOS PARA ESTA OPCION');
+    }
   };
 
+  let permiso = sessionStorage.getItem('PERMISO');
+  const localPermiso = JSON.parse(permiso);
   return (
     <React.Fragment>
       <Modal show={open} onHide={toggleSignUp}>
         <Modal.Body><FormUpdate
-          title={`ACTUALIZAR ${itemsmenuprincipal?.toUpperCase()}`}
+          title={`FORMULARIO PARA LA EDICION DE ${itemsmenuprincipal?.toUpperCase()}`}
           validated={validated}
         />
         </Modal.Body>
       </Modal>
-      {
-        permisos?.update === 'S' ? (
-          <Link to="#" className="action-icon" onClick={() => toggleSignUp(row.cells[0].value)}>
-            {' '}
-            <i className="mdi mdi-square-edit-outline"></i>
-          </Link>) : ''
-      }
-      {
-        permisos?.delete === 'S' ? (
-          <Link to="#" className="action-icon" onClick={() => eliminar(row.cells[0].value)}>
-            {' '}
-            <i className="mdi mdi-delete"></i>
-          </Link>) : ''}
+      <Row>
+        <Pagination className="pagination-rounded mx-auto" size="sm">
+          <Pagination.Item>
+
+           {
+           (localPermiso?.update === 'S')?
+            <BtnActions
+              permisos={'S'}
+              key={`EDITAR_${row.cells[0].value}`}
+              toggleActions={toggleSignUp}
+              row={row.cells[0].value}
+              titulo={'EDITAR'}
+              descripcion={'Editar Proyecto'}
+              icon={'mdi mdi-square-edit-outline'}
+            />:''
+           }
+          </Pagination.Item>
+          <Pagination.Item>
+          {
+           (localPermiso?.update === 'S')?
+            <BtnActions
+              permisos={'S'}
+              key={`ELIMINAR_${row.cells[0].value}`}
+              toggleActions={eliminar}
+              row={row.cells[0].value}
+              titulo={'ELIMINAR'}
+              descripcion={'Registrar Proyecto'}
+              icon={'mdi mdi-delete'}
+            />:''
+          }
+          </Pagination.Item>
+        </Pagination>
+      </Row>
     </React.Fragment>
   );
 };
 const Productos = (props) => {
-  //const [registros, setRegistros] = useState();
+
+  const permisos = props?.permisos || {};
+  const {itemsProductos,query} = useGestionBasica()
   const {
-    validated,itemsmenuprincipal,
-    signUpModalAdd, setSignUpModalAdd, query,Spinners,
-    sizePerPageList, StatusColumn, PERMISOS_USER
+    validated, itemsmenuprincipal,
+    signUpModalAdd, setSignUpModalAdd,
+    sizePerPageList, StatusColumn,
   } = useContext(DashboardContext);
 
-  const permisos = PERMISOS_USER || [{}];
-  const datos = props?.datos || [{}];
+  const datos = itemsProductos?.data || [{}];
 
   const columns = [
     {
@@ -106,7 +123,7 @@ const Productos = (props) => {
       Header: 'Total',
       accessor: 'Total',
       sort: false,
-    },{
+    }, {
       Header: 'Tipo',
       accessor: 'Producto',
       sort: false,
@@ -126,12 +143,13 @@ const Productos = (props) => {
     },
   ];
   const toggleSignUp = () => {
-    setSignUpModalAdd(!signUpModalAdd);
+    {permisos?.add === 'S' ? setSignUpModalAdd(!signUpModalAdd) : Swal.fire('USTED NO TIENE PERMISOS HABILITADOS PARA ESTA OPCION')}
   };
 
   useEffect(() => {
     {
-     query('GestionesBasicas', 'Productos', [{ opcion: 'consultar', obj: 'Productos' }]);
+      query('GestionesBasicas', 'Productos', [{ opcion: 'consultar', obj: 'Productos' }]);
+
     }
   }, [props.tipo, query])
 
@@ -147,18 +165,19 @@ const Productos = (props) => {
                     <Card.Body>
                       {/* Sign up Modal */}
                       <Modal show={signUpModalAdd} onHide={setSignUpModalAdd}>
-                        <Modal.Body>{
-                          permisos?.add === 'S' ? (<FormAdd
+                        <Modal.Body>
+                          <FormAdd
                             title={`GESTIONAR ${props?.tipo?.toUpperCase()}`}
                             validated={validated}
-                          />) : ''}
+                          />
                         </Modal.Body>
                       </Modal>
                     </Card.Body>
                   </Card>
                 </Col>
               </Row>
-              {datos?.length>0 && permisos?.query === 'S' ? (<Table
+              {permisos?.query}
+              {Number(datos?.length) > 0 && permisos?.query === 'S' ? (<Table
                 columns={columns}
                 data={datos}
                 pageSize={5}
@@ -173,7 +192,8 @@ const Productos = (props) => {
                 titulo={itemsmenuprincipal}
                 permisos={permisos}
                 toggleSignUp={toggleSignUp}
-              />) : <Suspense fallback={loading()}><Spinners /></Suspense>}
+              />) : <PermisoAlert />
+              }
             </Card.Body>
           </Card>
         </Col>

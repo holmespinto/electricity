@@ -1,102 +1,97 @@
 /* eslint-disable no-lone-blocks */
 /* eslint-disable array-callback-return */
 // @flow
-import React, { useContext, Suspense, useEffect } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { Row, Col, Card, Modal,Pagination } from 'react-bootstrap';
 import { DashboardContext } from '../../../../../layouts/context/DashboardContext';
 import BtnActions from '../../BtnActions';
 import FormAdd from './FormAdd';
 import OptionsActions from './OptionsActions';
 import Table from '../../../../../components/Table';
-const loading = () => <div className="text-center"></div>;
+import MensajeAlert from '../../PermisoAlert/PermisoAlert';
+import Swal from 'sweetalert2';
+import { useGestionPrecios } from '../../../../../hooks/useGestionPrecios';
 
 
 const ActionColumn = ({ row }) => {
 
   const {
-    openActions, setActions,
-     toggle, setParametroPrecio,
-     itemsParametroPrecio, PERMISOS_USER
+    eliminar,
+    toggle,
+    setOpen,
+    setItemsUpdate,
+    open,
   } = useContext(DashboardContext);
+   const toggleSignUp = (id) => {
+    let permiso = sessionStorage.getItem('PERMISO');
+    const localPermiso = JSON.parse(permiso);
+    if (localPermiso?.update === 'S') {
 
-  const permisos = PERMISOS_USER || [{}];
-
- const toggleActions = (id,opcion) => {
-
-  const Parametros = itemsParametroPrecio?.data?.ParametroPrecios;
-  let param= Parametros?.filter((item) => {
-    return item.id === id;
-  });
-let Array=[];
-    if (id > 0)
-    param?.map((row, i) => {
-      const obj ={
-        id: row.id,
-        Parametro: row.Parametro,
-        Valor: row.Valor,
-        Opcion: opcion,
-      }
-        if (row.id === id) {
-          Array.push(obj)
-        }
-      })
-
-    setActions(!openActions);
-    toggle()
-    setParametroPrecio(Array[0])
+      if(row.cells[0].row.values.id===id)
+      setItemsUpdate(row?.cells[0]?.row?.values)
+      setOpen(open);
+      toggle()
+    } else {
+      Swal.fire('USTED NO TIENE PERMISOS HABILITADOS PARA ESTA OPCION');
+    }
   };
+  let permiso = sessionStorage.getItem('PERMISO');
+  const localPermiso = JSON.parse(permiso);
   return (
     <React.Fragment>
       <Row>
-        <Modal show={openActions} onHide={toggleActions}>
+        <Modal show={open} onHide={toggleSignUp}>
           <Modal.Body>
             <OptionsActions />
           </Modal.Body>
         </Modal>
       </Row>
       <Row>
-      <Pagination className="pagination-rounded mx-auto" size="sm">
-      <Pagination.Item>
-        <BtnActions
-            permisos={permisos?.update}
-            key={`ACTUALZAR_${row.cells[0].value}`}
-            toggleActions={toggleActions}
-            row={row.cells[0].value}
-            titulo={'ACTUALZAR'}
-            descripcion={'Actualizar Registro'}
-            icon={'mdi mdi-square-edit-outline'}
-          />
-        </Pagination.Item>
-       <Pagination.Item>
-        <BtnActions
-            permisos={permisos?.update}
-            key={`ELIMINAR_${row.cells[0].value}`}
-            toggleActions={toggleActions}
-            row={row.cells[0].value}
-            titulo={'ELIMINAR'}
-            descripcion={'Eliminar Registro'}
-            icon={'mdi mdi-delete'}
-          />
-        </Pagination.Item>
+        <Pagination className="pagination-rounded mx-auto" size="sm">
+          <Pagination.Item>
 
+           {
+           (localPermiso?.update === 'S')?
+            <BtnActions
+              permisos={'S'}
+              key={`EDITAR_${row.cells[0].value}`}
+              toggleActions={toggleSignUp}
+              row={row.cells[0].value}
+              titulo={'EDITAR'}
+              descripcion={'Editar Orden de Compra'}
+              icon={'mdi mdi-square-edit-outline'}
+            />:''
+           }
+          </Pagination.Item>
+          <Pagination.Item>
+          {
+           (localPermiso?.update === 'S')?
+            <BtnActions
+              permisos={'S'}
+              key={`ELIMINAR_${row.cells[0].value}`}
+              toggleActions={eliminar}
+              row={row.cells[0].value}
+              titulo={'ELIMINAR'}
+              descripcion={'Registrar Orden de Compra'}
+              icon={'mdi mdi-delete'}
+            />:''
+          }
+          </Pagination.Item>
         </Pagination>
       </Row>
     </React.Fragment>
   );
 };
 const ParametosPrecios = (props) => {
-
+  const {itemsParametroPrecio,query} = useGestionPrecios()
+  const datos = itemsParametroPrecio?.data?.ParametrosPrecios || [];
+  const permisos = props?.permisos || {};
   const {
-    validated, Spinners,
-    itemsParametroPrecios,
-    setItemsAdd,
-    toggle,setOpen,open,
-    signUpModalAdd, setSignUpModalAdd, query,
-    sizePerPageList, isLoading, PERMISOS_USER
+    validated,
+    signUpModalAdd, setSignUpModalAdd,
+    sizePerPageList, isLoading,
   } = useContext(DashboardContext);
-  const permisos = PERMISOS_USER || [{}];
 
-  const ParametroPrecios = itemsParametroPrecios?.data?.ParametrosPrecios || [];
 
   const columns = [
     {
@@ -124,32 +119,12 @@ const ParametosPrecios = (props) => {
     }
   ];
   const toggleSignUp = () => {
-    const TipoCategoria = itemsParametroPrecios?.data?.ParametrosPrecios || [{}];
-
-    let Categoria = [];
-    const obj ={
-      value:'0',
-      label:'Registrar como nueva Configuración'
-    }
-    if (TipoCategoria.length>0)
-    Categoria.push(obj)
-    TipoCategoria?.map((row, i) =>{
-            const obj ={
-              value:row.id,
-              label:row.Parametro +'.-'+ row.Valor
-            }
-            Categoria.push(obj)
-        })
-      setItemsAdd(Categoria)
-      toggle()
-     setSignUpModalAdd(!signUpModalAdd);
-     setOpen(open);
-
+    {permisos?.add === 'S' ? setSignUpModalAdd(!signUpModalAdd) : Swal.fire('USTED NO TIENE PERMISOS HABILITADOS PARA ESTA OPCION')}
   };
   useEffect(() => {
     query('RegistrosAvanzados', 'ParametroPrecio', [{ opcion: 'consultar', obj: 'ParametroPrecio' }]);
   }, [query])
-  console.log(ParametroPrecios)
+
   return (
     <>
       <Row>
@@ -172,9 +147,9 @@ const ParametosPrecios = (props) => {
                   </Card>
                 </Col>
               </Row>
-              {!isLoading && ParametroPrecios?.length > 0 && permisos?.query === 'S' ? (<Table
+              {!isLoading && datos?.length > 0 && permisos?.query === 'S' ? (<Table
                 columns={columns}
-                data={ParametroPrecios}
+                data={datos}
                 pageSize={5}
                 sizePerPageList={sizePerPageList}
                 isSortable={true}
@@ -186,7 +161,7 @@ const ParametosPrecios = (props) => {
                 titulo={' Crear Configuración'}
                 permisos={permisos}
                 toggleSignUp={toggleSignUp}
-              />) : <Suspense fallback={loading()}><Spinners /></Suspense>}
+              />): <MensajeAlert/>}
             </Card.Body>
           </Card>
         </Col>

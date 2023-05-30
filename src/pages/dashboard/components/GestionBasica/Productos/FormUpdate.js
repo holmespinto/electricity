@@ -2,12 +2,12 @@ import React,{useContext} from 'react';
 import { DashboardContext } from '../../../../../layouts/context/DashboardContext';
 /* custon FormUpdate */
 import Fields from './Fields';
+
 const FormUpdate = (props) => {
-  const { itemUrl, itemsmenuprincipal,itemsUpdate, } = useContext(DashboardContext);
-  //console.log('FormUpdate',itemsUpdate)
+  const { itemUrl, itemsmenuprincipal,itemsUpdate } = useContext(DashboardContext);
   return (
-  <React.Fragment>
-      <Fields
+  <>
+    <Fields
         accion={itemUrl}
         tipo={itemsmenuprincipal}
         title={props.title}
@@ -16,7 +16,7 @@ const FormUpdate = (props) => {
         textBtn={'Actualizar Producto'}
         ItemsUpdate={[itemsUpdate]}
       />
-  </React.Fragment>
-    );
+  </>
+  );
 }
 export default FormUpdate;

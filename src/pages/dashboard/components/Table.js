@@ -82,7 +82,7 @@ const Table = (props: TableProps): React$Element<React$FragmentType> => {
     const pagination = props['pagination'] || false;
     const isSelectable = props['isSelectable'] || false;
     const isExpandable = props['isExpandable'] || false;
-    console.log('isExpandable',isExpandable)
+
     const dataTable = useTable(
         {
             columns: props['columns'],

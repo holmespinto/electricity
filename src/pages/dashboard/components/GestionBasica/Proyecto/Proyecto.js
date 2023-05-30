@@ -1,38 +1,45 @@
+/* eslint-disable no-lone-blocks */
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable array-callback-return */
 // @flow
-import React, { useContext, Suspense, useEffect } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { Row, Col, Card, Modal, Pagination } from 'react-bootstrap';
 import { DashboardContext } from '../../../../../layouts/context/DashboardContext';
-import BtnActions from '../../BtnActions';
+
 import FormAdd from './FormAdd';
 import FormUpdate from './FormUpdate';
 import Table from '../../../../../components/Table';
+import PermisoAlert from '../../PermisoAlert/PermisoAlert';
+import BtnActions from '../../BtnActions';
+import Swal from 'sweetalert2';
+import { useGestionBasica } from '../../../../../hooks/useGestionBasica';
 
-const loading = () => <div className="text-center"></div>;
 const ActionColumn = ({ row }) => {
-
   const {
     eliminar,
     validated,
-    setOpen, toggle, setItemsUpdate,
-    open, itemsmenuprincipal, itemsProyecto, PERMISOS_USER
+    toggle,
+    setOpen,
+    setItemsUpdate,
+    open, itemsmenuprincipal
   } = useContext(DashboardContext);
-  const permisos = PERMISOS_USER || [{}];
 
 
-  const toggleSignUp = (id) => {
-    let array = [];
-    if (id > 0)
-      itemsProyecto?.map((row, i) => {
-        if (row.id === id) {
-          array.push(row)
-        }
-      })
-    setOpen(open);
-    toggle()
-    setItemsUpdate(array[0])
+   const toggleSignUp = (id) => {
+    let permiso = sessionStorage.getItem('PERMISO');
+    const localPermiso = JSON.parse(permiso);
+    if (localPermiso?.update === 'S') {
+
+      if(row.cells[0].row.values.id===id)
+      setItemsUpdate(row.cells[0].row.values)
+      setOpen(open);
+      toggle()
+    } else {
+      Swal.fire('USTED NO TIENE PERMISOS HABILITADOS PARA ESTA OPCION');
+    }
   };
-
+  let permiso = sessionStorage.getItem('PERMISO');
+  const localPermiso = JSON.parse(permiso);
   return (
     <React.Fragment>
       <Modal show={open} onHide={toggleSignUp}>
@@ -45,26 +52,33 @@ const ActionColumn = ({ row }) => {
       <Row>
         <Pagination className="pagination-rounded mx-auto" size="sm">
           <Pagination.Item>
+
+           {
+           (localPermiso?.update === 'S')?
             <BtnActions
-              permisos={permisos?.update}
+              permisos={'S'}
               key={`EDITAR_${row.cells[0].value}`}
               toggleActions={toggleSignUp}
               row={row.cells[0].value}
               titulo={'EDITAR'}
               descripcion={'Editar Proyecto'}
               icon={'mdi mdi-square-edit-outline'}
-            />
+            />:''
+           }
           </Pagination.Item>
           <Pagination.Item>
+          {
+           (localPermiso?.update === 'S')?
             <BtnActions
-              permisos={permisos?.update}
+              permisos={'S'}
               key={`ELIMINAR_${row.cells[0].value}`}
               toggleActions={eliminar}
               row={row.cells[0].value}
               titulo={'ELIMINAR'}
               descripcion={'Registrar Proyecto'}
               icon={'mdi mdi-delete'}
-            />
+            />:''
+          }
           </Pagination.Item>
         </Pagination>
       </Row>
@@ -72,13 +86,15 @@ const ActionColumn = ({ row }) => {
   );
 };
 const Proyecto = (props) => {
-
+  const permisos = props.permisos || {};
+  const {itemsProyectos,query} = useGestionBasica()
   const {
-    validated, Spinners, itemsmenuprincipal,
-    signUpModalAdd, setSignUpModalAdd, query,
-    sizePerPageList, StatusColumn, isLoading, PERMISOS_USER
+    validated, itemsmenuprincipal,
+    signUpModalAdd, setSignUpModalAdd,
+    sizePerPageList, StatusColumn,
   } = useContext(DashboardContext);
-  const permisos = PERMISOS_USER || [{}];
+
+  const datos = itemsProyectos?.data || [{}];
 
   const columns = [
     {
@@ -124,17 +140,14 @@ const Proyecto = (props) => {
     },
   ];
   const toggleSignUp = () => {
-    setSignUpModalAdd(!signUpModalAdd);
+    {permisos?.add === 'S' ? setSignUpModalAdd(!signUpModalAdd) : Swal.fire('USTED NO TIENE PERMISOS HABILITADOS PARA ESTA OPCION')}
   };
   useEffect(() => {
     query('GestionesBasicas', 'Proyecto', [{ opcion: 'consultar', obj: 'Proyecto' }]);
   }, [query])
-
-
   return (
     <>
       <Row>
-
         <Col>
           <Card>
             <Card.Body>
@@ -144,7 +157,8 @@ const Proyecto = (props) => {
                     <Card.Body>
                       {/* Sign up Modal */}
                       <Modal show={signUpModalAdd} onHide={setSignUpModalAdd}>
-                        <Modal.Body><FormAdd
+                        <Modal.Body>
+                          <FormAdd
                           title={`GESTIONAR ${props?.tipo?.toUpperCase()}`}
                           validated={validated}
                         />
@@ -154,9 +168,9 @@ const Proyecto = (props) => {
                   </Card>
                 </Col>
               </Row>
-              {!isLoading && props?.datos?.length > 0 && permisos?.query === 'S' ? (<Table
+              {datos?.length > 0 && permisos?.query === 'S' ?  (<Table
                 columns={columns}
-                data={props?.datos}
+                data={datos}
                 pageSize={5}
                 sizePerPageList={sizePerPageList}
                 isVisible={true}
@@ -169,7 +183,7 @@ const Proyecto = (props) => {
                 titulo={itemsmenuprincipal}
                 permisos={permisos}
                 toggleSignUp={toggleSignUp}
-              />) : <Suspense fallback={loading()}><Spinners /></Suspense>}
+              />) : <PermisoAlert />}
             </Card.Body>
           </Card>
         </Col>

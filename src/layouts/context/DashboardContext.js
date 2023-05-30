@@ -1,10 +1,7 @@
-/* eslint-disable array-callback-return */
-/* eslint-disable no-duplicate-case */
-/* eslint-disable no-fallthrough */
+
 import React, { createContext, useState, useCallback,useEffect } from 'react';
 import Swal from 'sweetalert2'
 import classNames from 'classnames';
-import encodeBasicUrl from '../../utils/encodeBasicUrl';
 import {Card } from 'react-bootstrap';
 import Spinner from '../../components/Spinner';
 import createResponseHandler from './createResponseHandler';
@@ -22,35 +19,28 @@ const DashboardProvider = ({ children }) => {
   const [isLoading, setLoading] = useState(false);
   const [itemsmenuprincipal, setitemsMenuPrincipal] = useState('');
   const [itemUrl, setitemsUrl] = useState('');
-  const [items, setItems] = useState([]);
+
   const [itemsUsuarios, setIUsuarios] = useState([]);
   const [itemsQuery, setItemsQuery] = useState([]);
-  const [empleadoNomina, setEmpleadoNomina] = useState([]);
   const [signUpModal, setSignUpModal] = useState(false);
-  const [openNomin, setOpenNomina] = useState(false);
+
   const [signUpModalAdd, setSignUpModalAdd] = useState(false);
   const [signUpNomina, setSignUpNomina] = useState(false);
   const [openActions, setActions] = useState(false);
-  const [itemsUpProductos, setSignUpProductos] = useState(false);
+
   const [open, setOpen] = useState(false);
   const [idCategoria, setIdCategoria] = useState(0);
   const [itemsUpdate, setItemsUpdate] = useState([]);
   const [itemsAdd, setItemsAdd] = useState([]);
   const [itemsRoles, setRoles] = useState([]);
-  const [itemsEmpleado, setEmpleado] = useState([]);
-  const [itemsNomina, setNomina] = useState([]);
-  const [itemsControlDiario, setControlDiario] = useState([]);
-  const [itemsOrdenCompra, setOrdenCompra] = useState([]);
-  const [itemsCliente, setCliente] = useState([]);
+  const [openNomin, setOpenNomina] = useState(false);
+
   const [itemsProyecto, setProyecto] = useState([]);
-  const [itemsProductos, setProductos] = useState([]);
-  const [itemsCategorias, setCategorias] = useState([]);
-  const [itemsSubCategorias, setSubCategorias] = useState([]);
-  const [itemsApu, setApu] = useState([]);
+
   const [itemsParametroPrecios, setParametroPrecio] = useState([]);
   const [itemsapuTransport, setApuTrasporte] = useState([]);
   const [itemsEditarProyecto, setEditarProyecto] = useState([]);
-  const [PERMISOS_USER, setpermisos] = useState([{}]);
+
 
 
 // función para obtener el valor de una cookie
@@ -78,8 +68,8 @@ function deleteCookie(name) {
     const items_sub = e?.replace('/dashboard/', '').replace('/', '');
     if (items_sub) {
       let userInfo = JSON.parse(sessionStorage.getItem('ITEM_SELECT'))
-      if (userInfo?.memorizer.length > 0) {
-        setitemsMenuPrincipal(userInfo?.memorizer);
+      if (userInfo?.tipo.length > 0) {
+        setitemsMenuPrincipal(userInfo?.tipo);
         setitemsUrl(userInfo?.menu);
         setLoading(false)
       }
@@ -177,19 +167,7 @@ function deleteCookie(name) {
         const dataHandler = createResponseHandler(response, {
           setIUsuarios,
           setRoles,
-          setEmpleado,
-          setNomina,
-          setControlDiario,
-          setOrdenCompra,
-          setCliente,
-          setProyecto,
-          setProductos,
-          setCategorias,
-          setSubCategorias,
-          setApu,
-          setParametroPrecio,
           setItemsQuery,
-          setEditarProyecto
         });
         const handler = dataHandler[datos[0]?.obj] || dataHandler.default;
         handler();
@@ -207,6 +185,10 @@ function deleteCookie(name) {
 
   //ELEIMINAR REGISTRO
   const eliminar = useCallback((cel) => {
+
+    let permiso = sessionStorage.getItem('PERMISO');
+    const localPermiso = JSON.parse(permiso);
+    if(localPermiso.delete){
     const estrategiaConfirmacion = new ConfirmacionEliminacionStrategy();
     estrategiaConfirmacion.confirmar(cel, (cel) => {
       const url = `accion=${itemUrl}&tipo=${itemsmenuprincipal}&opcion=delete&id=${cel}`;
@@ -220,45 +202,13 @@ function deleteCookie(name) {
           }, 5000);
         });
     });
+  }else{
+    Swal.fire('USTED NO TIENE PERMISOS HABILITADOS PARA ESTA OPCION')
+  }
   }, [itemUrl, itemsmenuprincipal]);
 
 
-  const onPermisos = useCallback((itemUrl) => {
-    setTimeout(function () {
 
-      // get parameters from post request
-      let userInfo = sessionStorage.getItem('hyper_user');
-      const user = JSON.parse(userInfo);
-      if (user) {
-        const url = `accion=permisos&opcion=consultar&IdMenu=${encodeBasicUrl(user[0]?.role)}`;
-        const datosMenu = api.sendRequestData(`${url}`);
-        datosMenu.then(function (response) {
-          try {
-            const perm = []
-            const permisos = response?.Permisos || [{}];
-            if (itemUrl.length > 0)
-              permisos?.map((row, i) => {
-                if (row.opcion === itemUrl) {
-                  perm.push(row)
-                }
-              })
-
-           perm?.length > 0?setpermisos(perm[0]):setpermisos([{
-            "query": "N",
-            "add": "N",
-            "update": "N",
-            "delete": "N",
-            "opcion": itemUrl,
-            "userInfo":user[0]?.role
-        }])
-
-          } catch (error) {
-            console.error(error);
-          }
-        });
-      }
-    }, 1000);
-  }, []);
 
  //EDITOR DE APUS
  const add = useCallback((cel,idProyecto) => {
@@ -335,40 +285,29 @@ const AdvertenciaLocalStorage = () => {
     setLoading,
     setitemsMenuPrincipal,
     isLoading,
-    itemsmenuprincipal,setitemsUrl,
-    itemUrl, setItems, items,
+    itemsmenuprincipal,
+    itemUrl,
     eliminar,
     signUpModal, setSignUpModal,
     StatusColumn, sizePerPageList, INIT_RESPONSE,
     signUpModalAdd, setSignUpModalAdd,
     itemsQuery, setItemsQuery, query,
-    empleadoNomina, setEmpleadoNomina,
     signUpNomina, setSignUpNomina,
     open, setOpen, toggle,
-    openNomin, setOpenNomina,
     openActions, setActions,
-
     itemsUsuarios, setIUsuarios,
     itemsUpdate, setItemsUpdate,
     itemsAdd, setItemsAdd,
     itemsRoles, setRoles,
-    itemsEmpleado, setEmpleado,
-    itemsNomina, setNomina,
-    itemsControlDiario, setControlDiario,
-    itemsOrdenCompra, setOrdenCompra,
-    itemsCliente, setCliente,
+    openNomin, setOpenNomina,
     itemsProyecto, setProyecto,
     Spinners,
-    itemsProductos, setProductos,
-    itemsUpProductos, setSignUpProductos,
-    itemsCategorias, setCategorias,
-    itemsSubCategorias, setSubCategorias,
-    itemsApu, setApu,
+
     itemsapuTransport, setApuTrasporte,
     itemsParametroPrecios, setParametroPrecio,
     getCookie,deleteCookie,
     queryFile,updateApu,
-    onPermisos, PERMISOS_USER,add,update,borrar,pagesInSearch,
+    add,update,borrar,pagesInSearch,
     itemsEditarProyecto, setEditarProyecto,
     idCategoria, setIdCategoria
   };

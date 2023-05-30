@@ -1,15 +1,14 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 // @flow
 import React, {  useContext,useEffect } from 'react';
-//import Material from '../GestionBasica/Material/Material';
-//import Cliente from '../GestionBasica/Cliente/Cliente';
+
 import GestionarProyecto from '../Informes/GestionarProyecto/GestionarProyecto';
 import EditarProyecto from '../Informes/EditarProyecto/EditarProyecto';
-//import Empleado from '../GestionBasica/Empleado/Empleado';
 import { DashboardContext } from '../../../../layouts/context/DashboardContext';
-
+import PermisoAlert from '../PermisoAlert/PermisoAlert';
 
 const Informes = (props) => {
+  const permisos = props?.permisos || {};
 const {itemsEditarProyecto,idCategoria, setIdCategoria,
   pagesInSearch,itemsProyecto} = useContext(DashboardContext);
 
@@ -29,24 +28,33 @@ const DatosProyect = proyectos?.length>0?proyectos?.filter((t) => t.id === idCat
  const DatosProductos= Productos?.length>0?Productos?.filter((t) => t.IdProyecto === idCategoria):[{}]
 
 const Datos=[{"data":{DatosProyect:DatosProyect[0],idProyecto:idCategoria,Apus:DatosApus,Productos:DatosProductos}}]
- //console.log('itemsEditarProyecto',gestionProyectos)
+
+
   return (
     <>
       {(() => {
         switch (props?.tipo) {
           case 'GestionarProyecto':
-            return (<><GestionarProyecto
+            return <>
+             { permisos?.query?.length ===1 ?
+            <GestionarProyecto
               accion={'GestionarProyecto'}
               tipo={props.tipo}
               datos={gestionProyectos}
-              /></>);
+              permisos={permisos}
+              />:<PermisoAlert/>}
+              </>
               case 'EditarProyecto':
-                return (<><EditarProyecto
+                return <>
+                { permisos?.query?.length ===1 ?
+                <EditarProyecto
                   accion={'EditarProyecto'}
                   tipo={props.tipo}
                   datos={Datos}
                   idProyecto={idCategoria}
-                  /></>);
+                  permisos={permisos}
+                  />:<PermisoAlert/>}
+                  </>
           default:
             return (
               <>{''}</>

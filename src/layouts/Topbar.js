@@ -115,7 +115,7 @@ const Topbar = ({ hideLogo, navCssClasses, openLeftMenuCallBack, topbarDark }: T
                                 profilePic={profilePic}
                                 menuItems={ProfileMenus}
                                 username={autor.name}
-                                userTitle={autor.role==='0minirezo' ? 'Admin' : 'Consulta'}
+                                userTitle={autor.role}
                             />
                         </li>
                     </ul>

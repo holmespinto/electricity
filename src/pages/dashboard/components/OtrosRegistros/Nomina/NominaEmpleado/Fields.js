@@ -7,9 +7,6 @@ const Fields = (props) => {
   const DatosEmpleadoNomina = [props.EmpleadoNomina] || [];
   const isLoading = props.loading;
 
-
-  console.log('props.Nomina',  )
-  //console.log('fields-EmpleadoNomina', props)
   return (
     <React.Fragment>
       <Row>

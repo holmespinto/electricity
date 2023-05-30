@@ -3,7 +3,7 @@ import { DashboardContext } from '../../../../../layouts/context/DashboardContex
 /* custon FormUpdate */
 import Fields from './Fields';
 const FormAdd = (props) => {
-  const { itemUrl, itemsmenuprincipal,itemsAdd } = useContext(DashboardContext);
+  const { itemUrl, itemsmenuprincipal, } = useContext(DashboardContext);
   return (
   <React.Fragment>
       {
@@ -15,7 +15,6 @@ const FormAdd = (props) => {
         opcion={'add'}
         textBtn={'Registrar Categorias'}
         ItemsUpdate={[]}
-        Padres={itemsAdd}
       />
     }
   </React.Fragment>

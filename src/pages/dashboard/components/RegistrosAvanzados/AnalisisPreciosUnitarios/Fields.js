@@ -22,10 +22,10 @@ function multiplicar(a,b){
 
 
 const Register = (props)=> {
-const {query,setActions} = useContext(DashboardContext);
+const {query,setActions,openActions} = useContext(DashboardContext);
   const [detalles, setDetalles] = useState([]);
   const data =  props?.Categorias||[];
-  const [items, setItems,openActions] = useState([{
+  const [items, setItems] = useState([{
     id: '',
     Nombre: '',
     Unidad: '1',

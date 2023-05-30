@@ -35,6 +35,7 @@ type TarjetasReferenciasProps = {
 };
 
 const TarjetasReferencias = (props: TarjetasReferenciasProps): React$Element<any> => {
+
   const [idCategoria, setIdCategoria] = useState(0);
 
   const { query, itemsApu,isLoading,pagesInSearch

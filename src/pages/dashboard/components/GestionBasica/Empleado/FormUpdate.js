@@ -1,19 +1,22 @@
-import React, {useContext} from 'react';
-
-import Fields from './Fields';
+import React,{useContext} from 'react';
 import { DashboardContext } from '../../../../../layouts/context/DashboardContext';
+/* custon FormUpdate */
+import Fields from './Fields';
+
 const FormUpdate = (props) => {
-  const {setItems,items,update} = useContext(DashboardContext);
+  const { itemUrl, itemsmenuprincipal,itemsUpdate } = useContext(DashboardContext);
   return (
-  <React.Fragment>
+  <>
     <Fields
-    setItems={setItems}
-    items={items}
-    accion={update}
-    title={props.title}
-    validated={props.validated}
-    />
-  </React.Fragment>
-    );
+        accion={itemUrl}
+        tipo={itemsmenuprincipal}
+        title={props.title}
+        validated={props.validated}
+        opcion={'update'}
+        textBtn={'Actualizar Empleado'}
+        items={itemsUpdate}
+      />
+  </>
+  );
 }
 export default FormUpdate;

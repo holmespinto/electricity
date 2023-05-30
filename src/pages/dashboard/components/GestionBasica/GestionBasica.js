@@ -1,47 +1,52 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 // @flow
-import React, { useContext } from 'react';
 import Productos from './Productos/Productos';
 import Cliente from './Cliente/Cliente';
 import Proyecto from './Proyecto/Proyecto';
 import Empleado from './Empleado/Empleado';
-import { DashboardContext } from '../../../../layouts/context/DashboardContext';
-
-
+import PermisoAlert from '../PermisoAlert/PermisoAlert';
 const GestionBasica = (props) => {
-
-  const {itemsProyecto,
-    itemsCliente,
-    itemsEmpleado,itemsProductos
-  } = useContext(DashboardContext);
-const proyectos = itemsProyecto?.data || [{}]
+const permisos = props?.permisos || {};
   return (
     <>
       {(() => {
-        switch (props.tipo) {
+        switch (props?.tipo) {
           case 'Productos':
-            return (<><Productos
+            return <>
+              { permisos?.query?.length === 1?
+              <Productos
               accion={'GestionBasica'}
-              datos={itemsProductos}
               tipo={props.tipo}
-            /></>);
+              permisos={props.permisos}
+        />:<PermisoAlert/>}
+        </>
           case 'Empleado':
-            return (<><Empleado
+            return <>
+            { permisos?.query?.length === 1 ?
+            <Empleado
               accion={'GestionBasica'}
               tipo={props.tipo}
-              datos={itemsEmpleado}
-              /></>);
+              permisos={props.permisos}
+              />:<PermisoAlert/>}
+              </>
           case 'Cliente':
-            return (<><Cliente
+            return <>
+            { permisos?.query?.length === 1 ?
+            <Cliente
               accion={'GestionBasica'}
               tipo={props.tipo}
-              datos={itemsCliente}
-              /></>);
+              permisos={props.permisos}
+              />:<PermisoAlert/>}
+              </>
           case 'Proyecto':
-            return (<><Proyecto
+            return <>
+           { permisos?.query?.length === 1 ?
+            <Proyecto
               accion={'GestionBasica'}
               tipo={props.tipo}
-              datos={proyectos}/></>);
+              permisos={props.permisos}
+              />:<PermisoAlert/>}
+              </>
           default:
             return (
               <>{''}</>

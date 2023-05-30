@@ -3,15 +3,18 @@ import React, {useContext} from 'react';
 import Fields from './Fields';
 import { DashboardContext } from '../../../../../layouts/context/DashboardContext';
 const FormUpdate = (props) => {
-  const {setItems,items,update} = useContext(DashboardContext);
+  const {itemsUpdate,} = useContext(DashboardContext);
+
   return (
   <React.Fragment>
     <Fields
-    setItems={setItems}
-    items={items}
-    accion={update}
-    title={props.title}
-    validated={props.validated}
+         items={itemsUpdate}
+         title={'Actualizar una ControDiarios'}
+         textBtn={'Actualizar ControDiarios'}
+         accion={'GestionBasica'}
+         tipo={'ControlDiario'}
+         opcion={'update'}
+         validated={props.validated}
     />
   </React.Fragment>
     );

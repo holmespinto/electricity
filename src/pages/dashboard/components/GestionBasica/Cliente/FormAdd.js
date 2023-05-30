@@ -1,19 +1,21 @@
-import React, { useState, useContext } from 'react';
-import Fields from './Fields';
+import React,{useContext} from 'react';
 import { DashboardContext } from '../../../../../layouts/context/DashboardContext';
-const FormClienteAdd = (props) => {
-  const { add } = useContext(DashboardContext);
-  const [items, setItems] = useState({});
+/* custon FormUpdate */
+import Fields from './Fields';
+const FormAdd = (props) => {
+  const { itemUrl, itemsmenuprincipal, } = useContext(DashboardContext);
   return (
-    <React.Fragment>
+  <React.Fragment>
       <Fields
-        setItems={setItems}
-        items={items}
-        accion={add}
-        title={props.title}
+        accion={itemUrl}
+        tipo={itemsmenuprincipal}
+        title={'Registrar cliente'}
         validated={props.validated}
+        opcion={'add'}
+        textBtn={'Registrar Cliente'}
+        ItemsUpdate={[]}
       />
-    </React.Fragment>
-  );
+  </React.Fragment>
+    );
 }
-export default FormClienteAdd;
+export default FormAdd;

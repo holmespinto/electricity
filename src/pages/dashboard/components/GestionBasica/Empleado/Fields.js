@@ -1,17 +1,70 @@
-import React from 'react';
-import { Button, Form, Row, Col } from 'react-bootstrap';
+import React,{useContext,useState} from 'react';
+import { Redirect } from 'react-router-dom';
+import { useSelector, useDispatch } from 'react-redux';
+import { Alert,Button, Form, Row, Col } from 'react-bootstrap';
 import FormInput from '../../../components/FormInput';
+import { VerticalForm } from '../../../../../components/';
+import { DashboardContext } from '../../../../../layouts/context/DashboardContext';
+import { queryFormSend } from '../../../../../redux/actions';
+import * as yup from 'yup';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { useOtrosRegistros } from '../../../../../hooks/useOtrosRegistros';
+
 const Fields = (props) => {
+  const {query} = useOtrosRegistros()
+const {setActions,openActions} = useContext(DashboardContext);
+
+const [items, setItems] = useState([{
+  Identificacion: props?.items?.Identificacion ? props?.items?.Identificacion : '',
+  Email: props?.items?.Email ? props?.items?.Email : '',
+  Nombres: props?.items?.Nombres ? props?.items?.Nombres :'',
+  Cargo: props?.items?.Cargo ? props?.items?.Cargo :'',
+  Apellidos: props?.items?.Apellidos ? props?.items?.Apellidos :'',
+  Salario: props?.items?.Salario ? props?.items?.Salario :'',
+  Telefono: props?.items?.Telefono ? props?.items?.Telefono :'',
+  accion: props?.accion,
+  opcion: props?.opcion,
+  tipo: props?.tipo,
+  id: props?.items?.id ? props?.items?.id:'',
+}]);
+
+const dispatch = useDispatch();
+
+const {loading,queryForm, error } = useSelector((state) => ({
+  loading: state.Queryform.loading,
+  error: state.Queryform.error,
+  queryForm: state.Queryform.queryForm,
+}));
+
+
+const schemaResolver = yupResolver(
+  yup.object().shape({
+  })
+);
+
+const onSubmit = () => {
+
+  dispatch(queryFormSend(...items))
+
+  setTimeout(function () {
+    setActions(!openActions);
+    query('GestionesBasicas', 'Empleado', [{ opcion: 'consultar', obj: 'Empleado' }]);
+  }, 1000);
+};
 
   return (
 
   <React.Fragment>
-    <div className="text-center mt-2 mb-4 btn-success">
-      <br />
-      <span className="text-white">{props.title}</span>
-      <br />
-    </div>
-    <Form validated={props.validated}>
+      {queryForm ? <Redirect to={`/${props?.accion}/${props?.tipo}`}></Redirect> : null}
+      <div className="text-center w-75 m-auto">
+        <h4 className="text-black-50 text-center mt-0 fw-bold">{`${props?.title}`}</h4>
+      </div>
+      {error && (
+        <Alert variant="danger" className="my-2">
+          {error}
+        </Alert>
+      )}
+      <VerticalForm onSubmit={onSubmit} resolver={schemaResolver} defaultValues={{}}>
       <Row>
         <Col sm={6}>
           <Form.Group className="mb-3" controlId="Identificacion">
@@ -21,8 +74,8 @@ const Fields = (props) => {
               type="number"
               name="Identificacion"
               placeholder="Digite la Identificacion"
-              value={props.items[0]?.Identificacion}
-              onChange={(e) => props.setItems([{ ...props.items[0], Identificacion: e.target.value }])}
+              value={items[0]?.Identificacion}
+              onChange={(e) => setItems([{ ...items[0], Identificacion: e.target.value }])}
             />
 
             <Form.Control.Feedback type="invalid">
@@ -39,8 +92,8 @@ const Fields = (props) => {
               containerClass={'mb-3'}
               name="Email"
               placeholder="Digite el email"
-              value={props.items[0]?.Email}
-              onChange={(e) => props.setItems([{ ...props.items[0], Email: e.target.value }])}
+              value={items[0]?.Email}
+              onChange={(e) => setItems([{ ...items[0], Email: e.target.value }])}
             />
             <Form.Control.Feedback type="invalid">
               Por favor, digite el email.
@@ -59,8 +112,8 @@ const Fields = (props) => {
               containerClass={'mb-3'}
               key="Nombres"
               placeholder="Digite el Nombre"
-              value={props.items[0]?.Nombres}
-              onChange={(e) => props.setItems([{ ...props.items[0], Nombres: e.target.value }])}
+              value={items[0]?.Nombres}
+              onChange={(e) => setItems([{ ...items[0], Nombres: e.target.value }])}
             />
 
             <Form.Control.Feedback type="invalid">
@@ -76,8 +129,8 @@ const Fields = (props) => {
               type="text"
               name="Cargo"
               placeholder="Digite el Cargo"
-              value={props.items[0]?.Cargo}
-              onChange={(e) => props.setItems([{ ...props.items[0], Cargo: e.target.value }])}
+              value={items[0]?.Cargo}
+              onChange={(e) => setItems([{ ...items[0], Cargo: e.target.value }])}
             />
             <Form.Control.Feedback type="invalid">
               Por favor, digite el Cargo.
@@ -94,8 +147,8 @@ const Fields = (props) => {
               type="text"
               name="Apellidos"
               placeholder="Digite el Apellidos"
-              value={props.items[0]?.Apellidos}
-              onChange={(e) => props.setItems([{ ...props.items[0], Apellidos: e.target.value }])}
+              value={items[0]?.Apellidos}
+              onChange={(e) => setItems([{ ...items[0], Apellidos: e.target.value }])}
             />
             <Form.Control.Feedback type="invalid">
               Por favor, digite el Primer Apellido.
@@ -110,8 +163,8 @@ const Fields = (props) => {
               type="number"
               name="Salario"
               placeholder="Digite el Salario"
-              value={props.items[0]?.Salario}
-              onChange={(e) => props.setItems([{ ...props.items[0], Salario: e.target.value }])}
+              value={items[0]?.Salario}
+              onChange={(e) => setItems([{ ...items[0], Salario: e.target.value }])}
             />
             <Form.Control.Feedback type="invalid">
               Por favor, digite el Salario.
@@ -128,8 +181,8 @@ const Fields = (props) => {
               type="number"
               name="Telefono"
               placeholder="Digite el Telefono"
-              value={props.items[0]?.Telefono}
-              onChange={(e) => props.setItems([{ ...props.items[0], Telefono: e.target.value }])}
+              value={items[0]?.Telefono}
+              onChange={(e) => setItems([{ ...items[0], Telefono: e.target.value }])}
             />
             <Form.Control.Feedback type="invalid">
               Por favor, digite el Telefono.
@@ -138,13 +191,12 @@ const Fields = (props) => {
           <Col sm={6}>
           </Col>
         </Row>
-
       <div className="button-list">
-        <Button type="button" disabled={props.items[0]?.message?.length<0 ? 'true' : ''} onClick={(e) => {props.accion(e,props.items)}}>
-          +
-        </Button>
+      <Button variant="primary" type="submit" disabled={loading}>
+            {(props?.title)}
+          </Button>
       </div>
-    </Form>
+      </VerticalForm>
     </React.Fragment>
     );
 }

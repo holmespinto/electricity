@@ -5,6 +5,7 @@ import { DashboardContext } from '../../../../../../layouts/context/DashboardCon
 const FormAdd = (props) => {
   const {addNomina} = useContext(DashboardContext);
   const [items, setItems] = useState({});
+
   return (
     <React.Fragment>
       <Fields

@@ -14,11 +14,11 @@ import { DashboardContext } from '../../../../../layouts/context/DashboardContex
 
 const Register = (props)=> {
 const {query,setActions,openActions} = useContext(DashboardContext);
-  const data =  props?.ItemsUpdate||[];
+
   const [items, setItems] = useState([{
-    id: '',
-    Parametro: data?.Parametro,
-    Valor: data?.Valor,
+    id: props?.ItemsUpdate[0]?.id,
+    Parametro: props?.ItemsUpdate[0]?.Parametro,
+    Valor: props?.ItemsUpdate[0]?.valor,
     tipo:props.tipo,
     opcion:props.opcion,
     accion:props.accion
@@ -65,7 +65,7 @@ const {query,setActions,openActions} = useContext(DashboardContext);
                 type="text"
                 containerClass={'mb-3'}
                 name="Parametro"
-                placeholder={items?.Parametro}
+                placeholder={items[0]?.Parametro}
                 onChange={(e) => setItems([{ ...items[0], Parametro: e.target.value }])}
               />
               <Form.Control.Feedback type="invalid">

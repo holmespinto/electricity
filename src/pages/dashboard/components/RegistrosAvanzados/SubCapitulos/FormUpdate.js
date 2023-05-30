@@ -5,14 +5,15 @@ import { DashboardContext } from '../../../../../layouts/context/DashboardContex
 import Fields from './Fields';
 const FormUpdate = (props) => {
   const { itemUrl, itemsmenuprincipal,itemsUpdate, } = useContext(DashboardContext);
-
+  let permiso = sessionStorage.getItem('Categorias');
+  const TipoCategoria = JSON.parse(permiso);
   let Padres = [];
   const obj ={
     value:'0',
     label:'Registrar como nueva Categoria'
   }
   Padres.push(obj)
-  itemsUpdate?.TipoCategoria?.map((row, i) =>{
+  TipoCategoria?.map((row, i) =>{
           const obj ={
             value:row.id,
             label:row.Categoria

@@ -1,20 +1,22 @@
-import React, { useState, useContext } from 'react';
+import React, { useContext } from 'react';
 import Fields from './Fields';
 import { DashboardContext } from '../../../../../layouts/context/DashboardContext';
 /* custon FormAdd */
 const FormAdd = (props) => {
-
-  const { add } = useContext(DashboardContext);
-  const [items, setItems] = useState({});
+  const { itemsUpdate } = useContext(DashboardContext);
+  console.log('props',itemsUpdate);
   return (
     <React.Fragment>
       <Fields
-        setItems={setItems}
-        items={items}
-        accion={add}
-        title={props.title}
-        validated={props.validated}
-      />
+         items={itemsUpdate[0]}
+         title={'Registrar una ControDiarios'}
+         textBtn={'Registrar ControDiarios'}
+         accion={props.accion}
+         tipo={props.tipo}
+         opcion={'add'}
+         validated={props.validated}
+
+       />
     </React.Fragment>
   );
 }

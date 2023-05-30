@@ -1,7 +1,6 @@
 import axios from 'axios';
 import MockAdapter from 'axios-mock-adapter';
 import Swal from 'sweetalert2'
-import {environments} from '../environments/environments';
 
 import { APICore } from './api/apiCore';
 const api = new APICore();
@@ -18,22 +17,26 @@ export function configureFakeBackend() {
         const Usuarios = api.sendRequestUser(`${url}`,params.username,params.password);
         Usuarios.then(function (response) {
           try {
-          if (response.status === '404' || response.status ==='') {
+          if (response?.data?.Auth[0].status === '404' || response.status ==='') {
               resolve([401, { message: 'Username or password is incorrect' }]);
           } else {
-              if (response.status === '202') {
+              if (response?.data?.Auth[0].status === '202') {
+                sessionStorage.removeItem('PERMISO_ALL');
+                sessionStorage.removeItem('PERMISO');
+                sessionStorage.removeItem('ITEM_SELECT');
                   let arrayRes = [];
                   let users = {
-                      id: response?.Idsuario,
-                      name: response?.Nom,
-                      username: response?.Usuario,
-                      email: response?.Email,
-                      role: response?.Rol,
-                      password: response?.Password,
-                      token: environments.TOKEN,
-                      Apikey: response?.Apikey,
-                      ApiToken: response?.ApiToken,
+                      id: response?.data?.Auth[0]?.Idsuario,
+                      name: response?.data?.Auth[0]?.Nom,
+                      username: response?.data?.Auth[0]?.Usuario,
+                      email: response?.data?.Auth[0]?.Email,
+                      role: response?.data?.Auth[0]?.Rol,
+                      password: response?.data?.Auth[0]?.Password,
+                      token: response?.data?.Auth[0].TOKEN,
+                      Apikey: response?.data?.Auth[0]?.Apikey,
+                      ApiToken: response?.data?.Auth[0]?.ApiToken,
                   };
+                  sessionStorage.setItem('PERMISO_ALL', JSON.stringify(response?.data?.Permisos));
                   arrayRes.push(users);
                   resolve([202,arrayRes]);
               }

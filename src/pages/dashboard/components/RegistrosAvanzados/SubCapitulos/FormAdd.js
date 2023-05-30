@@ -3,7 +3,22 @@ import { DashboardContext } from '../../../../../layouts/context/DashboardContex
 /* custon FormUpdate */
 import Fields from './Fields';
 const FormAdd = (props) => {
-  const { itemUrl, itemsmenuprincipal,itemsAdd } = useContext(DashboardContext);
+  const { itemUrl, itemsmenuprincipal } = useContext(DashboardContext);
+  let permiso = sessionStorage.getItem('Categorias');
+  const TipoCategoria = JSON.parse(permiso);
+  let Padres = [];
+  const obj ={
+    value:'0',
+    label:'Registrar como nueva Categoria'
+  }
+  Padres.push(obj)
+  TipoCategoria?.map((row, i) =>{
+          const obj ={
+            value:row.id,
+            label:row.Categoria
+          }
+          Padres.push(obj)
+      })
   return (
   <React.Fragment>
       {
@@ -15,7 +30,7 @@ const FormAdd = (props) => {
         opcion={'add'}
         textBtn={'Registrar APU'}
         ItemsUpdate={[]}
-        Padres={itemsAdd}
+        Padres={Padres}
       />
     }
   </React.Fragment>

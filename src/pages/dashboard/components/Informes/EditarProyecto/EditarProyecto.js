@@ -122,12 +122,12 @@ const columns = [
 ];
 
 const EditarProyecto = (props) => {
+  const permisos = props?.permisos || {};
   const {
     Spinners,
     query,
-    isLoading, PERMISOS_USER,
+    isLoading,
   } = useContext(DashboardContext);
-  const permisos = PERMISOS_USER || [{}];
   const proyectos = [props?.datos[0]?.data?.DatosProyect] || []
   const Apus = props?.datos[0]?.data?.Apus || [{}]
   // const productos = [props?.datos[0]?.data?.Productos] || [{}]

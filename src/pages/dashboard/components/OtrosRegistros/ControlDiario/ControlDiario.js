@@ -1,69 +1,103 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable array-callback-return */
 // @flow
-import React, { useContext, Suspense, useEffect } from 'react';
-import { Row, Col, Card,  Modal } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
+import React, { useContext,useEffect } from 'react';
+import { Row, Col, Card,  Modal,Pagination } from 'react-bootstrap';
+
 import { DashboardContext } from '../../../../../layouts/context/DashboardContext';
 //import { GestionBasicaContext } from '../../../../layouts/context/GestionBasicaContext';
 import FormAdd from './FormAdd';
 import FormUpdate from './FormUpdate';
 import Table from '../../../../../components/Table';
-const loading = () => <div className="text-center"></div>;
+import BtnActions from '../../BtnActions';
+import MensajeAlert from '../../PermisoAlert/PermisoAlert';
+import Swal from 'sweetalert2';
+import { useOtrosRegistros } from '../../../../../hooks/useOtrosRegistros';
+
 const ActionColumn = ({ row }) => {
 
   const {
     eliminar,
     validated,
-    signUpModal,
-    setSignUpModal,
-    setItems, itemsmenuprincipal
+    toggle,
+    setOpen,
+    setItemsUpdate,
+    open, itemsmenuprincipal
   } = useContext(DashboardContext);
 
-  const toggleSignUp = () => {
-    if (row.cells[0].value > 0)
-      setSignUpModal(!signUpModal);
-    setItems([{
-      id: row.cells[0].value ? row.cells[0].value : row.cells[0].value,
-      Ciudad: row.cells[1].value ? row.cells[1].value : row.cells[1].value,
-      Concepto: row.cells[2].value ? row.cells[2].value : row.cells[2].value,
-      Fecha: row.cells[3].value ? row.cells[3].value : row.cells[3].value,
-      Paga: row.cells[4].value ? row.cells[4].value : row.cells[4].value,
-      Valor: row.cells[5].value ? row.cells[5].value : row.cells[5].value,
-      ValorLetras: row.cells[6].value ? row.cells[6].value : row.cells[6].value,
-      status: row.cells[7].value ? row.cells[7].value : row.cells[7].value,
-    }])
+
+   const toggleSignUp = (id) => {
+    let permiso = sessionStorage.getItem('PERMISO');
+    const localPermiso = JSON.parse(permiso);
+    if (localPermiso?.update === 'S') {
+
+      if(row.cells[0].row.values.id===id)
+      setItemsUpdate(row?.cells[0]?.row?.values)
+      setOpen(open);
+      toggle()
+    } else {
+      Swal.fire('USTED NO TIENE PERMISOS HABILITADOS PARA ESTA OPCION');
+    }
   };
 
+  let permiso = sessionStorage.getItem('PERMISO');
+  const localPermiso = JSON.parse(permiso);
   return (
     <React.Fragment>
-      <Modal show={signUpModal} onHide={toggleSignUp}>
-        <Modal.Body>
-          <FormUpdate
-            title={`ACTUALIZAR ${itemsmenuprincipal?.toUpperCase()}`}
-            validated={validated}
-          />
+      <Modal show={open} onHide={toggleSignUp}>
+        <Modal.Body><FormUpdate
+          title={`FORMULARIO PARA LA EDICION DE ${itemsmenuprincipal?.toUpperCase()}`}
+          validated={validated}
+        />
         </Modal.Body>
       </Modal>
-      <Link to="#" className="action-icon" onClick={() => toggleSignUp()}>
-        {' '}
-        <i className="mdi mdi-square-edit-outline"></i>
-      </Link>
-      <Link to="#" className="action-icon" onClick={() => eliminar(row.cells[0].value)}>
-        {' '}
-        <i className="mdi mdi-delete"></i>
-      </Link>
+      <Row>
+        <Pagination className="pagination-rounded mx-auto" size="sm">
+          <Pagination.Item>
+
+           {
+           (localPermiso?.update === 'S')?
+            <BtnActions
+              permisos={'S'}
+              key={`EDITAR_${row.cells[0].value}`}
+              toggleActions={toggleSignUp}
+              row={row.cells[0].value}
+              titulo={'EDITAR'}
+              descripcion={'Editar Control Diario'}
+              icon={'mdi mdi-square-edit-outline'}
+            />:''
+           }
+          </Pagination.Item>
+          <Pagination.Item>
+          {
+           (localPermiso?.update === 'S')?
+            <BtnActions
+              permisos={'S'}
+              key={`ELIMINAR_${row.cells[0].value}`}
+              toggleActions={eliminar}
+              row={row.cells[0].value}
+              titulo={'ELIMINAR'}
+              descripcion={'Registrar Control Diario'}
+              icon={'mdi mdi-delete'}
+            />:''
+          }
+          </Pagination.Item>
+        </Pagination>
+      </Row>
     </React.Fragment>
   );
 };
 const ControlDiario = (props) => {
+  const {itemsControlDiario,query} = useOtrosRegistros()
+  const datos = itemsControlDiario?.data || [{}];
+  const permisos = props?.permisos || {};
   const {
-    query,
     validated,itemsmenuprincipal,
     signUpModalAdd, setSignUpModalAdd,
-    Spinners, sizePerPageList, isLoading,
-    PERMISOS_USER
+     sizePerPageList, isLoading,
   } = useContext(DashboardContext);
 
-  const permisos = PERMISOS_USER || [{}];
+
   const columns = [
     {
       Header: 'ID',
@@ -113,7 +147,6 @@ const ControlDiario = (props) => {
     query('OtrosRegistros', 'ControlDiario', [{ opcion: 'consultar', obj: 'ControlDiario' }]);
   }, [query]);
 
-  const controDiario = props?.datos || [];
 
   return (
     <>
@@ -127,25 +160,28 @@ const ControlDiario = (props) => {
                     <Card.Body>
                       {/* Sign up Modal */}
                       <Modal show={signUpModalAdd} onHide={setSignUpModalAdd}>
-                        <Modal.Body>
+                        <Modal.Body>{
+                          permisos?.add === 'S' ? (
                           <FormAdd
-                            title={`GESTIONAR ${props?.tipo?.toUpperCase()}`}
+                            tipo={props?.tipo}
+                            accion={props?.accion}
+                            title={`GESTIONAR ${props?.tipo?.toUpperCase()}` }
                             validated={validated}
-                          />
+                          />) : ''}
                         </Modal.Body>
                       </Modal>
                     </Card.Body>
                   </Card>
                 </Col>
               </Row>
-              {!isLoading && controDiario.length > 0 && permisos?.query === 'S'? (<Table
+              {!isLoading && datos.length > 0 && permisos?.query === 'S'? (<Table
                 columns={columns}
-                data={controDiario}
+                data={datos}
                 pageSize={5}
                 sizePerPageList={sizePerPageList}
                 isSortable={true}
-                pagination={true}
                 isVisible={true}
+                pagination={true}
                 theadClass="table-light"
                 searchBoxClass="mt-2 mb-3"
                 isSearchable={true}
@@ -153,7 +189,7 @@ const ControlDiario = (props) => {
                 titulo={itemsmenuprincipal}
                 permisos={permisos}
                 toggleSignUp={toggleSignUp}
-                />) : <Suspense fallback={loading()}><Spinners /></Suspense>}
+                />) : <MensajeAlert />}
             </Card.Body>
           </Card>
         </Col>

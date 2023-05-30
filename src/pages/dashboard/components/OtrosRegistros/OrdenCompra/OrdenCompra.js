@@ -1,70 +1,99 @@
 // @flow
-import React, { useContext, Suspense, useEffect } from 'react';
-import { Row, Col, Card,  Modal } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
+import React, { useContext, useEffect } from 'react';
+import { Row, Col, Card,  Modal, Pagination } from 'react-bootstrap';
+
 import { DashboardContext } from '../../../../../layouts/context/DashboardContext';
 import FormAdd from './FormAdd';
 import FormUpdate from './FormUpdate';
 import Table from '../../../../../components/Table';
-const loading = () => <div className="text-center"></div>;
+import Swal from 'sweetalert2';
+import BtnActions from '../../BtnActions';
+import MensajeAlert from '../../PermisoAlert/PermisoAlert';
+import { useOtrosRegistros } from '../../../../../hooks/useOtrosRegistros';
+
 const ActionColumn = ({ row }) => {
 
   const {
     eliminar,
     validated,
-    signUpModal,
-    setSignUpModal,
-    setItems, itemsmenuprincipal,PERMISOS_USER
+    toggle,
+    setOpen,
+    setItemsUpdate,
+    open, itemsmenuprincipal
   } = useContext(DashboardContext);
-  const permisos = PERMISOS_USER || [{}];
 
-  const toggleSignUp = () => {
-    if (row.cells[0].value > 0)
-      setSignUpModal(!signUpModal);
-    setItems([{
-      id: row.cells[0].value ? row.cells[0].value : row.cells[0].value,
-      Codigo: row.cells[1].value ? row.cells[1].value : row.cells[1].value,
-      Empresa: row.cells[2].value ? row.cells[2].value : row.cells[2].value,
-      Fecha: row.cells[3].value ? row.cells[3].value : row.cells[3].value,
-      Descripcion: row.cells[4].value ? row.cells[4].value : row.cells[4].value,
-      Cantidad: row.cells[5].value ? row.cells[5].value : row.cells[5].value,
-      ValorUnitario: row.cells[6].value ? row.cells[6].value : row.cells[6].value,
-      status: row.cells[7].value ? row.cells[7].value : row.cells[7].value,
-    }])
+
+   const toggleSignUp = (id) => {
+    let permiso = sessionStorage.getItem('PERMISO');
+    const localPermiso = JSON.parse(permiso);
+    if (localPermiso?.update === 'S') {
+
+      if(row.cells[0].row.values.id===id)
+      setItemsUpdate(row?.cells[0]?.row?.values)
+      setOpen(open);
+      toggle()
+    } else {
+      Swal.fire('USTED NO TIENE PERMISOS HABILITADOS PARA ESTA OPCION');
+    }
   };
 
+  let permiso = sessionStorage.getItem('PERMISO');
+  const localPermiso = JSON.parse(permiso);
   return (
     <React.Fragment>
-      <Modal show={signUpModal} onHide={toggleSignUp}>
+      <Modal show={open} onHide={toggleSignUp}>
         <Modal.Body><FormUpdate
-          title={`ACTUALIZAR ${itemsmenuprincipal?.toUpperCase()}`}
+          title={`FORMULARIO PARA LA EDICION DE ${itemsmenuprincipal?.toUpperCase()}`}
           validated={validated}
         />
         </Modal.Body>
       </Modal>
-      {
-        permisos?.update === 'S' ? (
-          <Link to="#" className="action-icon" onClick={() => toggleSignUp()}>
-            {' '}
-            <i className="mdi mdi-square-edit-outline"></i>
-          </Link>) : ''
-      }
-      {
-        permisos?.delete === 'S' ? (
-          <Link to="#" className="action-icon" onClick={() => eliminar(row.cells[0].value)}>
-            {' '}
-            <i className="mdi mdi-delete"></i>
-          </Link>) : ''}
+      <Row>
+        <Pagination className="pagination-rounded mx-auto" size="sm">
+          <Pagination.Item>
+
+           {
+           (localPermiso?.update === 'S')?
+            <BtnActions
+              permisos={'S'}
+              key={`EDITAR_${row.cells[0].value}`}
+              toggleActions={toggleSignUp}
+              row={row.cells[0].value}
+              titulo={'EDITAR'}
+              descripcion={'Editar Orden de Compra'}
+              icon={'mdi mdi-square-edit-outline'}
+            />:''
+           }
+          </Pagination.Item>
+          <Pagination.Item>
+          {
+           (localPermiso?.update === 'S')?
+            <BtnActions
+              permisos={'S'}
+              key={`ELIMINAR_${row.cells[0].value}`}
+              toggleActions={eliminar}
+              row={row.cells[0].value}
+              titulo={'ELIMINAR'}
+              descripcion={'Registrar Orden de Compra'}
+              icon={'mdi mdi-delete'}
+            />:''
+          }
+          </Pagination.Item>
+        </Pagination>
+      </Row>
     </React.Fragment>
   );
 };
 const OrdenCompra = (props) => {
+  const {itemsOrdenCompra,query} = useOtrosRegistros()
+  const datos = itemsOrdenCompra?.data || [{}];
+  const permisos = props?.permisos || {};
   const {
-    validated, query,Spinners,
+    validated,
     signUpModalAdd, setSignUpModalAdd,
-    itemsmenuprincipal, sizePerPageList, StatusColumn, isLoading,PERMISOS_USER
+    itemsmenuprincipal, sizePerPageList, StatusColumn, isLoading,
   } = useContext(DashboardContext);
-  const permisos = PERMISOS_USER || [{}];
+
   const columns = [
     {
       Header: 'ID',
@@ -120,7 +149,7 @@ const OrdenCompra = (props) => {
   useEffect(() => {
     query('OtrosRegistros', 'OrdenCompra', [{ opcion: 'consultar', obj: 'OrdenCompra' }]);
   }, [query]);
-  const OrdenCompra = props?.datos || [];
+
   return (
     <>
       <Row>
@@ -143,9 +172,9 @@ const OrdenCompra = (props) => {
                   </Card>
                 </Col>
               </Row>
-              {!isLoading && OrdenCompra.length > 0 && permisos?.query === 'S'? (<Table
+              {!isLoading && datos.length > 0 && permisos?.query === 'S'? (<Table
                 columns={columns}
-                data={OrdenCompra}
+                data={datos}
                 pageSize={5}
                 sizePerPageList={sizePerPageList}
                 isSortable={true}
@@ -158,7 +187,7 @@ const OrdenCompra = (props) => {
                 titulo={itemsmenuprincipal}
                 permisos={permisos}
                 toggleSignUp={toggleSignUp}
-                />) : <Suspense fallback={loading()}><Spinners /></Suspense>}
+                />) : <MensajeAlert />}
             </Card.Body>
           </Card>
         </Col>

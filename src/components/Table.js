@@ -92,7 +92,7 @@ const Table = (props: TableProps): React$Element<React$FragmentType> => {
     const isVisible = props['isVisible'] || false;
     const numtable = props['numtable'] || '0';
     const titulo = props['titulo'] ||  '';
-    const permisos = props['permisos'] ||  false;
+    //const permisos = props['permisos'] ||  {};
     const toggleSignUp = props['toggleSignUp'] || '';
 
     const dataTable = useTable(
@@ -188,12 +188,10 @@ const Table = (props: TableProps): React$Element<React$FragmentType> => {
 
                     <div className="bg-success p-1 text-sm-end">
 
-                        {
-                        permisos?.add === 'S' ? (
                         <Button className="btn btn-info mb-0 me-5 p-2" onClick={toggleSignUp}>
                           <i className="mdi mdi-tray-plus">{titulo}</i>
                         </Button>):({titulo})
-                        }
+
                       </div>
                 <table id={table}
                     {...dataTable.getTableProps()}

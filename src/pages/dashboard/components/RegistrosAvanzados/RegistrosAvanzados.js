@@ -4,41 +4,53 @@ import ParametosPrecios from './ParametosPrecios/ParametosPrecios';
 import Categorias from './Categorias/Categorias';
 import SubCapitulos from './SubCapitulos/SubCapitulos';
 import AnalisisPreciosUnitarios from './AnalisisPreciosUnitarios/AnalisisPreciosUnitarios';
-//import { DashboardContext } from '../../../../layouts/context/DashboardContext';
-
+import PermisoAlert from '../PermisoAlert/PermisoAlert';
 
 const RegistrosAvanzados = (props) => {
-//const { itemsapuTransport} = useContext(DashboardContext);
 
 
+
+const permisos = props?.permisos || {};
   return (
     <>
       {(() => {
         switch (props.tipo) {
           case 'Categorias':
             return (<>
+            {permisos?.query?.length ===1 ?
             <Categorias
               accion={'RegistrosAvanzados'}
               tipo={props.tipo}
-            />
+              permisos={permisos}
+            />:<PermisoAlert/>}
             </>);
             case 'EditorPUA':
-            return (<><SubCapitulos
+            return (<>
+            { permisos?.query?.length ===1 ?
+            <SubCapitulos
               accion={'RegistrosAvanzados'}
               tipo={props.tipo}
-            /></>);
+              permisos={permisos}
+            />:<PermisoAlert/>}
+            </>);
             case 'APU':
             return (<>
-            <AnalisisPreciosUnitarios
+            { permisos?.query?.length ===1 ?
+            (<AnalisisPreciosUnitarios
               accion={'RegistrosAvanzados'}
               tipo={props.tipo}
-            /></>);
+              permisos={permisos}
+            />):<PermisoAlert/>}
+            </>);
             case 'ParametosPrecios':
             return (<>
+            { permisos?.query?.length ===1 ?
             <ParametosPrecios
               accion={'RegistrosAvanzados'}
               tipo={props.tipo}
-            /></>);
+              permisos={permisos}
+            />:<PermisoAlert/>}
+            </>);
           default:
             return (
               <>{''}</>

@@ -12,9 +12,12 @@ import { queryFormSend } from '../../../../../redux/actions';
 // components
 import { VerticalForm } from '../../../../../components/';
 import { DashboardContext } from '../../../../../layouts/context/DashboardContext';
+import { useOtrosRegistros } from '../../../../../hooks/useOtrosRegistros';
 
 const Register = (props): React$Element<React$FragmentType> => {
+  const {query} = useOtrosRegistros()
   const { setOpen, open } = useContext(DashboardContext);
+
   const [items, setItems] = useState([{
     Nombre: props?.ItemsUpdate?.length === 1 ? props?.ItemsUpdate[0]?.Nombre : '',
     Unidad: props?.ItemsUpdate?.length === 1 ? props?.ItemsUpdate[0]?.Unidad : '',
@@ -44,6 +47,7 @@ const Register = (props): React$Element<React$FragmentType> => {
 
     setTimeout(function () {
       setOpen(open)
+      query('GestionesBasicas', 'Productos', [{ opcion: 'consultar', obj: 'Productos' }]);
     }, 2000);
   };
   const tipos = [

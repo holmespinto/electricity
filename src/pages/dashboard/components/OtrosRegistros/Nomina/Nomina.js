@@ -1,34 +1,28 @@
 // @flow
-import React, {useContext,useEffect } from 'react';
+import React, { useEffect } from 'react';
 
 import MenuNomina from './MenuNomina/MenuNomina';
-import { DashboardContext } from '../../../../../layouts/context/DashboardContext';
-
-
+import { useOtrosRegistros } from '../../../../../hooks/useOtrosRegistros';
 const Nomina = (props) => {
-  const { query } = useContext(DashboardContext);
+  localStorage.removeItem('menuNomina')
+  const permisos = props?.permisos || {};
+  const {itemsNomina,query} = useOtrosRegistros()
+  const datos = itemsNomina?.data?.Empleado || [{}];
+
 
   useEffect(() => {
-    query('OtrosRegistros','GenerarNomina',[{opcion:'consultar',obj:'GenerarNomina'}]);
-  }, [query]);
+    query('OtrosRegistros', 'Nomina', [{ opcion: 'consultar', obj: 'Nomina' }]);
+  }, [query])
 
   return (
     <>
-      {(() => {
-        switch (props.tipo) {
-          case 'GenerarNomina':
-            return (<>
-            <MenuNomina
-              accion={'OtrosRegistros'}
-              tipo={props.tipo}
-            />
-            </>);
-          default:
-            return (
-              <>{''}</>
-            );
-        }
-      })()}
+      <MenuNomina
+        accion={'OtrosRegistros'}
+        tipo={props.tipo}
+        permisos={permisos}
+        datos={datos}
+        itemsNomina={itemsNomina}
+      />
     </>
   );
 };

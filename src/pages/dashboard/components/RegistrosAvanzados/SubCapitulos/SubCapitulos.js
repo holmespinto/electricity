@@ -2,104 +2,98 @@
 /* eslint-disable array-callback-return */
 /* eslint-disable no-duplicate-case */
 /* eslint-disable no-fallthrough */
-import React, { useContext,Suspense, useEffect } from 'react';
+import React, { useContext,useEffect,useMemo } from 'react';
+
 import { Row, Col, Card, Modal,Pagination } from 'react-bootstrap';
 import BtnActions from '../../BtnActions';
 import { DashboardContext } from '../../../../../layouts/context/DashboardContext';
 import FormAdd from './FormAdd';
 import FormUpdate from './FormUpdate';
 import Table from '../../../../../components/Table';
-const loading = () => <div className="text-center"></div>;
+import Swal from 'sweetalert2';
+import MensajeAlert from '../../PermisoAlert/PermisoAlert';
+
+import { useGestionPrecios } from '../../../../../hooks/useGestionPrecios';
 
 const ActionColumn = ({ row }) => {
-
   const {
     eliminar,
     validated,
-    setSignUpModalAdd,
-    signUpModalAdd,
-    setItemsUpdate,toggle,
-    setOpen,itemsSubCategorias,
-    open, itemsmenuprincipal, PERMISOS_USER
+    toggle,
+    setOpen,
+    setItemsUpdate,
+    open, itemsmenuprincipal
   } = useContext(DashboardContext);
-  const permisos = PERMISOS_USER || [{}];
-  const Categorias = itemsSubCategorias?.data?.Categoria || [{}];
-  const SubCategorias = itemsSubCategorias?.data?.SubCategorias|| [{}];
+   const toggleSignUp = (id) => {
+    let permiso = sessionStorage.getItem('PERMISO');
+    const localPermiso = JSON.parse(permiso);
+    if (localPermiso?.update === 'S') {
 
-  const toggleSignUp = (id) => {
-    let array = [];
-
-    if(id>0)
-    SubCategorias?.map((row, i) =>{
-           if(row.id===id){
-            const obj ={
-              id: row.id,
-              idCategoria: row.id,
-              Codigo: row.Codigo,
-              Descripcion:row.Descripcion,
-              Unidad: row.Unidad,
-              Cantidad: row.Cantidad,
-              ValorUnitario: row.ValorUnitario,
-              TipoCategoria:Categorias
-            }
-            array.push(obj)
-           }
-        })
-      setItemsUpdate(array[0])
+      if(row.cells[0].row.values.id===id)
+      setItemsUpdate(row?.cells[0]?.row?.values)
       setOpen(open);
-      setSignUpModalAdd(signUpModalAdd);
       toggle()
-
+    } else {
+      Swal.fire('USTED NO TIENE PERMISOS HABILITADOS PARA ESTA OPCION');
+    }
   };
 
+  let permiso = sessionStorage.getItem('PERMISO');
+  const localPermiso = JSON.parse(permiso);
   return (
     <React.Fragment>
       <Modal show={open} onHide={toggleSignUp}>
         <Modal.Body><FormUpdate
-          title={`ACTUALIZAR ${itemsmenuprincipal?.toUpperCase()}`}
+          title={`FORMULARIO PARA LA EDICION DE ${itemsmenuprincipal?.toUpperCase()}`}
           validated={validated}
         />
         </Modal.Body>
       </Modal>
       <Row>
-      <Pagination className="pagination-rounded mx-auto" size="sm">
-       <Pagination.Item>
-        <BtnActions
-            permisos={permisos?.update}
-            key={`EDITAR_${row.cells[0].value}`}
-            toggleActions={toggleSignUp}
-            row={row.cells[0].value}
-            titulo={'EDITAR'}
-            descripcion={'Editar Proyecto'}
-            icon={'mdi mdi-square-edit-outline'}
-          />
-        </Pagination.Item>
-        <Pagination.Item>
-        <BtnActions
-            permisos={permisos?.update}
-            key={`ELIMINAR_${row.cells[0].value}`}
-            toggleActions={eliminar}
-            row={row.cells[0].value}
-            titulo={'ELIMINAR'}
-            descripcion={'Registrar Proyecto'}
-            icon={'mdi mdi-delete'}
-          />
-        </Pagination.Item>
-          </Pagination>
-          </Row>
+        <Pagination className="pagination-rounded mx-auto" size="sm">
+          <Pagination.Item>
+
+           {
+           (localPermiso?.update === 'S')?
+            <BtnActions
+              permisos={'S'}
+              key={`EDITAR_${row.cells[0].value}`}
+              toggleActions={toggleSignUp}
+              row={row.cells[0].value}
+              titulo={'EDITAR'}
+              descripcion={'Editar Orden de Compra'}
+              icon={'mdi mdi-square-edit-outline'}
+            />:''
+           }
+          </Pagination.Item>
+          <Pagination.Item>
+          {
+           (localPermiso?.update === 'S')?
+            <BtnActions
+              permisos={'S'}
+              key={`ELIMINAR_${row.cells[0].value}`}
+              toggleActions={eliminar}
+              row={row.cells[0].value}
+              titulo={'ELIMINAR'}
+              descripcion={'Registrar Orden de Compra'}
+              icon={'mdi mdi-delete'}
+            />:''
+          }
+          </Pagination.Item>
+        </Pagination>
+      </Row>
     </React.Fragment>
   );
 };
 
 const SubCapitulos = (props) => {
-  const {
-    validated,itemsSubCategorias,setItemsAdd,toggle,signUpModalAdd, setSignUpModalAdd,Spinners,setOpen,open,
-    sizePerPageList,PERMISOS_USER,
-     query
-  } = useContext(DashboardContext);
+  const {itemsEditorApu,query} = useGestionPrecios()
 
-  const permisos = PERMISOS_USER || [{}];
-  const datos = itemsSubCategorias?.data?.SubCategorias || [];
+  const datos = itemsEditorApu?.data?.SubCategorias || [{}];
+
+  const permisos = props?.permisos || {};
+  const {validated,signUpModalAdd, setSignUpModalAdd, sizePerPageList,
+  } = useContext(DashboardContext);
 
   const columns = [
     {
@@ -138,26 +132,7 @@ const SubCapitulos = (props) => {
     },
   ];
   const toggleSignUp = () => {
-
-    const TipoCategoria = itemsSubCategorias?.data?.Categoria|| [{}];
-    let Categoria = [];
-    const obj ={
-      value:'0',
-      label:'Registrar como nueva Categoria'
-    }
-    if (TipoCategoria.length>0)
-    Categoria.push(obj)
-    TipoCategoria?.map((row, i) =>{
-            const obj ={
-              value:row.id,
-              label:row.Codigo +'.-'+ row.Categoria
-            }
-            Categoria.push(obj)
-        })
-      setItemsAdd(Categoria)
-      toggle()
-     setSignUpModalAdd(!signUpModalAdd);
-     setOpen(open);
+    {permisos?.add === 'S' ? setSignUpModalAdd(!signUpModalAdd) : Swal.fire('USTED NO TIENE PERMISOS HABILITADOS PARA ESTA OPCION')}
   };
 
   useEffect(() => {
@@ -177,18 +152,17 @@ const SubCapitulos = (props) => {
                   <Card>
                     <Card.Body>
                       <Modal show={signUpModalAdd} onHide={setSignUpModalAdd}>
-                        <Modal.Body>{
-                          permisos?.add === 'S' ? (<FormAdd
+                        <Modal.Body><FormAdd
                             title={`GESTIONAR ${props?.tipo?.toUpperCase()}`}
                             validated={validated}
-                          />) : ''}
+                          />
                         </Modal.Body>
                       </Modal>
                     </Card.Body>
                   </Card>
                 </Col>
               </Row>
-              {permisos?.query === 'S' && datos?.length>0? (<Table
+              {datos?.length > 0 && permisos?.query === 'S' ? (<Table
                 columns={columns}
                 data={datos}
                 pageSize={5}
@@ -203,7 +177,7 @@ const SubCapitulos = (props) => {
                 titulo={' Listado APU'}
                 permisos={permisos}
                 toggleSignUp={toggleSignUp}
-              />) : <Suspense fallback={loading()}><Spinners /></Suspense>}
+              />) : <MensajeAlert/>}
             </Card.Body>
           </Card>
         </Col>

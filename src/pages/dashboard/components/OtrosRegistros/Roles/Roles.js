@@ -1,37 +1,42 @@
+/* eslint-disable array-callback-return */
+/* eslint-disable react-hooks/exhaustive-deps */
 // @flow
-import React, { useContext, Suspense,useEffect} from 'react';
-import { Row, Col, Card,  Modal } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
+import React, { useContext,useEffect} from 'react';
+import { Row, Col, Card,  Modal, Pagination } from 'react-bootstrap';
+
 import { DashboardContext } from '../../../../../layouts/context/DashboardContext';
 import FormUpdate from './FormUpdate';
 import Table from '../../../../../components/Table';
-const loading = () => <div className="text-center"></div>;
+import BtnActions from '../../BtnActions';
+import Swal from 'sweetalert2';
+import PermisoAlert from '../../PermisoAlert/PermisoAlert';
+
 const ActionColumn = ({ row }) => {
 
   const {
-    validated,setOpen,open,toggle,setItemsUpdate,itemsRoles
+    validated, setOpen, open, toggle, setItemsUpdate, itemsRoles
   } = useContext(DashboardContext);
 
   const toggleUpUpdate = (id) => {
-  let array = [];
-
-
-  if(id>0)
-   // eslint-disable-next-line array-callback-return
-  itemsRoles.dataRoles?.roles?.map((row, i) =>{
-         if(row.id===id){
-          array.push(row)
-         }
-      })
-      //console.log('ActionColumn',array[0])
-
-    setOpen(open);
-    toggle()
-
-    setItemsUpdate(array[0])
+    let array = [];
+    let permiso = sessionStorage.getItem('PERMISO');
+    const localPermiso = JSON.parse(permiso);
+    if (localPermiso?.update === 'S') {
+      if (id > 0)
+        itemsRoles.dataRoles?.roles?.map((row, i) => {
+          if (row.id === id) {
+            array.push(row)
+          }
+        })
+      setOpen(open);
+      toggle()
+      setItemsUpdate(array[0])
+    } else {
+      Swal.fire('USTED NO TIENE PERMISOS HABILITADOS PARA ESTA OPCION');
+    }
   };
 
-//console.log('signUpUpdate',signUpUpdate)
+
   return (
     <React.Fragment>
       <Modal show={open} onHide={toggleUpUpdate} size={'lg'}>
@@ -42,20 +47,32 @@ const ActionColumn = ({ row }) => {
         />
         </Modal.Body>
       </Modal>
-      <Link to="#" className="action-icon" onClick={() => toggleUpUpdate(row.cells[0].value)}>
-        {' '}
-        <i className="mdi mdi-square-edit-outline"></i>
-      </Link>
+      <Row>
+        <Pagination className="pagination-rounded mx-auto" size="sm">
+          <Pagination.Item>
+            <BtnActions
+              permisos={'S'}
+              key={`EDITAR_${row.cells[0].value}`}
+              toggleActions={toggleUpUpdate}
+              row={row.cells[0].value}
+              titulo={'EDITAR'}
+              descripcion={'Editar Rol'}
+              icon={'mdi mdi-square-edit-outline'}
+            />
+          </Pagination.Item>
+        </Pagination>
+      </Row>
     </React.Fragment>
   );
 };
 const Roles = (props) => {
-
-
+  const permisos = props.permisos || {};
+  const datos = props?.datos?.dataRoles?.roles || [{}];
   const {
-    sizePerPageList, isLoading,query,
+    sizePerPageList,query,
     itemsmenuprincipal,
   } = useContext(DashboardContext);
+
 
   const columns = [
     {
@@ -109,15 +126,17 @@ const Roles = (props) => {
     query('OtrosRegistros','Roles',[{opcion:'consultar',obj:'Roles'}]);
   }, [query])
   const operado={add:'S'};
+
+
   return (
     <>
       <Row>
         <Col>
-          <Card>
-            <Card.Body>
-              {!isLoading && props?.datos?.dataRoles?.roles?.length>1? (<Table
+        <Card>
+          <Card.Body>
+          {datos?.length > 0 && permisos?.query === 'S' ? (<Table
                 columns={columns}
-                data={props?.datos?.dataRoles?.roles}
+                data={datos}
                 pageSize={5}
                 sizePerPageList={sizePerPageList}
                 isSortable={true}
@@ -129,7 +148,7 @@ const Roles = (props) => {
                 titulo={itemsmenuprincipal}
                 permisos={operado}
                 toggleSignUp={toggleSignUp}
-              />) : <Suspense fallback={loading()}>Esperando...</Suspense>}
+              />)  : <PermisoAlert />}
             </Card.Body>
           </Card>
         </Col>
