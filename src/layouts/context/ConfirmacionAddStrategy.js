@@ -4,7 +4,7 @@ import Swal from 'sweetalert2'
 class ConfirmacionAddStrategy {
   confirmar(cel, addCallback) {
     Swal.fire({
-      title: 'Desea adjuntar la apu al Proyecto? ' + cel,
+      title: 'Desea adjuntar el registro? ' + cel,
       showCancelButton: true,
     }).then((result) => {
       if (result.isConfirmed) {

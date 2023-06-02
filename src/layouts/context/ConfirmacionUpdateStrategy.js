@@ -4,7 +4,7 @@ import Swal from 'sweetalert2'
 class ConfirmacionUpdateStrategy {
   confirmar(cel, updateCallback) {
     Swal.fire({
-      title: 'Desea actualizar el valor de la apu al Proyecto? ' + cel,
+      title: 'Desea actualizar el registro? ' + cel,
       showCancelButton: true,
     }).then((result) => {
       if (result.isConfirmed) {

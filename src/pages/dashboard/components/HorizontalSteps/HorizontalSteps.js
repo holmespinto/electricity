@@ -13,7 +13,7 @@ const HorizontalSteps = (props) => {
       <div className="horizontal-steps mt-2 mb-2 pb-3">
         <div className="horizontal-steps-content">
           <div className={`step-item ${props.contentInit}`}>
-            <Link to={`/dashboard/Informes/asignarApu?p=${props.idProyecto}`} className="btn btn-link p-0 text-secondary shadow-none px-0 py-2">
+            <Link to={`/dashboard/GestionProyecto/asignarApu?p=${props.idProyecto}`} className="btn btn-link p-0 text-secondary shadow-none px-0 py-2">
               <span
                 data-toggle="tooltip"
                 data-placement="bottom"
@@ -24,7 +24,7 @@ const HorizontalSteps = (props) => {
             </Link>
           </div>
           <div className={`step-item ${props.contentEnd}`}>
-            <Link to={`/dashboard/Informes/EditarProyecto?p=${props.idProyecto}`} className="btn btn-link p-0 text-secondary shadow-none px-0 py-2">
+            <Link to={`/dashboard/GestionProyecto/asignarApu?p=${props.idProyecto}`} className="btn btn-link p-0 text-secondary shadow-none px-0 py-2">
               <span
                 data-toggle="tooltip"
                 data-placement="bottom"

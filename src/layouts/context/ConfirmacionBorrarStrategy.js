@@ -4,7 +4,7 @@ import Swal from 'sweetalert2'
 class ConfirmacionBorrarStrategy  {
   confirmar(cel, borrarCallback) {
     Swal.fire({
-      title: 'Desea eliminar el la APU del Proyecto? ' + cel,
+      title: 'Desea eliminar? ' + cel,
       showCancelButton: true,
     }).then((result) => {
       if (result.isConfirmed) {

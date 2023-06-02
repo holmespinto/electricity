@@ -6,14 +6,13 @@ import { useCallback, useState } from 'react'
 import { APICore } from '../helpers/api/apiCore';
 const api = new APICore();
 
-export const useGestionBasica = () => {
+export const useGestionFinanciera = () => {
 
   const [isLoading, setLoading] = useState(false);
-  const [itemsClientes, setClientes] = useState([]);
-  const [itemsProyectos, setProyectos] = useState([]);
-  const [itemsProductos, setProductos] = useState([]);
-  const [itemsEmpleados, setEmpleado] = useState([]);
-  const [itemsGestionarProyecto, setGestionarProyecto] = useState([]);
+  const [itemsControlDiario, setControlDiario] = useState([]);
+  const [itemsOrdenCompra, setOrdenCompra] = useState([]);
+  const [itemsNomina, setNomina] = useState([]);
+  const [itemsGenerarNomina, setGenerarNomina] = useState([]);
 
 //QUERY DE RESPUSTA DE CONSULTAS
 const query = useCallback((itemUrl, itemsmenuprincipal, opcion) => {
@@ -36,33 +35,29 @@ const query = useCallback((itemUrl, itemsmenuprincipal, opcion) => {
       {
         (() => {
           switch (datos[0]?.obj) {
-            case 'Productos':
-              setProductos(response)
+            case 'ControlDiario':
+              setControlDiario(response)
             break
-            case 'Cliente':
-              setClientes(response)
+            case 'OrdenCompra':
+              setOrdenCompra(response)
               break
-            case 'Proyecto':
-              setProyectos(response)
-              break
-              case 'Empleado':
-                setEmpleado(response)
+            case 'Nomina':
+                setNomina(response)
                 break
-              case 'GestionarProyecto':
-                setGestionarProyecto(response)
+                case 'listar_nominas':
+                setGenerarNomina(response)
                 break
           }
         })()
       }
-
     } catch (error) {
       console.error(error);
     }
   })
     .catch((error) => console.error('Error:', error))
     .finally(() => {
-      setTimeout(function () {
-        setLoading(false);
+     setTimeout(function () {
+     setLoading(false);
       }, 1000);
     });
   }, 2000);
@@ -71,10 +66,9 @@ const query = useCallback((itemUrl, itemsmenuprincipal, opcion) => {
     {
       query,
       isLoading,
-      itemsClientes,
-      itemsProyectos,
-      itemsProductos,
-      itemsEmpleados,itemsGestionarProyecto
+      itemsControlDiario,
+      itemsOrdenCompra,
+      itemsNomina,itemsGenerarNomina,
     }
   )
 }

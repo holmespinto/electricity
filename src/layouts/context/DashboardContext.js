@@ -231,7 +231,7 @@ function deleteCookie(name) {
  const update = useCallback((cel,idProyecto,valor) => {
   const estrategiaConfirmacion = new ConfirmacionUpdateStrategy();
   estrategiaConfirmacion.confirmar(cel, (cel) => {
-    const url = `accion=${itemUrl}&tipo=${itemsmenuprincipal}&opcion=update_apu&idApu=${cel}&idProyecto=${idProyecto}&valor=${valor}`;
+    const url = `accion=${itemUrl}&tipo=${itemsmenuprincipal}&opcion=EditarProyecto&idApu=${cel}&idProyecto=${idProyecto}&valor=${valor}`;
     const respuesta = api.sendRequestData(`${url}`);
     respuesta.then(function (resp) {
       Swal.fire('' + resp[0].menssage + '');

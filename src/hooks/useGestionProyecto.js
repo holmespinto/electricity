@@ -6,14 +6,11 @@ import { useCallback, useState } from 'react'
 import { APICore } from '../helpers/api/apiCore';
 const api = new APICore();
 
-export const useGestionBasica = () => {
+export const useGestionProyecto = () => {
 
   const [isLoading, setLoading] = useState(false);
-  const [itemsClientes, setClientes] = useState([]);
-  const [itemsProyectos, setProyectos] = useState([]);
-  const [itemsProductos, setProductos] = useState([]);
-  const [itemsEmpleados, setEmpleado] = useState([]);
   const [itemsGestionarProyecto, setGestionarProyecto] = useState([]);
+
 
 //QUERY DE RESPUSTA DE CONSULTAS
 const query = useCallback((itemUrl, itemsmenuprincipal, opcion) => {
@@ -36,33 +33,20 @@ const query = useCallback((itemUrl, itemsmenuprincipal, opcion) => {
       {
         (() => {
           switch (datos[0]?.obj) {
-            case 'Productos':
-              setProductos(response)
+            case 'EditarProyecto':
+              setGestionarProyecto(response)
             break
-            case 'Cliente':
-              setClientes(response)
-              break
-            case 'Proyecto':
-              setProyectos(response)
-              break
-              case 'Empleado':
-                setEmpleado(response)
-                break
-              case 'GestionarProyecto':
-                setGestionarProyecto(response)
-                break
           }
         })()
       }
-
     } catch (error) {
       console.error(error);
     }
   })
     .catch((error) => console.error('Error:', error))
     .finally(() => {
-      setTimeout(function () {
-        setLoading(false);
+     setTimeout(function () {
+     setLoading(false);
       }, 1000);
     });
   }, 2000);
@@ -71,10 +55,8 @@ const query = useCallback((itemUrl, itemsmenuprincipal, opcion) => {
     {
       query,
       isLoading,
-      itemsClientes,
-      itemsProyectos,
-      itemsProductos,
-      itemsEmpleados,itemsGestionarProyecto
+      itemsGestionarProyecto,
+
     }
   )
 }
