@@ -13,6 +13,7 @@ export const useGestionPrecios = () => {
   const [itemsCategorias, setCategorias] = useState([]);
   const [itemsEditorApu, setEditorApu] = useState([]);
   const [itemsParametroPrecio, setParametroPrecio] = useState([]);
+  const [itemsconsultarById, setconsultarById] = useState([]);
 
 //QUERY DE RESPUSTA DE CONSULTAS
 const query = useCallback((itemUrl, itemsmenuprincipal, opcion) => {
@@ -36,7 +37,7 @@ const query = useCallback((itemUrl, itemsmenuprincipal, opcion) => {
       {
         (() => {
           switch (datos[0]?.obj) {
-            case 'Apu':
+            case 'APU':
               setApu(response)
             break
             case 'Categorias':
@@ -47,6 +48,9 @@ const query = useCallback((itemUrl, itemsmenuprincipal, opcion) => {
             break
             case 'ParametroPrecio':
               setParametroPrecio(response)
+            break
+            case 'consultarById':
+              setconsultarById(response)
             break
           }
         })()
@@ -71,6 +75,7 @@ const query = useCallback((itemUrl, itemsmenuprincipal, opcion) => {
       itemsCategorias,
       itemsEditorApu,
       itemsParametroPrecio,
+      itemsconsultarById,
     }
   )
 }

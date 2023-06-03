@@ -1,10 +1,12 @@
 // @flow
 import { Popover, OverlayTrigger } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
+import { DashboardContext } from '../../../layouts/context/DashboardContext';
+import { useContext } from 'react';
 
 
 const BtnActions = (props) => {
-
+  const {itemUrl,itemsmenuprincipal} = useContext(DashboardContext);
   const popover = (
     <Popover id={props.key}>
       <Popover.Header as="h3">{props.titulo}</Popover.Header>
@@ -13,13 +15,14 @@ const BtnActions = (props) => {
   );
   let Ids = localStorage.getItem('Ids');
   const idUrls = JSON.parse(Ids);
-  const url = `?p=${idUrls.idProyecto}&q=${idUrls.IdApu}`
-
+  const url = `?p=${idUrls?.idProyecto}&q=${idUrls?.IdApu}`;
+  const urlb = `/dashboard/${itemUrl}/${itemsmenuprincipal}`;
+//&q=
   return (
         <OverlayTrigger trigger={['hover', 'focus']} placement="left" overlay={popover} key={props.key}>
           {
             props.permisos === 'S' ? (
-              <Link key={props.key} to={idUrls.idProyecto > 0 ? url:'/#'} className="action-icon " onClick={() => props.toggleActions(props.row, props.titulo)}>
+              <Link key={props.key} to={idUrls?.idProyecto > 0 ? url:urlb} className="action-icon " onClick={() => props.toggleActions(props.row, props.titulo)}>
                 <i className={`${props.icon} pt-2`}></i>
               </Link>) : ''
           }

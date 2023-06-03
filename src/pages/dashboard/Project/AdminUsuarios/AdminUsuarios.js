@@ -1,10 +1,11 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 // @flow
-import PermisoAlert from '../PermisoAlert/PermisoAlert';
+import PermisoAlert from '../../components/PermisoAlert/PermisoAlert';
 import Usuarios from './Usuarios/Usuarios';
 import Roles from './Roles/Roles';
 const AdminUsuarios = (props) => {
   const permisos = props?.permisos || {};
+
   return (
     <>
       {(() => {
@@ -12,11 +13,11 @@ const AdminUsuarios = (props) => {
           case 'Usuarios':
             return <>
               {permisos?.query?.length === 1 ?
-                <Usuarios
+                (<Usuarios
                   accion={'AdminUsuarios'}
                   tipo={props.tipo}
                   permisos={props.permisos}
-                /> : <PermisoAlert />}
+                /> ): <PermisoAlert />}
             </>
           case 'Roles':
             return <>

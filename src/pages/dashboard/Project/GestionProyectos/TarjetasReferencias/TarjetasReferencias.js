@@ -54,7 +54,7 @@ const TarjetasReferencias = (props: TarjetasReferenciasProps): React$Element<any
     idProyecto:idCategoria,
     ProyectosApu:itemsGestionarProyecto?.data?.apu_producto || [{}]
   }}]
-console.log('Datos',Datos)
+
   return (<>
     <Row>
 		{itemsGestionarProyecto?.data?.ApusNoAsignadas?.length > 0? <Kanban  data={Datos[0]}  />: <PermisoAlert />}

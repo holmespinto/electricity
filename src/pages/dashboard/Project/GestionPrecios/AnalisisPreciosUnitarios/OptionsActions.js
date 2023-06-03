@@ -37,7 +37,7 @@ Productos?.map((row, i) => {
     {(() => {
         switch (itemsUpdate?.Opcion) {
         case "VISTA":
-              return (<><VistaPrevia/></>)
+              return (<><VistaPrevia IdApu={itemsUpdate?.id}/></>)
         case "IMAGEN":
                 return (<><LoadImg
                   producto={itemsUpdate?.Opcion}
@@ -51,7 +51,7 @@ Productos?.map((row, i) => {
         default:
           return (<><Fields
           accion={itemUrl}
-          tipo={'Apu'}
+          tipo={'APU'}
           NombreApu={itemsUpdate?.Objetivo}
           IdApu={itemsUpdate?.id}
           Categorias={conteg}

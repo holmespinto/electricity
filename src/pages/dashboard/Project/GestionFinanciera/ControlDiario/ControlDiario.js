@@ -10,8 +10,9 @@ import Swal from 'sweetalert2';
 import { DashboardContext } from '../../../../../layouts/context/DashboardContext';
 import BtnSeccionAction from '../../../components/BtnSeccionAction/BtnSeccionAction';
 import { useGestionFinanciera } from '../../../../../hooks/useGestionFinanciera';
-import Table from '../../../../../components/Table';
+
 import PermisoAlert from '../../../components/PermisoAlert/PermisoAlert';
+import Table from '../../../components/Table';
 
 const ActionColumn = ({ row }) => {
 

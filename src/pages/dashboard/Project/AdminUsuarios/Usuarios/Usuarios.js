@@ -3,104 +3,72 @@
 /* eslint-disable array-callback-return */
 // @flow
 import React, { useContext, useEffect} from 'react';
-import { Row, Col, Card, Button, Modal,Pagination } from 'react-bootstrap';
+import { Row, Col, Card, Button, Modal } from 'react-bootstrap';
 
 import { DashboardContext } from '../../../../../layouts/context/DashboardContext';
 import FormAdd from './FormAdd';
 import FormUpdate from './FormUpdate';
 import Table from '../../../../../components/Table';
-import BtnActions from '../../BtnActions';
-import MensajeAlert from '../../PermisoAlert/PermisoAlert';
+import PermisoAlert from '../../../components/PermisoAlert/PermisoAlert';
 import Swal from 'sweetalert2';
 
-
+import { useAdminUsuarios } from '../../../../../hooks/useAdminUsuarios';
+import BtnSeccionAction from '../../../components/BtnSeccionAction/BtnSeccionAction';
 const ActionColumn = ({ row }) => {
-
-
   const {
     eliminar,
-    validated,setOpen,open,toggle,setItemsUpdate,itemsUsuarios
+    validated,
+    toggle,
+    setOpen,
+    setItemsUpdate,
+    open, itemsmenuprincipal
   } = useContext(DashboardContext);
-
-
-  const toggleUpUpdate = (id) => {
-    let auteurs = [];
+   const toggleSignUp = (id) => {
     let permiso = sessionStorage.getItem('PERMISO');
     const localPermiso = JSON.parse(permiso);
-
     if (localPermiso?.update === 'S') {
-  if (id > 0)
-  itemsUsuarios?.data?.auteurs?.map((row, i) =>{
-         if(row.id===id){
-         const obj =
-            {
-                id: row.id,
-                login: row.login,
-                email: row.email,
-                rol: row.rol
-            }
-            auteurs.push(obj)
-         }
-      })
-      setItemsUpdate(auteurs[0])
 
-    setOpen(open);
-    toggle()
-  } else {
-    Swal.fire('USTED NO TIENE PERMISOS HABILITADOS PARA ESTA OPCION');
-  }
+      if(row.cells[0].row.values.id===id)
+      setItemsUpdate(row?.cells[0]?.row?.values)
+      setOpen(open);
+      toggle()
+    } else {
+      Swal.fire('USTED NO TIENE PERMISOS HABILITADOS PARA ESTA OPCION');
+    }
   };
 
-//console.log('signUpUpdate',signUpUpdate)
+  let permiso = sessionStorage.getItem('PERMISO');
+  const localPermiso = JSON.parse(permiso);
+  const obj = {
+    open,
+    toggleSignUp,
+    localPermiso,
+    validated,
+    key:row.cells[0].value,
+    row:row.cells[0].value,
+    eliminar,
+  }
   return (
     <React.Fragment>
-      <Modal show={open} onHide={toggleUpUpdate}>
-        <Modal.Body>
-          <FormUpdate
-          title={`ACTUALIZAR DATOS DEL USUARIOS`}
+      <BtnSeccionAction obj={obj}>
+      <FormUpdate
+          title={`FORMULARIO PARA LA EDICION DE ${itemsmenuprincipal?.toUpperCase()}`}
           validated={validated}
         />
-        </Modal.Body>
-      </Modal>
-      <Row>
-        <Pagination className="pagination-rounded mx-auto" size="sm">
-          <Pagination.Item>
-            <BtnActions
-              permisos={'S'}
-              key={`EDITAR_${row.cells[0].value}`}
-              toggleActions={toggleUpUpdate}
-              row={row.cells[0].value}
-              titulo={'EDITAR'}
-              descripcion={'Editar Usuario'}
-              icon={'mdi mdi-square-edit-outline'}
-            />
-          </Pagination.Item>
-          <Pagination.Item>
-            <BtnActions
-              permisos={'S'}
-              key={`ELIMINAR_${row.cells[0].value}`}
-              toggleActions={eliminar}
-              row={row.cells[0].value}
-              titulo={'ELIMINAR'}
-              descripcion={'Eliminar Usuario'}
-              icon={'mdi mdi-delete'}
-            />
-          </Pagination.Item>
-        </Pagination>
-      </Row>
+        </BtnSeccionAction>
     </React.Fragment>
   );
 };
 const Usuarios = (props) => {
   const permisos = props?.permisos || {};
-  const datos = props?.datos?.auteurs || [];
   const {
     validated,
-    signUpModalAdd, setSignUpModalAdd,query,
+    signUpModalAdd, setSignUpModalAdd,
     sizePerPageList,
   } = useContext(DashboardContext);
-
-
+  const {itemsAdminUsuarios,query} = useAdminUsuarios()
+  const datos = itemsAdminUsuarios?.data?.auteurs || [];
+  const roles = itemsAdminUsuarios?.data?.roles || [];
 
   const columns = [
     {
@@ -133,7 +101,6 @@ const Usuarios = (props) => {
   ];
   const toggleSignUp = () => {
     {permisos?.add === 'S' ? setSignUpModalAdd(!signUpModalAdd) : Swal.fire('USTED NO TIENE PERMISOS HABILITADOS PARA ESTA OPCION')}
-
   };
   useEffect(() => {
     query('AdminUsuarios','Usuarios',[{opcion:'lista_Usuarios',obj:'Usuarios'}]);
@@ -147,17 +114,16 @@ const Usuarios = (props) => {
         <Col>
           <Card>
             <Card.Body>
-              <Row>
-                <Col sm={12}>
+            <Row>
+                <Col sm={12} className={`${signUpModalAdd ? '' : 'd-lg-none'}`}>
                   <Card>
                     <Card.Body>
                       {/* Sign up Modal */}
                       <Modal show={signUpModalAdd} onHide={setSignUpModalAdd}>
-                        <Modal.Body>
-                          <FormAdd
-                          title={`GESTIONAR USUARIOS`}
-                          validated={validated}
-                        />
+                        <Modal.Body><FormAdd
+                            title={`GESTIONAR ${props?.tipo?.toUpperCase()}`}
+                            validated={validated}
+                          />
                         </Modal.Body>
                       </Modal>
                     </Card.Body>
@@ -175,9 +141,11 @@ const Usuarios = (props) => {
                   </div>
                 </Col>
               </Row>
-              {datos?.length > 0 && permisos?.query === 'S' ? (<Table
+              {datos?.length > 0 && permisos?.query === 'S' ? (
+              localStorage.setItem('roles',JSON.stringify(roles)),
+              <Table
                 columns={columns}
-                data={props?.datos?.auteurs}
+                data={datos}
                 pageSize={5}
                 sizePerPageList={sizePerPageList}
                 isSortable={true}
@@ -185,8 +153,12 @@ const Usuarios = (props) => {
                 theadClass="table-light"
                 searchBoxClass="mt-2 mb-3"
                 isSearchable={true}
+                isVisible={true}
                 nametable={props.accion}
-              />) : <MensajeAlert />}
+                titulo={'Usuarios'}
+                permisos={permisos}
+                toggleSignUp={toggleSignUp}
+              />) : <PermisoAlert />}
             </Card.Body>
           </Card>
         </Col>

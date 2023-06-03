@@ -55,7 +55,7 @@ const onSubmit = () => {
   return (
 
   <React.Fragment>
-      {queryForm ? <Redirect to={`/${props?.accion}/${props?.tipo}`}></Redirect> : null}
+      {queryForm ? <Redirect to={`/dashboard/${props?.accion}/${props?.tipo}`}></Redirect> : null}
       <div className="text-center w-75 m-auto">
         <h4 className="text-black-50 text-center mt-0 fw-bold">{`${props?.title}`}</h4>
       </div>

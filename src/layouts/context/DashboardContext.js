@@ -19,28 +19,14 @@ const DashboardProvider = ({ children }) => {
   const [isLoading, setLoading] = useState(false);
   const [itemsmenuprincipal, setitemsMenuPrincipal] = useState('');
   const [itemUrl, setitemsUrl] = useState('');
-
-  const [itemsUsuarios, setIUsuarios] = useState([]);
   const [itemsQuery, setItemsQuery] = useState([]);
   const [signUpModal, setSignUpModal] = useState(false);
-
   const [signUpModalAdd, setSignUpModalAdd] = useState(false);
-  const [signUpNomina, setSignUpNomina] = useState(false);
   const [openActions, setActions] = useState(false);
-
   const [open, setOpen] = useState(false);
   const [idCategoria, setIdCategoria] = useState(0);
   const [itemsUpdate, setItemsUpdate] = useState([]);
   const [itemsAdd, setItemsAdd] = useState([]);
-  const [itemsRoles, setRoles] = useState([]);
-  const [openNomin, setOpenNomina] = useState(false);
-
-  const [itemsProyecto, setProyecto] = useState([]);
-
-  const [itemsParametroPrecios, setParametroPrecio] = useState([]);
-  const [itemsapuTransport, setApuTrasporte] = useState([]);
-  const [itemsEditarProyecto, setEditarProyecto] = useState([]);
-
 
 
 // función para obtener el valor de una cookie
@@ -165,8 +151,6 @@ function deleteCookie(name) {
     datosMaterial?.then(function (response) {
       try {
         const dataHandler = createResponseHandler(response, {
-          setIUsuarios,
-          setRoles,
           setItemsQuery,
         });
         const handler = dataHandler[datos[0]?.obj] || dataHandler.default;
@@ -292,23 +276,14 @@ const AdvertenciaLocalStorage = () => {
     StatusColumn, sizePerPageList, INIT_RESPONSE,
     signUpModalAdd, setSignUpModalAdd,
     itemsQuery, setItemsQuery, query,
-    signUpNomina, setSignUpNomina,
     open, setOpen, toggle,
     openActions, setActions,
-    itemsUsuarios, setIUsuarios,
     itemsUpdate, setItemsUpdate,
     itemsAdd, setItemsAdd,
-    itemsRoles, setRoles,
-    openNomin, setOpenNomina,
-    itemsProyecto, setProyecto,
     Spinners,
-
-    itemsapuTransport, setApuTrasporte,
-    itemsParametroPrecios, setParametroPrecio,
     getCookie,deleteCookie,
     queryFile,updateApu,
     add,update,borrar,pagesInSearch,
-    itemsEditarProyecto, setEditarProyecto,
     idCategoria, setIdCategoria
   };
   return (

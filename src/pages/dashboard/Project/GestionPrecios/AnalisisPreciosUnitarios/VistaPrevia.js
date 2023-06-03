@@ -1,16 +1,18 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable array-callback-return */
-import React, { useContext} from 'react';
+import React, {useEffect} from 'react';
 import { Row, Col,  } from 'react-bootstrap';
-import { DashboardContext } from '../../../../../layouts/context/DashboardContext';
-import Table from '../../../components/Table';
+
+
 import PermisoAlert from '../../../components/PermisoAlert/PermisoAlert';
+import { useGestionPrecios } from '../../../../../hooks/useGestionPrecios';
+import Table from '../../../../../components/Table';
 // Create Document Component
 const VistaPrevia  = (props) => {
-  const {itemsUpdate,sizePerPageList} = useContext(DashboardContext);
-  //console.log('VistaPrevia',itemsUpdate?.datos)
-  const datos = itemsUpdate?.datos || [{}];
-  console.log('VistaPrevia',itemsUpdate?.datos)
+
+  const {itemsconsultarById,query} = useGestionPrecios()
+  const datos = itemsconsultarById?.data?.Rows || [{}];
+
   const columns = [
     {
       Header: 'ID',
@@ -23,32 +25,54 @@ const VistaPrevia  = (props) => {
       sort: true,
     },
     {
-      Header: 'Descripcion',
-      accessor: 'Descripcion',
-      sort: true,
-    },
-    {
       Header: 'Producto',
       accessor: 'Producto',
       sort: true,
-    }, {
+    },
+    {
+      Header: 'Unidad',
+      accessor: 'Unidad',
+      sort: false,
+    },{
+      Header: 'Cantidad',
+      accessor: 'Cantidad',
+      sort: false,
+    },
+    {
       Header: 'Total',
       accessor: 'Total',
       sort: true,
     }
-    , {
-      Header: 'Unidad',
-      accessor: 'Unidad',
-      sort: false,
-    }, {
+    ,  {
       Header: 'Valor',
       accessor: 'ValorUnitario',
       sort: false,
     },
   ];
+  const sizePerPageList = [
+    {
+        text: '100',
+        value: 100,
+    },
+    {
+        text: '150',
+        value: 150,
+    },
+    {
+        text: '200',
+        value: 200,
+    },
+    {
+        text: 'All',
+        value:9999,
+    },
+  ];
   const toggleSignUp = () => {
     console.log('Toggle')
   };
+  useEffect(() => {
+    query('GestionPrecios', 'APU', [{ opcion: 'consultarById', obj: 'consultarById',id:props?.IdApu}]);
+  }, [])
 return (
 
     <React.Fragment>
@@ -58,12 +82,12 @@ return (
         </div>
       </div>
         <Row>
-            <Col xl={12}>
+            <Col>
             {datos?.length > 0 ?
               (<Table
                 columns={columns}
                 data={datos}
-                pageSize={5}
+                pageSize={999}
                 sizePerPageList={sizePerPageList}
                 isSortable={true}
                 isVisible={true}
@@ -71,8 +95,8 @@ return (
                 theadClass="table-light"
                 searchBoxClass="mt-2 mb-3"
                 isSearchable={true}
-                nametable={props.accion}
-                titulo={''}
+                nametable={'VistaTable'}
+                titulo={'VistaTable'}
                 permisos={'SI'}
                 toggleSignUp={toggleSignUp}
                 />) : <PermisoAlert />}

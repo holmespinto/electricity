@@ -3,81 +3,76 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 // @flow
 import React, { useContext, useEffect } from 'react';
-import { Row, Col, Card, Modal, Pagination, } from 'react-bootstrap';
+import { Row, Col, Card, Modal, } from 'react-bootstrap';
 
 import { DashboardContext } from '../../../../../layouts/context/DashboardContext';
 import FormUpdate from './FormUpdate';
 import Table from '../../../../../components/Table';
-import BtnActions from '../../BtnActions';
 import Swal from 'sweetalert2';
-import PermisoAlert from '../../PermisoAlert/PermisoAlert';
+
 import FormAdd from './FormAdd';
+
+import PermisoAlert from '../../../components/PermisoAlert/PermisoAlert';
+import { useAdminUsuarios } from '../../../../../hooks/useAdminUsuarios';
+import BtnSeccionAction from '../../../components/BtnSeccionAction/BtnSeccionAction';
 
 const ActionColumn = ({ row }) => {
 
   const {
-    validated, setOpen, open, toggle, setItemsUpdate, itemsRoles
+    eliminar,
+    validated,
+    toggle,
+    setOpen,
+    setItemsUpdate,
+    open, itemsmenuprincipal
   } = useContext(DashboardContext);
-
-  const toggleUpUpdate = (id) => {
-    let array = [];
+   const toggleSignUp = (id) => {
     let permiso = sessionStorage.getItem('PERMISO');
     const localPermiso = JSON.parse(permiso);
     if (localPermiso?.update === 'S') {
-      if (id > 0)
-        itemsRoles.dataRoles?.roles?.map((row, i) => {
-          if (row.id === id) {
-            array.push(row)
-          }
-        })
+
+      if(row.cells[0].row.values.id===id)
+      setItemsUpdate(row?.cells[0]?.row?.values)
       setOpen(open);
       toggle()
-      setItemsUpdate(array[0])
     } else {
       Swal.fire('USTED NO TIENE PERMISOS HABILITADOS PARA ESTA OPCION');
     }
   };
 
-
+  let permiso = sessionStorage.getItem('PERMISO');
+  const localPermiso = JSON.parse(permiso);
+  const obj = {
+    open,
+    toggleSignUp,
+    localPermiso,
+    validated,
+    key:row.cells[0].value,
+    row:row.cells[0].value,
+    eliminar,
+  }
   return (
     <React.Fragment>
-      <Modal show={open} onHide={toggleUpUpdate} size={'lg'}>
-        <Modal.Body>
-          <FormUpdate
-            title={`ACTUALIZAR DATOS DEL USUARIOS`}
-            validated={validated}
-          />
-        </Modal.Body>
-      </Modal>
-      <Row>
-        <Pagination className="pagination-rounded mx-auto" size="sm">
-          <Pagination.Item>
-            <BtnActions
-              permisos={'S'}
-              key={`EDITAR_${row.cells[0].value}`}
-              toggleActions={toggleUpUpdate}
-              row={row.cells[0].value}
-              titulo={'EDITAR'}
-              descripcion={'Editar Rol'}
-              icon={'mdi mdi-square-edit-outline'}
-            />
-          </Pagination.Item>
-        </Pagination>
-      </Row>
+      <BtnSeccionAction obj={obj}>
+      <FormUpdate
+          title={`FORMULARIO PARA LA EDICION DE ${itemsmenuprincipal?.toUpperCase()}`}
+          validated={validated}
+        />
+        </BtnSeccionAction>
     </React.Fragment>
   );
 };
 const Roles = (props) => {
   const permisos = props.permisos || {};
-  const datos = props?.datos?.dataRoles?.roles || [{}];
+
+  const {itemsRoles,query} = useAdminUsuarios()
   const {
-    sizePerPageList, query,
+    sizePerPageList,
     setSignUpModalAdd,
     signUpModalAdd,
     validated,
   } = useContext(DashboardContext);
-
-
+  const datos = itemsRoles?.dataRoles?.roles|| [{}];
   const columns = [
     {
       Header: 'ID',
@@ -135,8 +130,11 @@ const Roles = (props) => {
           <Card>
             <Card.Body>
               {/* Sign up Modal */}
-              <Modal show={signUpModalAdd} onHide={setSignUpModalAdd}>
+              <Modal show={signUpModalAdd} size={'sm'} onHide={setSignUpModalAdd}>
                 <Modal.Body>
+                <Modal.Header closeButton>
+                    <h4 className="modal-description">GESTIONAR USUARIOS</h4>
+                  </Modal.Header>
                   <FormAdd
                     title={`GESTIONAR USUARIOS`}
                     validated={validated}

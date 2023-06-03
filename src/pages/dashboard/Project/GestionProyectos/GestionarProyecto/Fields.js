@@ -49,7 +49,7 @@ const Register = (props): React$Element<React$FragmentType> => {
 //console.log(items)
    return (
     <>
-      {queryForm ? <Redirect to={`/${props?.accion}/${props?.tipo}`}></Redirect> : null}
+      {queryForm ? <Redirect to={`/dashboard/${props?.accion}/${props?.tipo}`}></Redirect> : null}
       <div className="text-center w-75 m-auto">
         <h4 className="text-dark-50 text-center mt-0 fw-bold">{t(`${props?.textBtn}`)}</h4>
       </div>

@@ -45,7 +45,7 @@ const Register = (props): React$Element<React$FragmentType> => {
 
   return (
     <>
-      {queryForm ? <Redirect to={`/${props?.accion}/${props?.tipo}`}></Redirect> : null}
+      {queryForm ? <Redirect to={`/dashboard/${props?.accion}/${props?.tipo}`}></Redirect> : null}
       <Row>
         <Col sm={12}>
           <div className="text-center m-auto ">

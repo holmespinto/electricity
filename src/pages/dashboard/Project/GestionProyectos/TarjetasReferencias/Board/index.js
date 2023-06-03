@@ -8,7 +8,7 @@ import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 
 import classNames from 'classnames';
 import { DashboardContext } from '../../../../../../layouts/context/DashboardContext';
-import HorizontalSteps from '../../../../components/HorizontalSteps/HorizontalSteps';
+//import HorizontalSteps from '../../../../components/HorizontalSteps/HorizontalSteps';
 import TitleProyecto from '../../../../components/TitleProyect/TitleProyect';
 import TaskItem from './Task';
 import { convertirACifraDecimal, multiplicar } from '../../../../../../utils/convertirACifraDecimal';

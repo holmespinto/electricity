@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable no-lone-blocks */
 /* eslint-disable array-callback-return */
 // @flow
@@ -76,8 +77,11 @@ const ActionColumn = ({ row }) => {
   return (
     <React.Fragment>
       <Row>
-        <Modal show={openActions} onHide={toggleActions} fullscreen={false} animation={true}>
+        <Modal show={openActions} onHide={toggleActions} size="xl" centered animation={true}>
           <Modal.Body>
+          <Modal.Header closeButton>
+            <h4 className="modal-description">Vista Previa</h4>
+          </Modal.Header>
             <OptionsActions />
           </Modal.Body>
         </Modal>
@@ -216,8 +220,8 @@ const AnalisisPreciosUnitarios = (props) => {
     {permisos?.add === 'S' ? setSignUpModalAdd(!signUpModalAdd) : Swal.fire('USTED NO TIENE PERMISOS HABILITADOS PARA ESTA OPCION')}
   };
   useEffect(() => {
-    query('GestionPrecios', 'Apu', [{ opcion: 'consultar', obj: 'Apu' }]);
-  }, [query])
+    query('GestionPrecios', 'APU', [{ opcion: 'consultar', obj: 'APU' }]);
+  }, [])
 
   return (
     <>

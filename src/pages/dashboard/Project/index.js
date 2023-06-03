@@ -10,6 +10,7 @@ import GestionProductos from './GestionProductos/GestionProductos';
 import GestionFinanciera from './GestionFinanciera/GestionFinanciera';
 import GestionPrecios from './GestionPrecios/GestionPrecios';
 import GestionProyecto from './GestionProyectos/GestionProyecto';
+import AdminUsuarios from './AdminUsuarios/AdminUsuarios';
 const ProjectDashboard = () => {
   const { itemsmenuprincipal, AdvertenciaLocalStorage } = useContext(DashboardContext)
   AdvertenciaLocalStorage();
@@ -64,6 +65,17 @@ const ProjectDashboard = () => {
               {initPermiso === 1 || itemsmenuprincipal === 'asignarApu'|| itemsmenuprincipal === 'EditarProyecto' ?
                 (<GestionProyecto
                   accion={'GestionProyecto'}
+                  tipo={itemsmenuprincipal}
+                  permisos={permisos}
+                />) : <PermisoAlert />}
+            </>
+            break;
+          case 'Roles':
+          case 'Usuarios':
+            return <>
+              {initPermiso === 1 ?
+                (<AdminUsuarios
+                  accion={'AdminUsuarios'}
                   tipo={itemsmenuprincipal}
                   permisos={permisos}
                 />) : <PermisoAlert />}

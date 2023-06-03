@@ -11,6 +11,7 @@ import { VerticalForm } from '../../../../../components/';
 //actions
 import { queryFormSend } from '../../../../../redux/actions';
 import { DashboardContext } from '../../../../../layouts/context/DashboardContext';
+import { useGestionPrecios } from '../../../../../hooks/useGestionPrecios';
 
 function convertirACifraDecimal(numero) {
   const cifraDecimal = numero.toFixed(2).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
@@ -22,7 +23,8 @@ function multiplicar(a,b){
 
 
 const Register = (props)=> {
-const {query,setActions,openActions} = useContext(DashboardContext);
+const {setActions,openActions} = useContext(DashboardContext);
+const {query} = useGestionPrecios()
   const [detalles, setDetalles] = useState([]);
   const data =  props?.Categorias||[];
   const [items, setItems] = useState([{
@@ -87,7 +89,7 @@ const {query,setActions,openActions} = useContext(DashboardContext);
     dispatch(queryFormSend(detalles))
 
     setTimeout(function () {
-      query('GestionPrecios', 'Apu', [{ opcion: 'consultar', obj: 'Apu' }]);
+      query('GestionPrecios', 'APU', [{ opcion: 'consultar', obj: 'Apu' }]);
       setActions(openActions);
     }, 2000);
   };
@@ -95,7 +97,7 @@ const {query,setActions,openActions} = useContext(DashboardContext);
 //console.log('props.ItemsUpdate',items)
   return (
     <>
-      {queryForm ? <Redirect to={`/${props?.accion}/${props?.tipo}`}></Redirect> : null}
+      {queryForm ? <Redirect to={`/dashboard/${props?.accion}/${props?.tipo}`}></Redirect> : null}
       <div className="text-left mt-2 mb-4 btn-success text-white mx-auto">
         <div class="row">
           <div class="col-md-auto ml-auto font-13 mt-2 mb-2">{props?.producto}-{props?.NombreApu}</div>

@@ -33,7 +33,7 @@ const Register = (props): React$Element<React$FragmentType> => {
     queryForm: state.Queryform.queryForm,
   }));
 
-
+console.log('props?.opcionroles',props?.opcionroles)
   const schemaResolver = yupResolver(
     yup.object().shape({
       login: yup.string().required(t('Digite su login')),
@@ -52,7 +52,7 @@ const Register = (props): React$Element<React$FragmentType> => {
   console.log('Register',items)
    return (
     <>
-      {queryForm ? <Redirect to={`/${props?.accion}/${props?.tipo}}`}></Redirect> : null}
+      {queryForm ? <Redirect to={`/dashboard/${props?.accion}/${props?.tipo}}`}></Redirect> : null}
       <div className="text-center w-75 m-auto">
         <h4 className="text-dark-50 text-center mt-0 fw-bold">{t(`${props?.textBtn}`)}</h4>
         <p className="text-muted mb-4">
@@ -107,7 +107,7 @@ const Register = (props): React$Element<React$FragmentType> => {
             tipo: props?.tipo,
             id: items[0]?.id,
           }])}
-          options={props?.roles}
+          options={props?.opcionroles}
           placeholder="Selecione el Rol..."
           selected={props?.roles?.value}
         />

@@ -4,8 +4,11 @@ import { DashboardContext } from '../../../../../layouts/context/DashboardContex
 /* custon FormAdd */
 const FormAdd = (props) => {
 
-  const { itemUrl, itemsmenuprincipal,itemsUsuarios } = useContext(DashboardContext);
+  const { itemUrl, itemsmenuprincipal } = useContext(DashboardContext);
 
+  let role = localStorage.getItem('roles');
+  const roles = JSON.parse(role);
+  console.log('roles',roles)
   return (
     <React.Fragment>
       <Fields
@@ -15,7 +18,8 @@ const FormAdd = (props) => {
         validated={props.validated}
         opcion={'add'}
         textBtn={'Registrar usuario'}
-        roles={itemsUsuarios.data?.roles}
+        roles={[]}
+        opcionroles={roles}
       />
     </React.Fragment>
   );

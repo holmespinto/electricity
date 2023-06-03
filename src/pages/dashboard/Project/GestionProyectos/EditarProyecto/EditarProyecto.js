@@ -2,8 +2,7 @@
 /* eslint-disable array-callback-return */
 // @flow
 import React, { useContext, Suspense, useEffect, useState } from 'react';
-import { Row, Col, Card, Pagination, Modal} from 'react-bootstrap';
-import { Link } from 'react-router-dom';
+import { Row, Col, Card} from 'react-bootstrap';
 import { DashboardContext } from '../../../../../layouts/context/DashboardContext';
 import FormUpdate from './FormUpdate';
 import HorizontalSteps from '../../../components/HorizontalSteps/HorizontalSteps';
