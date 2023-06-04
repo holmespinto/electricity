@@ -8,7 +8,7 @@ const FormUpdate = (props) => {
 
   let Ids = localStorage.getItem('Ids');
   const idUrls = JSON.parse(Ids);
-  const url = `?p=${idUrls.idProyecto}&q=${idUrls.IdApu}`
+  const url = `?p=${idUrls.p}&q=${idUrls.q}`
   const ids = idUrls.idProyecto > 0 ? url:''
   return (
   <React.Fragment>

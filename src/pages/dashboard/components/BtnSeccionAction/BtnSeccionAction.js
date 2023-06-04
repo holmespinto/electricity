@@ -1,8 +1,17 @@
 import { Modal, Pagination, Row } from "react-bootstrap";
 import BtnActions from "../BtnActions";
 import React from "react";
+import BtnLink from "../BtnLink";
 
 const BtnSeccionAction = (props,children) => {
+
+  const isbtnLink = props?.obj?.isbtnLink|| 'N';
+  const itemsmenuprincipal = props?.obj?.itemsmenuprincipal || '';
+  const descripcionbtnLink = props?.obj?.descripcionbtnLink || '';
+  const descripcionbtnaction = props?.obj?.descripcionbtnaction || '';
+  const titulobtnLink =props?.obj?.titulobtnLink || '';
+  const urlbtnLink =props?.obj?.urlbtnLink || '';
+
   return (
     <React.Fragment>
       <Modal show={props?.obj?.open} onHide={props?.obj?.toggleSignUp}>
@@ -20,7 +29,7 @@ const BtnSeccionAction = (props,children) => {
                   toggleActions={props?.obj?.toggleSignUp}
                   row={props?.obj?.row}
                   titulo={'EDITAR'}
-                  descripcion={'Editar Proyecto'}
+                  descripcion={`Editar ${descripcionbtnaction}`}
                   icon={'mdi mdi-square-edit-outline'}
                 /> : ''
             }
@@ -34,13 +43,29 @@ const BtnSeccionAction = (props,children) => {
                   toggleActions={props?.obj?.eliminar}
                   row={props?.obj?.row}
                   titulo={'ELIMINAR'}
-                  descripcion={'Registrar Proyecto'}
+                  descripcion={`Eliminar ${descripcionbtnaction}`}
                   icon={'mdi mdi-delete'}
 
                 /> : ''
             }
           </Pagination.Item>
-        </Pagination>
+        {
+        (isbtnLink==='S' && props?.obj?.localPermiso?.add === 'S') ?
+        <Pagination.Item>
+        <BtnLink
+            permisos={'S'}
+            key={`${itemsmenuprincipal}_${props?.obj?.row}`}
+            row={props?.obj?.row}
+            url={urlbtnLink}
+            titulo={`${titulobtnLink}`}
+            descripcion={`${descripcionbtnLink}`}
+            icon={'mdi mdi-account-cash'}
+          />
+           </Pagination.Item>
+
+        :''
+      }
+      </Pagination>
       </Row>
     </React.Fragment>
   );

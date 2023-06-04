@@ -61,6 +61,8 @@ const Empleado = (props) => {
   const permisos = props?.permisos || {};
   const {itemsEmpleados,query} = useGestionFinanciera()
   const datos = itemsEmpleados?.data || [{}];
+
+
   const {
     validated, itemsmenuprincipal,
     signUpModalAdd, setSignUpModalAdd,

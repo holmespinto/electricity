@@ -25,7 +25,7 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 		
 		switch ($_POST['opcion']) {
 			case 'consultar':
-				
+				$idNomina = $_POST['idNomina'];
 				$DatosNomina=array();
 				$DatosEmpleado=array();
 				$Empleado=array();
@@ -34,32 +34,30 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 
 				$tbl_empleados='electry_empleados';
 				$app_empleados=new Electry($tbl_empleados);
-				//$query_empleados="id='".$_POST['idEmpleado']."'";
-				$rowEmpleado=$app_empleados->consultadatos('',$select);				
+				$query_empleados="id='".$_POST['idEmpleado']."'";
+				$rowEmpleado=$app_empleados->consultadatos($query_empleados,$select);				
 				foreach($rowEmpleado as $a => $value){
 					$Salario=$value['Salario'];
-					$DatosEmpleado['Empleado'][] = array(
+					$DatosEmpleado[] = array(
                     'id'=>$value['id'],
                     'Identificacion'=>$value['Identificacion'],
                     'Nombres'=>$value['Nombres'],
                     'Apellidos'=>$value['Apellidos'],
                     'Email'=>$value['Email'],
                     'Cargo'=>$value['Cargo'],
-                    'Salario'=>$value['Salario']
+                    'Salario'=>$value['Salario'],
+                    'status'=>$value['status'],
 					);
 					}	
-
+				
 				$tbl_empl='electry_nomina_empleados';
 				$app_conc=new Electry($tbl_empl);
-				$idNomina=$_POST['idEmpleado'];
+				$idEmpleado=$_POST['idEmpleado'];
 				list($dias_restantes,$idNomi)=$app_conc->dias_restantes_mes();
-				if(is_null($_POST['idNomina'])) {
-					$idNomina=$idNomi;	
-				}else{
-					$idNomina=$_POST['idNomina'];
-				}
+
 				//GENERE EL LISTADO DE EMPLEADOS CON SU RESPECTIVANOMINA
-				$rowEmpleado=$app_empleados->consultadatos('',$select);				
+				 
+				$rowEmpleado=$app_empleados->consultadatos($query_empleados,$select);				
 				foreach($rowEmpleado as $a => $row){
 					$Salario=$row['Salario'];				
 					$Empleado=$row['id'];
@@ -71,7 +69,8 @@ if (!defined('_ECRIRE_INC_VERSION')) {
                     'Devengado'=>'$'.number_format($Salario, 2, ',', '.'),
                     'Deducido'=>'0',
                     'Dias'=>$dias_restantes,
-                    'IdNomina'=>$idNomina
+                    'IdNomina'=>$idNomina,
+                    
 					);
 					$query="Empleado='".$Empleado."'";
 					$conceptos=$app_conc->consultadatos($query,$select);
@@ -88,7 +87,8 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 						'Devengado'=>'$'.number_format($adm['Devengado']*$adm['Cantidad']),
 						'Deducido'=>'$'.number_format($adm['Deducido']*$adm['Cantidad']),
 						'Dias'=>$dias_restantes,
-						'IdNomina'=>$idNomina
+						'IdNomina'=>$idNomina,
+						'DatosEmpleado'=>array("DatosEmpleado"=>$DatosEmpleado),
 						);
 					}					
 				$EmpleadoNomina['EmpleadoNomina'][]= array(
@@ -99,7 +99,8 @@ if (!defined('_ECRIRE_INC_VERSION')) {
                     'Devengado'=>'$'.number_format(array_sum($Devengado)),
                     'Deducido'=>'$'.number_format(array_sum($Deducido)),
                     'Dias'=>$dias_restantes,
-                    'IdNomina'=>$idNomina
+                    'IdNomina'=>$idNomina,
+					 
 					);				
 				$EmpleadoNomina['EmpleadoNomina'][]= array(
                     'Nomina'=>$idNomina,
@@ -109,7 +110,8 @@ if (!defined('_ECRIRE_INC_VERSION')) {
                     'Devengado'=>'',
                     'Deducido'=>'',
                     'Dias'=>$dias_restantes,
-                    'IdNomina'=>$idNomina
+                    'IdNomina'=>$idNomina,
+					
 					);				
 				}
 				// FIN GENERE EL LISTADO DE EMPLEADOS 
@@ -126,23 +128,33 @@ if (!defined('_ECRIRE_INC_VERSION')) {
                     'label'=>$adm['Estado'],
                     'Descripcion'=>$adm['Descripcion']);
 				}
-
-
+        
+				$DatosEmpleado[] = array(
+                    'id'=>'',
+                    'Identificacion'=>'Codigo Nomina',
+                    'Nombres'=>'Empresa',
+                    'Apellidos'=>'Fecha Inicial',
+                    'Email'=>'Fecha Final',
+                    'Cargo'=>'Comprobante Nomina No.',
+                    'Salario'=>'Total pagado a la Nomina',
+                    'status'=>'Estado de la Nomina'
+					);
 					
+				//datos de la nomina
 				$tbl_nomina='electry_nomina';
 				$app_nomina=new Electry($tbl_nomina);
 				$query_nomina="id='".$idNomina."'";
 				$rowNomina=$app_nomina->consultadatos($query_nomina,$select);
 				foreach($rowNomina as $a => $value){
-					$DatosNomina['Nomina'][] = array(
+					$DatosEmpleado[] = array(
                     'id'=>$value['id'],
-                    'Codigo'=>$value['Codigo'],
-                    'Empresa'=>$value['Empresa'],
-                    'FechaInicial'=>$value['FechaInicial'],
-                    'FechaFinal'=>$value['FechaFinal'],
-                    'Comprobante'=>$value['Comprobante'],
-                    'Total'=>$value['Total'],
-                    'Estado'=>$value['Estado']
+                    'Identificacion'=>$value['Codigo'],
+                    'Nombres'=>$value['Empresa'],
+                    'Apellidos'=>$value['FechaInicial'],
+                    'Email'=>$value['FechaFinal'],
+                    'Cargo'=>$value['Comprobante'],
+                    'Salario'=>'$'.$app_nomina->sumaCampo('Total',$query_nomina),
+                    'status'=>$value['Estado']
 					);
 				}
 
@@ -157,10 +169,11 @@ if (!defined('_ECRIRE_INC_VERSION')) {
                     'Porcentaje'=>$value['Porcentaje'],
                     'Tipo'=>$value['Tipo'],
                     'value'=>$value['id'],
-                    'label'=>$value['Concepto']
+                    'label'=>$value['Concepto'],
+					
 					);
 				}					
-				
+				/*
 				$tbl_nomina='electry_nomina';
 				$app_nomina=new Electry($tbl_nomina);
 					$rowNomina=$app_nomina->consultadatos('',$select);
@@ -175,8 +188,10 @@ if (!defined('_ECRIRE_INC_VERSION')) {
                     'Estado'=>$value['Estado'],
 					);
 				}
-					$EstadosNomina['EstadosNomina'][]=$EstadosNomina;	
-					$data = array("data"=>array_merge($DatosEmpleado,$DatosNomina,$EmpleadoNomina,$DatosConceptos,$TodasNomina,$EstadosNomina));
+				*/
+					$EstadosNomina['EstadosNomina'][]=$EstadosNomina;
+					$Empleado = array("Empleado"=>$DatosEmpleado);
+					$data = array("data"=>array_merge($Empleado,$EmpleadoNomina,$DatosConceptos,$EstadosNomina));
 					$var = var2js($data);
 					echo $var;		
 
@@ -295,53 +310,75 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 				$var = var2js($msg);	
 				echo $var;
 			break;
-			case 'addNomina':
-					$select='*';
-					$tbl_nomin='electry_nomina_empleados';
-					$app_nomin=new Electry($tbl_nomin);
-					$Total=$_POST['Cantidad']*$_POST['Valor'];
-					$IdEmpleado=$_POST['IdEmpleado'];
-					$IdNomina=$_POST['IdNomina'];
-					$IdConcepto=$_POST['Concepto'];
-					
-					
-				$tbl_conceptos='electry_nomina_conceptos';
-				$app_conceptos=new Electry($tbl_conceptos);
-				$rowConceptos=$app_conceptos->consultadatos("Concepto='".$IdConcepto."'",$select);				
-				foreach($rowConceptos as $a => $value){
-  					if($value['Tipo']=='Devengado'){
-					$Devengado=$_POST['Valor'];	
-					$Deducido=0;	
-				}else{
-					$Devengado=0;	
-					$Deducido=$_POST['Valor'];						
-				}				
-				
-				}					
-				
+			case 'add_conceptos':
+					$app_conceptos=new Electry('electry_nomina_empleados');
+					$IdEmpleado = $_POST['IdEmpleado'];
+					$Cantidad = $_POST['Cantidad'];
+					$Valor = $_POST['Valor'];
+					$Concepto = $_POST['Concepto'];
+					$Salario = $_POST['Salario'];
+					$IdNomina = $_POST['IdNomina'];
 					$chartic=array();
-					//CARGO EL ARRAY 
 					
-					$chartic['Nomina']=$IdNomina;
-					$chartic['Empleado']=$IdEmpleado;
-					$chartic['Concepto']=$_POST['Concepto'];
-					$chartic['Cantidad']=$_POST['Cantidad'];
-					$chartic['Devengado']=$Devengado;
-					$chartic['Deducido']=$Deducido;
-					$chartic['Total']=$Total;
-					//GUARDO
+					$query='Concepto="'.$Concepto.'" AND Nomina="'.$IdNomina.'" AND Empleado="'.$IdEmpleado.'" ';
+					$select='COUNT(*) AS total';					
+					$row=$app_conceptos->consultadatos($query,$select);
+				
+				if($row[0]['total']>0){
+						$msg[] = array('menssage'=>'No se pudo registrar: "'.$Concepto.'", este ya existe en BD');
+				}else{
 					
-					$id=$app_nomin->guardar($chartic);
-					
-					//VERIFICO
-						if($id>0){
-								$msg[] = array('id'=>1,'menssage'=>'El proceso fue registrado correctamente!');
-						}else{
-								$msg[] = array('menssage'=>'ERROR.El proceso no fue registrado correctamente!');
+					if($Concepto=='Fondo de salud' or $Concepto=='Aportes de Pensión'){
+						$chartic['Nomina']=$IdNomina ;
+						$chartic['Empleado']=$IdEmpleado;
+						$chartic['Concepto']=$_POST['Concepto'];						
+						$chartic['Cantidad']=1;
+						$chartic['Devengado']=0;
+						$chartic['Deducido']=($Salario*$Valor)/100;
+						$chartic['Total']=$Valor;
+						$id=$app_conceptos->guardar($chartic);
+						$msg[] = array('menssage'=>'OK. El  concepto: '.$id.'  "'.$Concepto.'" fue registrado correctamente!');
+					}else{
+						$chartic['Nomina']=$IdNomina ;
+						$chartic['Empleado']=$IdEmpleado;
+						$chartic['Concepto']=$_POST['Concepto'];						
+						$chartic['Cantidad']=$Cantidad;
+						$chartic['Devengado']=$Cantidad*$Valor;
+						$chartic['Deducido']=0;
+						$chartic['Total']=$Valor;
+						$id=$app_conceptos->guardar($chartic);
+						$msg[] = array('menssage'=>'OK. El  concepto: '.$id.'  "'.$Concepto.'" fue registrado correctamente!');
 						}
-				//IMPRIMO RESPUESTA		
-				$var = var2js($msg);	
+				}	
+					//VERIFICO
+						if (!is_null($msg)) {
+							$var = var2js($msg);
+						}else{
+							$msg[] = array('menssage'=>'ERROR.El  "'.$Concepto.'" no fue registrado correctamente!');
+							$var = var2js($msg);
+						}	
 				echo $var;
+			break;
+			case 'updateConceptos':
+					$app_conceptos=new Electry('electry_nomina_empleados');
+					$IdNomina = $_POST['IdNomina'];
+					$Cantidad = $_POST['Cantidad'];
+					$Valor = $_POST['Valor'];
+					$Concepto = $_POST['Concepto'];
+					$Salario = $_POST['Salario'];
+					
+					if($Concepto=='Fondo de salud' or $Concepto=='Aportes de Pensión'){
+						$chartic['Cantidad']=1;
+						$chartic['Deducido']=($Salario*$Valor)/100;
+						$app_conceptos->actualizar($chartic,'id',$IdNomina);
+					}else{
+						$chartic['Cantidad']=$_POST['Cantidad'];
+						$chartic['Devengado']=$Valor;
+						$app_conceptos->actualizar($chartic,'id',$IdNomina);			
+					}
+						$msg[] = array('menssage'=>'OK. El  concepto: '.$_POST['IdNomina'].' fue actualizado correctamente!');
+						$var = var2js($msg); 	
+						echo $var;	
 			break;
 			case 'update':
 					

@@ -13,6 +13,9 @@ export const useGestionFinanciera = () => {
   const [itemsOrdenCompra, setOrdenCompra] = useState([]);
   const [itemsNomina, setNomina] = useState([]);
   const [itemsGenerarNomina, setGenerarNomina] = useState([]);
+  const [itemsEmpleados, setEmpleado] = useState([]);
+  const [itemsListarEmpleado, setListarEmpleado] = useState([]);
+  const [itemsNominaEmpleadoById, setNominaEmpleadoById] = useState([]);
 
 //QUERY DE RESPUSTA DE CONSULTAS
 const query = useCallback((itemUrl, itemsmenuprincipal, opcion) => {
@@ -37,15 +40,24 @@ const query = useCallback((itemUrl, itemsmenuprincipal, opcion) => {
           switch (datos[0]?.obj) {
             case 'ControlDiario':
               setControlDiario(response)
-            break
+                break
             case 'OrdenCompra':
               setOrdenCompra(response)
-              break
+                break
             case 'Nomina':
                 setNomina(response)
                 break
-                case 'listar_nominas':
+            case 'listar_nominas':
                 setGenerarNomina(response)
+                break
+            case 'Empleado':
+                setEmpleado(response)
+                break
+            case 'ListarEmpleadoById':
+                  setListarEmpleado(response)
+                break
+            case 'NominaEmpleadoById':
+                  setNominaEmpleadoById(response)
                 break
           }
         })()
@@ -68,6 +80,9 @@ const query = useCallback((itemUrl, itemsmenuprincipal, opcion) => {
       isLoading,
       itemsControlDiario,
       itemsOrdenCompra,
+      itemsEmpleados,
+      itemsListarEmpleado,
+      itemsNominaEmpleadoById,
       itemsNomina,itemsGenerarNomina,
     }
   )

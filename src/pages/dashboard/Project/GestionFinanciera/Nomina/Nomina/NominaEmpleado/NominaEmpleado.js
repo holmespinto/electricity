@@ -1,86 +1,54 @@
-/* eslint-disable array-callback-return */
+/* eslint-disable no-lone-blocks */
+/* eslint-disable react-hooks/exhaustive-deps */
 // @flow
-import React, { useContext } from 'react';
-import { Row, Col, Card, Collapse } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
+import React, { useContext, useEffect } from 'react';
+import { Row, Col, Card, Pagination } from 'react-bootstrap';
+import { useGestionFinanciera } from '../../../../../../../hooks/useGestionFinanciera';
 
-
-import { DashboardContext } from '../../../../../../../layouts/context/DashboardContext';
-import FormAdd from './FormAdd';
-import Table from '../../../../../components/Table';
 import PermisoAlert from '../../../../../components/PermisoAlert/PermisoAlert';
-const ActionColumnEmpleado = ({ row }) => {
-  const {
-    setItemsUpdate,open, setOpen, toggle  } = useContext(DashboardContext);
+import BtnLink from '../../../../../components/BtnLink';
+import { DashboardContext } from '../../../../../../../layouts/context/DashboardContext';
+import Table from '../../../../../../../components/Table';
 
-  const toggleUpUpdateEmpleado = (id) => {
+const ActionColumn = ({ row }) => {
+  const {pagesInSearch,} = useContext(DashboardContext);
+  let str = '#/dashboard/GestionFinanciera/LiquidaNomina';
+  let id = pagesInSearch();
+  let q = id?.replace(str, '');
+  let p = q?.split("&q=");
+  let idNomina = p[0].replace('?p=', '');
 
-    let menuNomina = localStorage.getItem('menuNomina');
-    const itemsNomina = JSON.parse(menuNomina);
-
-    const Empleado = itemsNomina?.data?.Empleado || [{}];
-    const EmpleadoNomina = [];
-
-    const Conceptos = itemsNomina?.data?.Conceptos || [{}];
-    const TodasNomina = itemsNomina?.data?.TodasNomina || [{}];
-
-
-    const nominaActiva = []
-
-    if (id > 0)
-      TodasNomina?.map((row, i) => {
-        if (row.Estado === 'Procesando') {
-          nominaActiva.push(row)
-        }
-      })
-    const DatosEmpleado = []
-    Empleado?.map((row, i) => {
-      if (row.id === id) {
-        DatosEmpleado.push(row)
-      }
-    })
-
-    itemsNomina?.data?.EmpleadoNomina?.map((row, i) => {
-      if (row?.Empleado === id && row?.IdNomina === nominaActiva[0]?.id) {
-        EmpleadoNomina.push(row)
-      }
-    })
-
-    const obj = {
-      "data": {
-        "Empleado": DatosEmpleado[0],
-        "Nomina": nominaActiva[0],
-        "EmpleadoNomina": EmpleadoNomina,
-        "Conceptos": Conceptos,
-        "isLoading": true,
-      }
-    }
-
-    setItemsUpdate(obj)
-    setOpen(open);
-    toggle()
-    //console.log('toggleUpUpdate',obj?.data)
-  };
 
   return (
     <React.Fragment>
-      <Link to="#" className="action-icon" data-bs-toggle="collapse" onClick={() => toggleUpUpdateEmpleado(row.cells[0].value)}>
-        {' '}
-        <i className="mdi mdi-square-edit-outline"></i>
-      </Link>
+      <Pagination>
+          <Pagination.Item>
+        <BtnLink
+            permisos={'S'}
+            key={`LIQUIDAR_${row.cells[0].value}`}
+            row={row.cells[0].value}
+            url={`LiquidarEmpleado?`}
+            q={`&q=${idNomina}`}
+            titulo={`LIQUIDAR`}
+            descripcion={``}
+            icon={'mdi mdi-account-cash'}
+          />
+           </Pagination.Item>
+      </Pagination>
     </React.Fragment>
   );
 };
-
-const NominaEmpleado = (props) => {
-
-  const datos = props?.datos || [{}];
-
+const NominaEmpleado = (props) =>{
+  localStorage.removeItem('Ids');
+  localStorage.removeItem('IdNomina')
   const permisos = props?.permisos || {};
-  const {sizePerPageList, isLoading,open,
-  } = useContext(DashboardContext);
+  const {itemsEmpleados,query} = useGestionFinanciera()
+  const datos = itemsEmpleados?.data || [{}];
+  const {itemsmenuprincipal,sizePerPageList, StatusColumn,} = useContext(DashboardContext);
 
-  const columns = [
+
+
+   const columns = [
     {
       Header: 'ID',
       accessor: 'id',
@@ -100,6 +68,14 @@ const NominaEmpleado = (props) => {
       accessor: 'Apellidos',
       sort: true,
     }, {
+      Header: 'Email',
+      accessor: 'Email',
+      sort: false,
+    }, {
+      Header: 'Telefono',
+      accessor: 'Telefono',
+      sort: false,
+    }, {
       Header: 'Cargo',
       accessor: 'Cargo',
       sort: false,
@@ -113,9 +89,23 @@ const NominaEmpleado = (props) => {
       accessor: 'action',
       sort: false,
       classes: 'table-action',
-      Cell: ActionColumnEmpleado,
+      Cell: ActionColumn,
+    },
+    {
+      Header: 'Status',
+      accessor: 'status',
+      sort: true,
+      Cell: StatusColumn,
     },
   ];
+  const toggleSignUp = () => {
+    console.log('toggle')
+  };
+  useEffect(() => {
+
+    query('GestionFinanciera', 'Empleado', [{ opcion: 'consultar', obj: 'Empleado' }]);
+  }, [query])
+
 
   return (
     <>
@@ -123,18 +113,8 @@ const NominaEmpleado = (props) => {
         <Col>
           <Card>
             <Card.Body>
-              <Collapse in={open} appear>
-                <div>
-                  <Row>
-                    <Col sm={12} >
-                      <FormAdd EmpleadoId={1} />
-                    </Col>
-                  </Row>
-                </div>
-              </Collapse>
+              {datos?.length > 0 && permisos?.query === 'S' ?  (
 
-              {!isLoading && datos?.length > 0 && permisos?.query === 'S' ? (
-                localStorage.setItem('menuNomina',JSON.stringify(props.itemsNomina)),
               <Table
                 columns={columns}
                 data={datos}
@@ -146,8 +126,10 @@ const NominaEmpleado = (props) => {
                 theadClass="table-light"
                 searchBoxClass="mt-2 mb-3"
                 isSearchable={true}
-              />):<PermisoAlert />}
-
+                nametable={props.accion}
+                titulo={itemsmenuprincipal}
+                toggleSignUp={toggleSignUp}
+              />) : <PermisoAlert />}
             </Card.Body>
           </Card>
         </Col>

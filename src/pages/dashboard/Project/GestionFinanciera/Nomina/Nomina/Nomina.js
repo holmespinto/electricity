@@ -11,6 +11,7 @@ import { useGestionFinanciera } from '../../../../../../hooks/useGestionFinancie
 
 
   useEffect(() => {
+    localStorage.removeItem('Ids');
     query('GestionFinanciera', 'Nomina', [{ opcion: 'consultar', obj: 'Nomina' }]);
   }, [query])
 

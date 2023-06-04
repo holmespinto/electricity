@@ -2,7 +2,7 @@
 import React, {useContext} from 'react';
 
 import Fields from './Fields';
-import { DashboardContext } from '../../../../../layouts/context/DashboardContext';
+import { DashboardContext } from '../../../../../../layouts/context/DashboardContext';
 const FormUpdate = (props) => {
   const { itemUrl, itemsmenuprincipal, } = useContext(DashboardContext);
   let EstadosNom = localStorage.getItem('EstadosNomina');

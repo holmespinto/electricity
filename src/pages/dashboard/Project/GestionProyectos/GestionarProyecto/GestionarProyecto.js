@@ -107,18 +107,19 @@ const Proyecto = (props) => {
       accessor: 'Estado',
       sort: false,
     },
-    {
-      Header: 'Status',
-      accessor: 'status',
-      sort: true,
-      Cell: StatusColumn,
-    },
+
     {
       Header: 'Action',
       accessor: 'action',
       sort: false,
       classes: 'table-action',
       Cell: ActionColumn,
+    },
+    {
+      Header: 'Status',
+      accessor: 'status',
+      sort: true,
+      Cell: StatusColumn,
     },
   ];
   const toggleSignUp = () => {
