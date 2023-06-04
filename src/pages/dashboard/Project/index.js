@@ -37,6 +37,8 @@ const ProjectDashboard = () => {
           case 'OrdenCompra':
           case 'ConfigNomina':
           case 'Nomina':
+          case 'LiquidaNomina':
+          case 'LiquidarEmpleado':
             return <>
               <GestionFinanciera
                 accion={'OtrosRegistros'}

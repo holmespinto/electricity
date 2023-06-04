@@ -15,14 +15,13 @@ const BtnActions = (props) => {
   );
   let Ids = localStorage.getItem('Ids');
   const idUrls = JSON.parse(Ids);
-  const url = `?p=${idUrls?.idProyecto}&q=${idUrls?.IdApu}`;
+  const url = `?p=${idUrls?.p}&q=${idUrls?.q}`;
   const urlb = `/dashboard/${itemUrl}/${itemsmenuprincipal}`;
-//&q=
   return (
         <OverlayTrigger trigger={['hover', 'focus']} placement="left" overlay={popover} key={props.key}>
           {
             props.permisos === 'S' ? (
-              <Link key={props.key} to={idUrls?.idProyecto > 0 ? url:urlb} className="action-icon " onClick={() => props.toggleActions(props.row, props.titulo)}>
+              <Link key={props.key} to={Number(idUrls?.p) > 0 ? url:urlb} className="action-icon " onClick={() => props.toggleActions(props.row, props.titulo)}>
                 <i className={`${props.icon} pt-2`}></i>
               </Link>) : ''
           }

@@ -117,7 +117,7 @@ const datos = itemsGestionarProyecto?.data || [{}];
   let str = '#/dashboard/GestionProyecto/EditarProyecto?p=';
   let q = id?.replace(str, '');
   const ids = q.split("&q=");
-  localStorage.setItem('Ids',JSON.stringify({idProyecto: ids[0],IdApu:ids[1]}));
+  localStorage.setItem('Ids',JSON.stringify({p: ids[0],q:ids[1]}));
   setIdIdApu(ids[0])
   setIdProyecto(ids[1])
   query('GestionProyecto', 'EditarProyecto', [{ opcion: 'const_apu_productos', obj: 'EditarProyecto', idProyecto: ids[0],IdApu:ids[1]}]);

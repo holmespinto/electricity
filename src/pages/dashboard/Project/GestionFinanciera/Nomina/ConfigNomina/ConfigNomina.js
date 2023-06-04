@@ -1,16 +1,15 @@
 /* eslint-disable no-lone-blocks */
 // @flow
 import React, { useContext, useEffect } from 'react';
-import { Row, Col, Card,  Modal } from 'react-bootstrap';
-
-import { DashboardContext } from '../../../../../layouts/context/DashboardContext';
+import { Row, Col, Card,  Modal} from 'react-bootstrap';
+import { DashboardContext } from '../../../../../../layouts/context/DashboardContext';
+import Swal from 'sweetalert2';
+import BtnSeccionAction from '../../../../components/BtnSeccionAction/BtnSeccionAction';
 import FormAdd from './FormAdd';
 import FormUpdate from './FormUpdate';
-import Table from '../../../../../components/Table';
-import Swal from 'sweetalert2';
-import MensajeAlert from '../../PermisoAlert/PermisoAlert';
-import { useGestionFinanciera } from '../../../../../hooks/useGestionFinanciera';
-import BtnSeccionAction from '../../BtnSeccionAction/BtnSeccionAction';
+import { useGestionFinanciera } from '../../../../../../hooks/useGestionFinanciera';
+import Table from '../../../../components/Table';
+import PermisoAlert from '../../../../components/PermisoAlert/PermisoAlert';
 
 const ActionColumn = ({ row }) => {
 
@@ -48,6 +47,11 @@ const ActionColumn = ({ row }) => {
     key:row.cells[0].value,
     row:row.cells[0].value,
     eliminar,
+    itemsmenuprincipal,
+    isbtnLink:'S',
+    titulobtnLink:'LIQUIDAR NOMINA',
+    descripcionbtnLink:'Liquide aquí la nomina del empleado',
+    urlbtnLink:`/dashboard/GestionFinanciera/LiquidaNomina?`,
   }
   return (
     <React.Fragment>
@@ -57,10 +61,11 @@ const ActionColumn = ({ row }) => {
           validated={validated}
         />
         </BtnSeccionAction>
+
     </React.Fragment>
   );
 };
-const OrdenCompra = (props) => {
+const ConfigNomina = (props) => {
   const {itemsGenerarNomina,query} = useGestionFinanciera()
   const datos = itemsGenerarNomina?.data?.Nomina || [{}];
   const Estados = itemsGenerarNomina?.data?.Estados || [{}];
@@ -112,7 +117,7 @@ const OrdenCompra = (props) => {
   };
 
   useEffect(() => {
-    query('OtrosRegistros','Nomina',[{opcion:'listar_nominas',obj:'listar_nominas'}]);
+    query('GestionFinanciera','Nomina',[{opcion:'listar_nominas',obj:'listar_nominas'}]);
   }, [query]);
 
   return (
@@ -154,7 +159,7 @@ const OrdenCompra = (props) => {
                 titulo={itemsmenuprincipal}
                 permisos={permisos}
                 toggleSignUp={toggleSignUp}
-                />) : <MensajeAlert />}
+                />) : <PermisoAlert />}
             </Card.Body>
           </Card>
         </Col>
@@ -163,4 +168,4 @@ const OrdenCompra = (props) => {
   );
 };
 
-export default OrdenCompra;
+export default ConfigNomina;

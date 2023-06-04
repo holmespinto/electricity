@@ -3,16 +3,14 @@ import React, {  useState,useContext } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Redirect } from 'react-router-dom';
 import { Alert,Form,Col,Row,Button } from 'react-bootstrap';
-import FormInput from '../../../../../components/FormInput';
 import Select from 'react-select';
-
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
-//actions
-import { queryFormSend } from '../../../../../redux/actions';
-// components
-import { VerticalForm } from '../../../../../components/';
-import { DashboardContext } from '../../../../../layouts/context/DashboardContext';
+import { DashboardContext } from '../../../../../../layouts/context/DashboardContext';
+import { queryFormSend } from '../../../../../../redux/actions';
+import { FormInput, VerticalForm } from '../../../../../../components';
+
+
 const Register = (props): React$Element<React$FragmentType> => {
   const {setOpen,open} = useContext(DashboardContext);
   const [items, setItems] = useState([{
