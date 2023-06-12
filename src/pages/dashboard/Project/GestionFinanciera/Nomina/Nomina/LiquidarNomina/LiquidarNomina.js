@@ -66,7 +66,16 @@ const LiquidarNomina = (props) => {
     setOpenNomina(!openNomin);
 
   };
-
+  /*
+const obj ={
+  title: props.title || '',
+  textBtn: props.textBtn || '',
+  accion:props.accion || '',
+  tipo:props.tipo || '',
+  opcion:props.opcion || '',
+  validated:props.validated || true,
+}
+*/
   return (
     <>
       <Row>

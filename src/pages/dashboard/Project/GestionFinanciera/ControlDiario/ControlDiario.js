@@ -12,7 +12,8 @@ import BtnSeccionAction from '../../../components/BtnSeccionAction/BtnSeccionAct
 import { useGestionFinanciera } from '../../../../../hooks/useGestionFinanciera';
 
 import PermisoAlert from '../../../components/PermisoAlert/PermisoAlert';
-import Table from '../../../components/Table';
+import Table from '../../../../../components/Table';
+
 
 const ActionColumn = ({ row }) => {
 

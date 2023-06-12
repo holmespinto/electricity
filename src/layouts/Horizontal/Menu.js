@@ -29,7 +29,7 @@ const MenuItemWithChildren = ({
         if (toggleMenu) toggleMenu(item, status);
         return false;
     };
-//console.log(open)
+    //console.log(open)
     return (
         <Tag className={classNames('dropdown', className, activeMenuItems.includes(item.key) ? 'active' : '')}>
             <Link
@@ -187,7 +187,7 @@ const AppMenu = ({ menuItems, location }: AppMenuProps) => {
     }, [menuItems]);
 
     useEffect(() => {
-        if (topnavMenuItems && topnavMenuItems.length > 0) activeMenu();
+        if (topnavMenuItems && topnavMenuItems?.length > 0) activeMenu();
     }, [activeMenu, topnavMenuItems]);
 
     return (
@@ -196,7 +196,7 @@ const AppMenu = ({ menuItems, location }: AppMenuProps) => {
                 {(topnavMenuItems || []).map((item, idx) => {
                     return (
                         <React.Fragment key={idx}>
-                            {item.children ? (
+                            {item?.children ? (
                                 <MenuItemWithChildren
                                     item={item}
                                     tag="li"

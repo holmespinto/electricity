@@ -25,8 +25,8 @@ const VistaPrevia  = (props) => {
       sort: true,
     },
     {
-      Header: 'Producto',
-      accessor: 'Producto',
+      Header: 'Nombre',
+      accessor: 'Nombre',
       sort: true,
     },
     {

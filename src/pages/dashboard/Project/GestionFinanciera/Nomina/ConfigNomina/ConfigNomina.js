@@ -8,8 +8,9 @@ import BtnSeccionAction from '../../../../components/BtnSeccionAction/BtnSeccion
 import FormAdd from './FormAdd';
 import FormUpdate from './FormUpdate';
 import { useGestionFinanciera } from '../../../../../../hooks/useGestionFinanciera';
-import Table from '../../../../components/Table';
 import PermisoAlert from '../../../../components/PermisoAlert/PermisoAlert';
+import Table from '../../../../../../components/Table';
+
 
 const ActionColumn = ({ row }) => {
 

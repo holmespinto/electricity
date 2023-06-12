@@ -1,7 +1,10 @@
 // @flow
-import React, { useRef, useEffect, forwardRef } from 'react';
-import { Button } from 'react-bootstrap';
-import PdfComponent from '../pages/dashboard/components/ButtonExportar/PdfComponent';
+import React, { useRef, useEffect, forwardRef, useContext, useState } from 'react';
+import { Alert, Button, Form, Pagination } from 'react-bootstrap';
+import { Redirect } from 'react-router-dom';
+import { useSelector, useDispatch } from 'react-redux';
+import * as yup from 'yup';
+import { yupResolver } from '@hookform/resolvers/yup';
 import {
     useTable,
     useSortBy,
@@ -12,10 +15,13 @@ import {
     useExpanded,
 } from 'react-table';
 import classNames from 'classnames';
+import { VerticalForm } from '../../../components';
+import { queryFormSend } from '../../../redux/actions';
+import { DashboardContext } from '../../../layouts/context/DashboardContext';
+import { useGestionFinanciera } from '../../../hooks/useGestionFinanciera';
+import FormInput from './FormInput';
 
 // components
-import Pagination from './Pagination';
-import ButtonExportar from '../pages/dashboard/components/ButtonExportar/ButtonExportar';
 
 // Define a default UI for filtering
 const GlobalFilter = ({ preGlobalFilteredRows, globalFilter, setGlobalFilter, searchBoxClass }) => {
@@ -61,6 +67,122 @@ const IndeterminateCheckbox = forwardRef(({ indeterminate, ...rest }, ref) => {
     );
 });
 
+const FormAdd = (props) => {
+    const { setActions, openActions } = useContext(DashboardContext);
+    const { query } = useGestionFinanciera();
+    const [items, setItems] = useState([
+        {
+            Descripcion: props?.items?.Descripcion ? props?.items?.Descripcion : '',
+            Cantidad: props?.items?.Cantidad ? props?.items?.Cantidad : '',
+            ValorUnitario: props?.items?.ValorUnitario ? props?.items?.ValorUnitario : '',
+            accion: props?.obj?.accion,
+            opcion: props?.obj?.opcion,
+            tipo: props?.obj?.tipo,
+            id: props?.obj?.id ? props?.obj?.id : '',
+        },
+    ]);
+    const dispatch = useDispatch();
+    const { loading, queryForm, error } = useSelector((state) => ({
+        loading: state.Queryform.loading,
+        error: state.Queryform.error,
+        queryForm: state.Queryform.queryForm,
+    }));
+
+    const schemaResolver = yupResolver(yup.object().shape({}));
+    const onSubmit = () => {
+        dispatch(queryFormSend(...items));
+        setTimeout(function () {
+            query('GestionFinanciera', 'OrdenCompra', [{ opcion: 'consultar', obj: 'OrdenCompra' }]);
+            setActions(openActions);
+        }, 2000);
+    };
+    return (
+        <>
+            {queryForm ? (
+                <Redirect to={`${props?.obj?.urlBase}${props?.obj?.tipo}${props?.obj?.urlVariables}`}></Redirect>
+            ) : null}
+            {error && (
+                <Alert variant="danger" className="my-2">
+                    {error}
+                </Alert>
+            )}
+            <div className="table-responsive">
+                <VerticalForm onSubmit={onSubmit} resolver={schemaResolver} defaultValues={{}}>
+                    <table class="table table-primary">
+                        <thead>
+                            <tr>
+                                <th scope="col"></th>
+                                <th scope="col">Cantidad</th>
+                                <th scope="col">Valor</th>
+                                <th scope="col"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td colspan="2">
+                                    <Form.Group className="mb-3" controlId="Cantidad">
+                                        <Form.Control
+                                            required
+                                            type="number"
+                                            name="Cantidad"
+                                            placeholder="Digite la Cantidad"
+                                            value={items[0]?.Cantidad}
+                                            onChange={(e) => setItems([{ ...items[0], Cantidad: e.target.value }])}
+                                        />
+                                        <Form.Control.Feedback type="invalid">
+                                            Por favor, digite el Telefono.
+                                        </Form.Control.Feedback>
+                                    </Form.Group>
+                                </td>
+                                <td colspan="2">
+                                    <Form.Group className="mb-3" controlId="ValorUnitario">
+                                        <Form.Control
+                                            required
+                                            type="number"
+                                            name="ValorUnitario"
+                                            placeholder="Digite el Valor Unitario"
+                                            value={items[0]?.ValorUnitario}
+                                            onChange={(e) => setItems([{ ...items[0], ValorUnitario: e.target.value }])}
+                                        />
+                                        <Form.Control.Feedback type="invalid">
+                                            Por favor, digite el Valor Unitario.
+                                        </Form.Control.Feedback>
+                                    </Form.Group>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="5">
+                                    <Form.Group className="mb-3" controlId="Descripcion">
+                                        <FormInput
+                                            label="Descripción"
+                                            type="textarea"
+                                            name="Descripcion"
+                                            containerClass={'mb-3'}
+                                            key="Descripcion"
+                                            value={items[0]?.Descripcion}
+                                            onChange={(e) => setItems([{ ...items[0], Descripcion: e.target.value }])}
+                                        />
+                                        <Form.Control.Feedback type="invalid">
+                                            Por favor, digite la Descripcion.
+                                        </Form.Control.Feedback>
+                                    </Form.Group>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colSpan={3}></td>
+                                <td>
+                                    <Button variant="primary" type="submit" disabled={loading}>
+                                        Adjuntar
+                                    </Button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </VerticalForm>
+            </div>
+        </>
+    );
+};
 type TableProps = {
     isSearchable?: boolean,
     isSortable?: boolean,
@@ -87,12 +209,8 @@ const Table = (props: TableProps): React$Element<React$FragmentType> => {
     const pagination = props['pagination'] || false;
     const isSelectable = props['isSelectable'] || false;
     const isExpandable = props['isExpandable'] || false;
-    const isVisible = props['isVisible'] || false;
     const numtable = props['numtable'] || '0';
-    const titulo = props['titulo'] || '';
-    //const permisos = props['permisos'] ||  {};
-    const toggleSignUp = props['toggleSignUp'] || '';
-
+    //const IdItems = props['IdItems'] || '';
     const dataTable = useTable(
         {
             columns: props['columns'],
@@ -161,8 +279,13 @@ const Table = (props: TableProps): React$Element<React$FragmentType> => {
 
     let rows = pagination ? dataTable.page : dataTable.rows;
     const table = `Table_Export_${numtable}`;
+
     return (
         <>
+            <div class="col-12 mb-3">
+                <FormAdd obj={props?.obj} />
+            </div>
+
             <div className="row justify-content-start">
                 <div class="col-8">
                     {isSearchable && (
@@ -174,25 +297,9 @@ const Table = (props: TableProps): React$Element<React$FragmentType> => {
                         />
                     )}
                 </div>
-                {isVisible && (
-                    <>
-                        <div class="col-2">
-                            <ButtonExportar numtable={table} />
-                        </div>
-                        <div class="col-2 p-2">
-                            <PdfComponent nombre={table} />
-                        </div>
-                    </>
-                )}
             </div>
 
             <div className="table-responsive">
-                <div className="bg-success p-1 text-sm-end">
-                    <Button className="btn btn-info mb-0 me-5 p-2" onClick={toggleSignUp}>
-                        <i className="mdi mdi-tray-plus">{titulo}</i>
-                    </Button>
-                    ):({titulo})
-                </div>
                 <table
                     id={table}
                     {...dataTable.getTableProps()}
@@ -217,7 +324,8 @@ const Table = (props: TableProps): React$Element<React$FragmentType> => {
                     <tbody {...dataTable.getTableBodyProps()}>
                         {(rows || []).map((row, i) => {
                             dataTable.prepareRow(row);
-                            //console.log(row?.original?.id)
+                            console.log(i);
+
                             return (
                                 <tr
                                     {...row.getRowProps()}
