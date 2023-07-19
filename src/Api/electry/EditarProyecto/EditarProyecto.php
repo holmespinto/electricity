@@ -168,7 +168,8 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 			case "add_apu":
 			$idApu=$_POST['idApu'];
 			$idProyecto=$_POST['idProyecto'];
-			
+			$appe=new Electry('electry_apu_proyecto');
+			$tot=new Electry('electry_apu_proyecto_totales');
 			
 			//electry_subcategorias consulta aqui
 		  $res = sql_select("t1.id,t1.idCategoria,
@@ -191,11 +192,20 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 						"image"=>$row['image'],
 						"status"=>'Inprogress',
 						);
-						print_r($shema);
-						//electry_apu_proyecto guardar aqui
-						$appe=new Electry('electry_apu_proyecto');
-						$id[]=$appe->guardar($shema); 						
-				}
+						
+						$id[]=$appe->guardar($shema); 	
+					}
+					$appe=new Electry('electry_apu_proyecto');
+					
+					//actualiza tabla liquidaciones del proyecto	
+					$total=new Electry('electry_apu_proyecto_totales');
+					list($shem,$num)=$appe->AddLiquidaApu($idProyecto);
+					if($num>0){
+						$total->actualizar($shem,'id',intval($num));	
+					}else{
+						$id[]=$total->guardar($shem); 
+					}
+					
 				if (!is_null($id)) {
 				$data= array(
                     'id'=>1,
@@ -224,6 +234,10 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 				$sce['ValorUnitario']=$_POST['valor'];
 				$id=$c[0]['id'];
 				$pp->actualizar($sce,'id',intval($id));
+				//actualiza tabla liquidaciones del proyecto	
+				list($shem,$num)=$pp->AddLiquidaApu($idProyecto);
+				$total=new Electry('electry_apu_proyecto_totales');
+				$total->actualizar($shem,'id',intval($num));
 				
 				$row[] = array(
                     'id'=>1,
@@ -250,6 +264,11 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 					$id=$value['id'];
 					sql_delete("electry_apu_producto_proyectos","id=" . intval($id));
 					}
+				//actualiza tabla liquidaciones del proyecto	
+				list($shem,$num)=$apps->AddLiquidaApu($_POST['idProyecto']);
+				$total=new Electry('electry_apu_proyecto_totales');
+				$total->actualizar($shem,'id',intval($num));
+				
 					$msg[] = array('menssage'=>'OK. El registro '.$_POST['id'].' fue eliminado correctamente!');
 					$var = var2js($msg);	
 					echo $var;					
@@ -271,12 +290,28 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 				$chartic['ValorUnitario']=$_POST['ValorUnitario'];
 				$chartic['Total']=$_POST['Total'];
 				$app->actualizar($chartic,'id',$_POST['id']);
-					$row[] = array(
+				
+				
+				$row[] = array(
                     'id'=>1,
                     'menssage'=>'El Producto de la APU fue Actualizado correctamente!',
                     'status'=>'202');
 				
 			}
+					
+				$apps=new Electry('electry_apu_proyecto');	
+				$select1='IdProyecto';
+				$query1='id="'.$_POST['idApu'].'"';
+				$rows=$apps->consultadatos($query1,$select1);
+					foreach($rows as $a => $value){
+					$idProyecto=$value['IdProyecto'];
+					}					
+				
+				//actualiza tabla liquidaciones del proyecto	
+				$total=new Electry('electry_apu_proyecto_totales');
+				list($shem,$num)=$apps->AddLiquidaApu($idProyecto);				
+				$total->actualizar($shem,'id',intval($num));
+				
 					$var = var2js($row);	
 					echo $var;	
 			break;

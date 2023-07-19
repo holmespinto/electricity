@@ -12,88 +12,115 @@ import GestionPrecios from './GestionPrecios/GestionPrecios';
 import GestionProyecto from './GestionProyectos/GestionProyecto';
 import AdminUsuarios from './AdminUsuarios/AdminUsuarios';
 const ProjectDashboard = () => {
-  const { itemsmenuprincipal, AdvertenciaLocalStorage } = useContext(DashboardContext)
-  AdvertenciaLocalStorage();
-  const { permisos, initPermiso } = usePermisos(itemsmenuprincipal);
+    const { itemsmenuprincipal, AdvertenciaLocalStorage } = useContext(DashboardContext);
+    AdvertenciaLocalStorage();
+    const { permisos, initPermiso } = usePermisos(itemsmenuprincipal);
 
-  return (
-    <React.Fragment>
-      <Title />
+    return (
+        <React.Fragment>
+            <Title />
 
-      {(() => {
-        switch (itemsmenuprincipal) {
-          case 'Productos': case 'Cliente': case 'Proyecto':
-            return <>
-              {initPermiso === 1 ?
-                <GestionProductos
-                  accion={'GestionProductos'}
-                  tipo={itemsmenuprincipal}
-                  permisos={permisos}
-                /> : <PermisoAlert />}
-            </>
-            break;
-          case 'Empleado':
-          case 'ControlDiario':
-          case 'OrdenCompra':
-          case 'ConfigNomina':
-          case 'Nomina':
-          case 'LiquidaNomina':
-          case 'LiquidarEmpleado':
-            return <>
-              <GestionFinanciera
-                accion={'OtrosRegistros'}
-                tipo={itemsmenuprincipal}
-                permisos={permisos}
-              />
-            </>
-            break;
-          case 'APU':
-          case 'Categorias':
-          case 'ListApusEdit':
-          case 'ParametosPrecios':
-            return <>
-              {initPermiso === 1 ?
-                <GestionPrecios
-                  accion={'GestionPrecios'}
-                  tipo={itemsmenuprincipal}
-                  permisos={permisos}
-                /> : <PermisoAlert />}
-            </>
-          break;
-          case 'GestionarProyecto':
-          case 'asignarApu':
-          case 'EditarProyecto':
-            return <>
-              {initPermiso === 1 || itemsmenuprincipal === 'asignarApu'|| itemsmenuprincipal === 'EditarProyecto' ?
-                (<GestionProyecto
-                  accion={'GestionProyecto'}
-                  tipo={itemsmenuprincipal}
-                  permisos={permisos}
-                />) : <PermisoAlert />}
-            </>
-            break;
-          case 'Roles':
-          case 'Usuarios':
-            return <>
-              {initPermiso === 1 ?
-                (<AdminUsuarios
-                  accion={'AdminUsuarios'}
-                  tipo={itemsmenuprincipal}
-                  permisos={permisos}
-                />) : <PermisoAlert />}
-            </>
-            break;
-          default:
-            return (
-              <>{''}</>
-            );
-        }
-      })()
-      }
-    </React.Fragment>
-  );
+            {(() => {
+                switch (itemsmenuprincipal) {
+                    case 'Productos':
+                    case 'Cliente':
+                    case 'Proyecto':
+                        return (
+                            <>
+                                {initPermiso === 1 ? (
+                                    <GestionProductos
+                                        accion={'GestionProductos'}
+                                        tipo={itemsmenuprincipal}
+                                        permisos={permisos}
+                                    />
+                                ) : (
+                                    <PermisoAlert />
+                                )}
+                            </>
+                        );
+                        break;
+                    case 'Empleado':
+                    case 'ControlDiario':
+                    case 'OrdenCompra':
+                    case 'ConfigNomina':
+                    case 'Nomina':
+                    case 'LiquidaNomina':
+                    case 'LiquidarEmpleado':
+                        return (
+                            <>
+                                <GestionFinanciera
+                                    accion={'OtrosRegistros'}
+                                    tipo={itemsmenuprincipal}
+                                    permisos={permisos}
+                                />
+                            </>
+                        );
+                        break;
+                    case 'APU':
+                    case 'Categorias':
+                    case 'ListApusEdit':
+                    case 'ParametosPrecios':
+                        return (
+                            <>
+                                {initPermiso === 1 ? (
+                                    <GestionPrecios
+                                        accion={'GestionPrecios'}
+                                        tipo={itemsmenuprincipal}
+                                        permisos={permisos}
+                                    />
+                                ) : (
+                                    <PermisoAlert />
+                                )}
+                            </>
+                        );
+                        break;
+                    case 'GestionarProyecto':
+                    case 'asignarApu':
+                    case 'EditarProyecto':
+                    case 'LiquidarProyecto':
+                    case 'Liquidaciones':
+                        return (
+                            <>
+                                {initPermiso === 1 ||
+                                itemsmenuprincipal === 'asignarApu' ||
+                                itemsmenuprincipal === 'Liquidaciones' ||
+                                itemsmenuprincipal === 'EditarProyecto' ||
+                                itemsmenuprincipal === 'LiquidarProyecto' ? (
+                                    <GestionProyecto
+                                        accion={'GestionProyecto'}
+                                        tipo={itemsmenuprincipal}
+                                        permisos={permisos}
+                                    />
+                                ) : (
+                                    <PermisoAlert />
+                                )}
+                            </>
+                        );
+                        break;
+                    case 'Roles':
+                    case 'Usuarios':
+                        return (
+                            <>
+                                {initPermiso === 1 ? (
+                                    <AdminUsuarios
+                                        accion={'AdminUsuarios'}
+                                        tipo={itemsmenuprincipal}
+                                        permisos={permisos}
+                                    />
+                                ) : (
+                                    <PermisoAlert />
+                                )}
+                            </>
+                        );
+                        break;
+                    default:
+                        return <>{''}</>;
+                }
+            })()}
+        </React.Fragment>
+    );
 };
 ProjectDashboard.defaultProps = {
-  itemsmenu: '/',
+    itemsmenu: '/',
 };
 export default ProjectDashboard;
