@@ -1,57 +1,56 @@
 /* eslint-disable no-unreachable */
 import React, { useContext } from 'react';
-import Fields from './Fields';
+
 import { DashboardContext } from '../../../../../layouts/context/DashboardContext';
+import Add from './Add';
+import LiquidarCantidad from './LiquidarCantidad';
 const Forms = (props) => {
     const { itemsUpdate, typeAcccion, itemsmenuprincipal, itemUrl } = useContext(DashboardContext);
     let Ids = localStorage.getItem('Ids');
     const idUrls = JSON.parse(Ids);
-    const url = `?p=${idUrls?.p}&q=${idUrls?.q}`;
+    const url = `?p=${idUrls?.p}`;
     const urlb = `/dashboard/${itemUrl}/`;
     const objAdd = {
         urlVariables: url,
         urlBase: urlb,
         idItems: itemsUpdate?.id,
         accion: itemUrl,
-        opcion: 'AddItemOrden',
+        opcion: 'ADD',
         tipo: itemsmenuprincipal,
-        id: itemsUpdate?.id,
+        id: idUrls?.p,
+        url: url,
+        title: props?.title,
+        importes: props?.importes,
+        idApu: props?.idApu,
+        max: props?.max,
     };
-    console.log(objAdd);
+
     return (
         <React.Fragment>
+            {' '}
             {(() => {
                 switch (typeAcccion) {
                     case 'VISTA':
-                        return <>{'hghgh'}</>;
+                        return <>{'VISTA'}</>;
                         break;
                     case 'UPDATE':
                         return (
                             <>
-                                <Fields
-                                    items={itemsUpdate}
-                                    title={'Actualizar una Orden Compra'}
-                                    textBtn={'Actualizar Orden Compra'}
-                                    accion={'GestionFinanciera'}
-                                    tipo={'OrdenCompra'}
-                                    opcion={'update'}
-                                    validated={props.validated}
-                                />
+                                <LiquidarCantidad obj={objAdd} />
+                            </>
+                        );
+                        break;
+                    case 'ADD':
+                        return (
+                            <>
+                                <Add obj={objAdd} />
                             </>
                         );
                         break;
                     default:
                         return (
                             <>
-                                <Fields
-                                    items={itemsUpdate}
-                                    title={'Crear una Orden Compra'}
-                                    textBtn={'Crear Orden Compra'}
-                                    accion={'GestionFinanciera'}
-                                    tipo={'OrdenCompra'}
-                                    opcion={'add'}
-                                    validated={props.validated}
-                                />
+                                return <>{'default'}</>;
                             </>
                         );
                 }

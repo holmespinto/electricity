@@ -1,3 +1,4 @@
+/* eslint-disable react/style-prop-object */
 // @flow
 import React, { useRef, useEffect, forwardRef } from 'react';
 import { Button } from 'react-bootstrap';
@@ -89,6 +90,8 @@ const Table = (props: TableProps): React$Element<React$FragmentType> => {
     const isExpandable = props['isExpandable'] || false;
     const isVisible = props['isVisible'] || false;
     const numtable = props['numtable'] || '0';
+    const cantidad = props['cantidad'] || '0';
+    const idRow = props['idRow'] || '0';
     const titulo = props['titulo'] || '';
     //const permisos = props['permisos'] ||  {};
     const toggleSignUp = props['toggleSignUp'] || '';
@@ -161,6 +164,9 @@ const Table = (props: TableProps): React$Element<React$FragmentType> => {
 
     let rows = pagination ? dataTable.page : dataTable.rows;
     const table = `Table_Export_${numtable}`;
+    // Obtener los datos actuales del localStorage si existen
+    let dataInLocalStorage = localStorage.getItem('LiquidarCantidad');
+    let data = dataInLocalStorage ? JSON.parse(dataInLocalStorage) : [];
     return (
         <>
             <div className="row justify-content-start">
@@ -217,15 +223,29 @@ const Table = (props: TableProps): React$Element<React$FragmentType> => {
                     <tbody {...dataTable.getTableBodyProps()}>
                         {(rows || []).map((row, i) => {
                             dataTable.prepareRow(row);
-                            //console.log(row?.original?.id)
+
                             return (
-                                <tr
-                                    {...row.getRowProps()}
-                                    className={classNames(
-                                        Number(row?.original?.id) > 0 ? '' : 'bg-success text-white'
-                                    )}>
+                                <tr {...row.getRowProps()}>
                                     {row.cells.map((cell) => {
-                                        return <td {...cell.getCellProps()}>{cell.render('Cell')}</td>;
+                                        let clase =
+                                            cell.row.original.id === idRow && cell.column.Header === 'Cantidad'
+                                                ? 'bg-danger text-white'
+                                                : 'text-black';
+                                        let filteredLocal = data.filter((item) => {
+                                            return item.idApu === cell.row.original.id;
+                                        });
+                                        const canti = cantidad === 0 ? cantidad : filteredLocal[0]?.Cantidad;
+                                        console.log('😁😁', cantidad);
+                                        return (
+                                            <td {...cell.getCellProps()}>
+                                                <div className={clase}>
+                                                    {cell.row.original.id === filteredLocal[0]?.idApu &&
+                                                    cell.column.Header === 'Cantidad'
+                                                        ? cell.row.original.Cantidad + '/' + canti
+                                                        : cell.render('Cell')}
+                                                </div>
+                                            </td>
+                                        );
                                     })}
                                 </tr>
                             );

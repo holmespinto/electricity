@@ -33,7 +33,7 @@ export const useGestionProyecto = () => {
                             (() => {
                                 switch (datos[0]?.obj) {
                                     case 'EditarProyecto':
-                                        console.log('👌👌', response);
+                                    case 'LiquidarProyecto':
                                         setGestionarProyecto(response);
                                         break;
                                 }

@@ -14,7 +14,8 @@ const BtnActions = (props) => {
     );
     let Ids = localStorage.getItem('Ids');
     const idUrls = JSON.parse(Ids);
-    const url = `?p=${idUrls?.p}&q=${idUrls?.q}`;
+    let q = Number(idUrls?.q) === 0 ? props?.row : idUrls?.q;
+    const url = `?p=${idUrls?.p}&q=${q}`;
     const urlb = `/dashboard/${itemUrl}/${itemsmenuprincipal}`;
     return (
         <OverlayTrigger trigger={['hover', 'focus']} placement="left" overlay={popover} key={props.key}>
@@ -23,8 +24,8 @@ const BtnActions = (props) => {
                     key={props.key}
                     to={Number(idUrls?.p) > 0 ? url : urlb}
                     className="action-icon "
-                    onClick={() => props.toggleActions(props.row, props.titulo)}>
-                    <i className={`${props.icon} pt-2`}></i>
+                    onClick={() => props?.toggleActions(props.row, props.titulo)}>
+                    <i className={`${props?.icon} pt-2`}></i>
                 </Link>
             ) : (
                 ''

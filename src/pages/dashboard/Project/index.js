@@ -78,13 +78,19 @@ const ProjectDashboard = () => {
                     case 'asignarApu':
                     case 'EditarProyecto':
                     case 'LiquidarProyecto':
+                    case 'LiquidarImportes':
                     case 'Liquidaciones':
+                    case 'ConsultarLiquidaciones':
+                    case 'ConsultaLiquidadas':
                         return (
                             <>
                                 {initPermiso === 1 ||
                                 itemsmenuprincipal === 'asignarApu' ||
                                 itemsmenuprincipal === 'Liquidaciones' ||
                                 itemsmenuprincipal === 'EditarProyecto' ||
+                                itemsmenuprincipal === 'LiquidarImportes' ||
+                                itemsmenuprincipal === 'ConsultarLiquidaciones' ||
+                                itemsmenuprincipal === 'ConsultaLiquidadas' ||
                                 itemsmenuprincipal === 'LiquidarProyecto' ? (
                                     <GestionProyecto
                                         accion={'GestionProyecto'}

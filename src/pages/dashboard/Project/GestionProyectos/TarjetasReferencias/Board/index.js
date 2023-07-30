@@ -3,7 +3,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 // @flow
 import React, { useState, useContext } from 'react';
-import { Row, Col, Modal } from 'react-bootstrap';
+import { Row, Col, Modal, Button } from 'react-bootstrap';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 
 import classNames from 'classnames';
@@ -276,7 +276,14 @@ const Kanban = (props): React$Element<React$FragmentType> => {
                     </DragDropContext>
                 </Col>
             </Row>
-
+            <Row>
+                <Col sm={3}>
+                    <Button variant="primary" type="submit" disabled={false} onClick={() => console.log('xx')}>
+                        CAMBIAR ESTADO DEL PROYECTO
+                    </Button>
+                </Col>{' '}
+                <Col sm={9}></Col>
+            </Row>
             {/* new task model */}
             {state.newTask && (
                 <Modal show={state.newTaskModal} onHide={toggleNewTaskModal} size="lg" centered>

@@ -64,21 +64,32 @@ const ActionColumn = ({ row }) => {
                             permisos={'S'}
                             key={`2_${row.cells[0].value}`}
                             row={row.cells[0].value}
-                            url={'/dashboard/GestionProyecto/LiquidarProyecto?'}
+                            url={'/dashboard/GestionProyecto/LiquidarImportes?'}
                             titulo={'EDITAR'}
-                            descripcion={'Liquidar Proyecto'}
+                            descripcion={'Liquidar AIU'}
                             icon={'mdi mdi-account-cash'}
                         />
                     </Pagination.Item>
                     <Pagination.Item>
                         <BtnLink
                             permisos={'S'}
-                            key={`2_${row.cells[0].value}`}
+                            key={`3_${row.cells[0].value}`}
                             row={row.cells[0].value}
-                            url={'/dashboard/GestionProyecto/Liquidaciones?'}
+                            url={'/dashboard/GestionProyecto/LiquidarProyecto?'}
                             titulo={'LIQUIDAR'}
-                            descripcion={'Ver Liquidaciones'}
+                            descripcion={'Liquidar'}
                             icon={'uil uil-usd-square'}
+                        />
+                    </Pagination.Item>
+                    <Pagination.Item>
+                        <BtnLink
+                            permisos={'S'}
+                            key={`4_${row.cells[0].value}`}
+                            row={row.cells[0].value}
+                            url={'/dashboard/GestionProyecto/ConsultarLiquidaciones?'}
+                            titulo={'CONSULTAR LIQUIDACIONES'}
+                            descripcion={'Liquidar'}
+                            icon={'mdi mdi-calendar-check'}
                         />
                     </Pagination.Item>
                 </Pagination>
@@ -92,7 +103,7 @@ const Proyecto = (props) => {
     const { validated, itemsmenuprincipal, signUpModalAdd, setSignUpModalAdd, sizePerPageList, StatusColumn } =
         useContext(DashboardContext);
 
-    const datos = itemsProyectos?.data || [{}];
+    const datos = itemsProyectos?.data?.Proyecto || [{}];
 
     const columns = [
         {
@@ -107,26 +118,20 @@ const Proyecto = (props) => {
             with: 20,
         },
         {
-            Header: 'Tipo Proyecto',
+            Header: 'Tipo',
             accessor: 'Tipo',
             sort: true,
         },
         {
-            Header: 'Direccion',
-            accessor: 'Direccion',
+            Header: 'APUs',
+            accessor: 'Cantidad',
             sort: true,
         },
         {
-            Header: 'Cliente',
-            accessor: 'Cliente',
-            sort: false,
+            Header: 'Valor',
+            accessor: 'Valor',
+            sort: true,
         },
-        {
-            Header: 'Estado',
-            accessor: 'Estado',
-            sort: false,
-        },
-
         {
             Header: 'Action',
             accessor: 'action',
@@ -149,8 +154,9 @@ const Proyecto = (props) => {
         }
     };
     useEffect(() => {
-        query('GestionProductos', 'Proyecto', [{ opcion: 'consultar', obj: 'Proyecto' }]);
+        query('GestionProyecto', 'consultaProyecto', [{ opcion: 'consultaProyecto', obj: 'Proyecto' }]);
     }, [query]);
+
     return (
         <>
             <Row>
