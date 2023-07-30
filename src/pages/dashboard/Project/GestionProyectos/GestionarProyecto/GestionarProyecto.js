@@ -11,6 +11,7 @@ import Swal from 'sweetalert2';
 import { useGestionBasica } from '../../../../../hooks/useGestionBasica';
 import Table from '../../../../../components/Table';
 import BtnLink from '../../../components/BtnLink';
+import BtnLinkFalse from '../../../components/BtnLinkFalse';
 
 const ActionColumn = ({ row }) => {
     const { validated, setOpen, toggle, setItemsUpdate, open, itemsmenuprincipal, itemsProyecto } =
@@ -35,7 +36,7 @@ const ActionColumn = ({ row }) => {
             Swal.fire('USTED NO TIENE PERMISOS HABILITADOS PARA ESTA OPCION');
         }
     };
-
+    const estado = row.cells[2].value === 'Inicial' ? 1 : 0;
     return (
         <React.Fragment>
             <Modal show={open} onHide={toggleSignUp}>
@@ -49,15 +50,26 @@ const ActionColumn = ({ row }) => {
             <Row>
                 <Pagination className="pagination-rounded mx-auto" size="sm">
                     <Pagination.Item>
-                        <BtnLink
-                            permisos={'S'}
-                            key={`1_${row.cells[0].value}`}
-                            row={row.cells[0].value}
-                            url={'/dashboard/GestionProyecto/asignarApu?'}
-                            titulo={'ASIGNAR'}
-                            descripcion={'Asignar APU'}
-                            icon={'mdi mdi-layers-plus'}
-                        />
+                        {estado === 0 ? (
+                            <BtnLink
+                                permisos={'S'}
+                                key={`1_${row.cells[0].value}`}
+                                row={row.cells[0].value}
+                                url={'/dashboard/GestionProyecto/asignarApu?'}
+                                titulo={'ASIGNAR'}
+                                descripcion={'Asignar APU'}
+                                icon={'mdi mdi-layers-plus'}
+                            />
+                        ) : (
+                            <BtnLinkFalse
+                                permisos={'S'}
+                                key={`1_${row.cells[0].value}`}
+                                row={row.cells[0].value}
+                                titulo={'CERRADO'}
+                                descripcion={'Cerrado'}
+                                icon={'mdi mdi-layers-plus'}
+                            />
+                        )}
                     </Pagination.Item>
                     <Pagination.Item>
                         <BtnLink
@@ -118,8 +130,8 @@ const Proyecto = (props) => {
             with: 20,
         },
         {
-            Header: 'Tipo',
-            accessor: 'Tipo',
+            Header: 'Estado',
+            accessor: 'Estado',
             sort: true,
         },
         {

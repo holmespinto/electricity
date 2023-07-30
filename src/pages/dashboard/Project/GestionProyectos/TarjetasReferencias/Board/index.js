@@ -2,7 +2,7 @@
 /* eslint-disable array-callback-return */
 /* eslint-disable react-hooks/exhaustive-deps */
 // @flow
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { Row, Col, Modal, Button } from 'react-bootstrap';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 
@@ -15,6 +15,8 @@ import { convertirACifraDecimal, multiplicar } from '../../../../../../utils/con
 import Pagination from '../Pagination';
 import TaskItemB from './TaskItemB';
 import VistaPrevia from '../../../GestionPrecios/AnalisisPreciosUnitarios/VistaPrevia';
+import { useGestionProyecto } from '../../../../../../hooks/useGestionProyecto';
+import Swal from 'sweetalert2';
 
 // components
 
@@ -29,12 +31,12 @@ type StateType = {
 const defaultAvatar = 'https://robohash.org/doloribusatconsequatur.png?size=100x100&set=set1';
 // kanban
 const Kanban = (props): React$Element<React$FragmentType> => {
-    const { setItemsUpdate, add, update, borrar } = useContext(DashboardContext);
+    const { setItemsUpdate, add, update, borrar, pagesInSearch } = useContext(DashboardContext);
     const idProyecto = props?.data?.data?.idProyecto || 0;
     const task = props?.data?.data?.ApusAsignadas || [];
     const ApusNoAsignadas = props?.data?.data?.ApusNoAsignadas || [{}];
     const DatosProyect = props?.data?.data?.DatosProyect || [{}];
-
+    const { query, itemsGestionarProyecto } = useGestionProyecto();
     const [currentCout, setCoutPage] = useState({ Total: 0 });
     const [currentPage, setCurrentPage] = useState(1);
     const [tasksPerPage] = useState(4);
@@ -145,16 +147,25 @@ const Kanban = (props): React$Element<React$FragmentType> => {
         const Codigo = task?.Codigo?.toLowerCase();
         return Descripcion.includes(searchTerm.toLowerCase()) || Codigo.includes(searchTerm.toLowerCase());
     });
-    //console.log('setsubrows',subrows)
+
+    const cambiarEstado = () => {
+        const id = pagesInSearch();
+        let str = '#/dashboard/GestionProyecto/asignarApu?p=';
+        const idProyecto = id?.replace(str, '');
+        query('GestionProyecto', 'LiquidarProyecto', [
+            {
+                opcion: 'cambiarEstado',
+                obj: 'LiquidarProyecto',
+                idProyecto: idProyecto,
+            },
+        ]);
+    };
+
+    useEffect(() => {
+        if (itemsGestionarProyecto[0]?.status === '202') Swal.fire('' + itemsGestionarProyecto[0].menssage + '');
+    }, [itemsGestionarProyecto]);
     return (
         <React.Fragment>
-            {/*<HorizontalSteps
-      contentInit={'current'}
-      contentEnd={''}
-      titleInit={''}
-      titleEnd={'Editar'}
-  idProyecto={idProyecto} />*/}
-
             <Row>
                 <Col xl={12}>
                     <TitleProyecto
@@ -278,7 +289,7 @@ const Kanban = (props): React$Element<React$FragmentType> => {
             </Row>
             <Row>
                 <Col sm={3}>
-                    <Button variant="primary" type="submit" disabled={false} onClick={() => console.log('xx')}>
+                    <Button variant="primary" type="submit" disabled={false} onClick={() => cambiarEstado()}>
                         CAMBIAR ESTADO DEL PROYECTO
                     </Button>
                 </Col>{' '}

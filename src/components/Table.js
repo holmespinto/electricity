@@ -235,7 +235,6 @@ const Table = (props: TableProps): React$Element<React$FragmentType> => {
                                             return item.idApu === cell.row.original.id;
                                         });
                                         const canti = cantidad === 0 ? cantidad : filteredLocal[0]?.Cantidad;
-                                        console.log('😁😁', cantidad);
                                         return (
                                             <td {...cell.getCellProps()}>
                                                 <div className={clase}>
