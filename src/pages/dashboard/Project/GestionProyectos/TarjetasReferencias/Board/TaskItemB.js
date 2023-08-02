@@ -34,11 +34,10 @@ const TaskItemB = (props: TaskItemProps): React$Element<any> => {
         setValorUnitario(total);
         props.setCoutPage({ Total: Number(props.currentCout + total) });
         if (valorUnitario >= 2) {
-            props.update(task.id, props.idProyecto, total);
+            props.update(task.id, props.idProyecto, total, valorUnitario);
         }
     }, [valorUnitario]);
 
-    //
     return (
         <Card className="mb-0 bg-info tex-white">
             <Card.Body className="p-3">
@@ -56,6 +55,7 @@ const TaskItemB = (props: TaskItemProps): React$Element<any> => {
                         )}
                     </a>
                 </h5>
+
                 <p className="mb-0">
                     <span
                         className={classNames('badge', {
@@ -66,6 +66,7 @@ const TaskItemB = (props: TaskItemProps): React$Element<any> => {
                         style={{ width: '85%' }}>
                         <input
                             name={task.id}
+                            placeholder={task.Cantidad}
                             type="number"
                             key={task.id}
                             onChange={(e) => {

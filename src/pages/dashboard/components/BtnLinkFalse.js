@@ -3,7 +3,7 @@ import { Popover, OverlayTrigger } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 
 const BtnLinkFalse = (props) => {
-    const q = props?.q?.length > 0 ? props?.q : '';
+    //const q = props?.q?.length > 0 ? props?.q : '';
     const popover = (
         <Popover id={props.key}>
             <Popover.Header as="h3">{props.titulo}</Popover.Header>

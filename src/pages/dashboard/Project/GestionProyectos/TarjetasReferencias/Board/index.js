@@ -1,3 +1,4 @@
+/* eslint-disable react/style-prop-object */
 /* eslint-disable no-sequences */
 /* eslint-disable array-callback-return */
 /* eslint-disable react-hooks/exhaustive-deps */
@@ -39,7 +40,7 @@ const Kanban = (props): React$Element<React$FragmentType> => {
     const { query, itemsGestionarProyecto } = useGestionProyecto();
     const [currentCout, setCoutPage] = useState({ Total: 0 });
     const [currentPage, setCurrentPage] = useState(1);
-    const [tasksPerPage] = useState(4);
+    const [tasksPerPage] = useState(200);
     const [searchTerm, setSearchTerm] = useState('');
     const [datos, setDatos] = useState([]);
     //const [subrows, setsubRows] = useState([]);
@@ -178,7 +179,7 @@ const Kanban = (props): React$Element<React$FragmentType> => {
                     <DragDropContext onDragEnd={onDragEnd}>
                         <div className="board">
                             {/* todo */}
-                            <Row>
+                            <Row className="overflow-auto">
                                 <Droppable droppableId="todoTasks">
                                     {(provided, snapshot) => (
                                         <>
@@ -229,7 +230,7 @@ const Kanban = (props): React$Element<React$FragmentType> => {
                                     )}
                                 </Droppable>
                             </Row>
-                            <Row>
+                            <Row className="overflow-auto">
                                 {/* in progress */}
                                 <Droppable droppableId="inprogressTasks">
                                     {(provided, snapshot) => (
@@ -243,11 +244,8 @@ const Kanban = (props): React$Element<React$FragmentType> => {
                                                                 HACIA ABAJO,AL AREA GRIS, PARA ADJUNTARLA AL PROYECTO
                                                             </p>
                                                         ) : (
-                                                            `+(${
-                                                                state.inprogressTasks?.length
-                                                            })  Total General: $ ${convertirACifraDecimal(
-                                                                Number(currentCout.Total)
-                                                            )}`
+                                                            `+(${state.inprogressTasks?.length})  Total Seleccionadas:
+                                                            `
                                                         )}
                                                     </h5>
                                                 </span>

@@ -217,10 +217,10 @@ const DashboardProvider = ({ children }) => {
 
     //ACTULIZAR  APUS ASIGNADAS
     const update = useCallback(
-        (cel, idProyecto, valor) => {
+        (cel, idProyecto, valor, cantidad) => {
             const estrategiaConfirmacion = new ConfirmacionUpdateStrategy();
             estrategiaConfirmacion.confirmar(cel, (cel) => {
-                const url = `accion=${itemUrl}&tipo=${itemsmenuprincipal}&opcion=EditarProyecto&idApu=${cel}&idProyecto=${idProyecto}&valor=${valor}`;
+                const url = `accion=${itemUrl}&tipo=${itemsmenuprincipal}&opcion=update&id=${cel}&idProyecto=${idProyecto}&Total=${valor}&Cantidad=${cantidad}&Producto=APU`;
                 const respuesta = api.sendRequestData(`${url}`);
                 respuesta
                     .then(function (resp) {
