@@ -23,7 +23,7 @@ type TaskItemProps = {
 
 // task item
 const TaskItemB = (props: TaskItemProps): React$Element<any> => {
-    const valor = props.task.ValorUnitario || 0;
+    const valor = props?.task?.ValorUnitario || 0;
     const task = props.task || {};
 
     const [valorUnitario, setState] = useState(0);
@@ -44,7 +44,7 @@ const TaskItemB = (props: TaskItemProps): React$Element<any> => {
                 <p className="mb-0 text-white">
                     <small className="float-end text-white">
                         {'$ '}
-                        {props.convertirACifraDecimal(Number(task.ValorUnitario))}
+                        {task?.ValorUnitario}
                     </small>
                     <br />
                 </p>

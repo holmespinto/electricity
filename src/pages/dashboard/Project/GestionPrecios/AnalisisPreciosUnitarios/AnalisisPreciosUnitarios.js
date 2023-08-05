@@ -33,10 +33,7 @@ const ActionColumn = ({ row }) => {
         const ItemsProductos = JSON.parse(localProductos);
 
         if (localPermiso?.update === 'S') {
-            let trans = Transportes?.filter((item) => {
-                return item.IdApu === id;
-            });
-            const Productos = opcion === 'TRANSPORTE' ? trans : ItemsProductos;
+            const Productos = opcion === 'TRANSPORTE' ? Transportes : ItemsProductos;
 
             let productos = Productos?.filter((item) => {
                 return item.Producto === opcion;

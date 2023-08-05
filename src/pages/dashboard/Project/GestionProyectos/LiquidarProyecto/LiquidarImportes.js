@@ -13,9 +13,15 @@ import FormAdd from './Forms';
 
 export const LiquidarImportes = (props) => {
     const [idCategoria, setIdCategoria] = useState(0);
+    const [Liquidadas, setLiquidadas] = useState([]);
+    const [Importes, setImportes] = useState([]);
+    const [Proyecto, setProyecto] = useState([]);
+    const [Principal, setPrincipal] = useState([]);
+
     const { pagesInSearch, sizePerPageList, setSignUpModalAdd, signUpModalAdd, validated, setTypeActions } =
         useContext(DashboardContext);
     const { isLoading, itemsGestionarProyecto, query } = useGestionProyecto();
+    const permisos = props?.permisos || {};
     useEffect(() => {
         const id = pagesInSearch();
         let str = '#/dashboard/GestionProyecto/LiquidarImportes?p=';
@@ -25,11 +31,19 @@ export const LiquidarImportes = (props) => {
         ]);
     }, []);
 
-    const Proyecto = itemsGestionarProyecto?.data?.Proyecto[0] || [{}];
-    const Principal = itemsGestionarProyecto?.data?.Principal[0] || [{}];
-    const Liquidadas = itemsGestionarProyecto?.data?.Liquidadas[0] || [{}];
-    const Importes = itemsGestionarProyecto?.data?.Importes || [{}];
-    const permisos = props?.permisos || {};
+    useEffect(() => {
+        setTimeout(function () {
+            const Proyecto = itemsGestionarProyecto?.data?.Proyecto[0] || [{}];
+            const Principal = itemsGestionarProyecto?.data?.Principal || '';
+            const Liquidadas = itemsGestionarProyecto?.data?.Liquidadas || [{}];
+            const Importes = itemsGestionarProyecto?.data?.Importes || [{}];
+            setProyecto(Proyecto);
+            setPrincipal(Principal);
+            setLiquidadas(Liquidadas);
+            setImportes(Importes);
+        }, 1000);
+    }, [itemsGestionarProyecto]);
+
     const columns = [
         {
             Header: 'ID',
@@ -78,14 +92,12 @@ export const LiquidarImportes = (props) => {
         localStorage.removeItem('Ids');
         localStorage.setItem('Ids', JSON.stringify({ p: idCategoria, q: 0 }));
     }, [idCategoria]);
+
     return (
         <>
             <Row>
                 <Col xl={12}>
-                    <Titulo
-                        title1={Proyecto?.Nombre ? Proyecto?.Nombre : ''}
-                        title2={Principal?.Valor ? Principal?.Valor : ''}
-                    />
+                    <Titulo title1={Proyecto?.Nombre ? Proyecto?.Nombre : ''} title2={Principal ? Principal : ''} />
                 </Col>
             </Row>
             <Card>

@@ -30,7 +30,7 @@ export const ConsultaLiquidadas = (props) => {
 
     const Proyecto = itemsGestionarProyecto?.data?.Proyecto[0] || [{}];
     const Principal = itemsGestionarProyecto?.data?.Principal[0] || [{}];
-    const Liquidadas = itemsGestionarProyecto?.data?.Liquidadas[0] || [{}];
+    const Liquidadas = itemsGestionarProyecto?.data?.Liquidadas || [{}];
     const permisos = props?.permisos || {};
     const columns = [
         {

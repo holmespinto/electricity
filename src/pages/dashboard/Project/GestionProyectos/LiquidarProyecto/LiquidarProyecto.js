@@ -45,10 +45,12 @@ const ActionColumn = ({ row }) => {
     let filteredLocal = data.filter((item) => {
         return item.idApu === row.cells[0].value;
     });
-
+    let cantidad = !filteredLocal[0]?.Cantidad ? 0 : filteredLocal[0]?.Cantidad;
     return (
         <React.Fragment>
-            {row.cells[0].value >= 99 || row.cells[4].value - filteredLocal[0]?.Cantidad === 0 ? (
+            {row.cells[0].value === 0 ||
+            Number(row.cells[4].value - cantidad) === 0 ||
+            Number(row.cells[3].value - row.cells[4].value) === 0 ? (
                 ''
             ) : (
                 <BtnSeccionAction obj={obj}>
@@ -56,7 +58,7 @@ const ActionColumn = ({ row }) => {
                         title={`${row.cells[2].value}`}
                         idApu={`${row.cells[0].value}`}
                         validated={validated}
-                        max={row.cells[4].value}
+                        max={row.cells[3].value}
                     />
                 </BtnSeccionAction>
             )}
@@ -65,6 +67,10 @@ const ActionColumn = ({ row }) => {
 };
 export const LiquidarProyecto = (props) => {
     const [idCategoria, setIdCategoria] = useState(0);
+    const [Liquidadas, setLiquidadas] = useState([]);
+    //const [Importes, setImportes] = useState([]);
+    const [Proyecto, setProyecto] = useState([]);
+    const [Principal, setPrincipal] = useState([]);
 
     const { pagesInSearch, sizePerPageList, cantidad, idRow } = useContext(DashboardContext);
     const { isLoading, itemsGestionarProyecto, query } = useGestionProyecto();
@@ -78,9 +84,18 @@ export const LiquidarProyecto = (props) => {
         ]);
     }, []);
 
-    const Proyecto = itemsGestionarProyecto?.data?.Proyecto[0] || [{}];
-    const Principal = itemsGestionarProyecto?.data?.Principal[0] || [{}];
-    const Liquidadas = itemsGestionarProyecto?.data?.Liquidadas[0] || [{}];
+    useEffect(() => {
+        setTimeout(function () {
+            const Proyecto = itemsGestionarProyecto?.data?.Proyecto[0] || [{}];
+            const Principal = itemsGestionarProyecto?.data?.Principal || [{}];
+            const Liquidadas = itemsGestionarProyecto?.data?.Liquidadas || [{}];
+            //const Importes = itemsGestionarProyecto?.data?.Importes || [{}];
+            setProyecto(Proyecto);
+            setPrincipal(Principal);
+            setLiquidadas(Liquidadas);
+        }, 1000);
+    }, [itemsGestionarProyecto]);
+
     const permisos = props?.permisos || {};
     const columns = [
         {
@@ -99,17 +114,22 @@ export const LiquidarProyecto = (props) => {
             sort: true,
         },
         {
-            Header: 'Unidad',
-            accessor: 'Unidad',
-            sort: true,
-        },
-        {
-            Header: 'Cantidad',
+            Header: 'A',
             accessor: 'Cantidad',
             sort: true,
         },
         {
-            Header: 'Valor Unitario',
+            Header: 'L',
+            accessor: 'Unidad',
+            sort: true,
+        },
+        {
+            Header: 'P',
+            accessor: 'PorLiquidadar',
+            sort: true,
+        },
+        {
+            Header: 'Vr.Unitario',
             accessor: 'ValorUnitario',
             sort: true,
         },

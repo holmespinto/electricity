@@ -165,6 +165,7 @@ const Kanban = (props): React$Element<React$FragmentType> => {
     useEffect(() => {
         if (itemsGestionarProyecto[0]?.status === '202') Swal.fire('' + itemsGestionarProyecto[0].menssage + '');
     }, [itemsGestionarProyecto]);
+
     return (
         <React.Fragment>
             <Row>

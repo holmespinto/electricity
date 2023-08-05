@@ -239,8 +239,8 @@ const Table = (props: TableProps): React$Element<React$FragmentType> => {
                                             <td {...cell.getCellProps()}>
                                                 <div className={clase}>
                                                     {cell.row.original.id === filteredLocal[0]?.idApu &&
-                                                    cell.column.Header === 'Cantidad'
-                                                        ? cell.row.original.Cantidad + '/' + canti
+                                                    cell.column.Header === 'L'
+                                                        ? cell.row.original.Unidad + '/' + canti
                                                         : cell.render('Cell')}
                                                 </div>
                                             </td>

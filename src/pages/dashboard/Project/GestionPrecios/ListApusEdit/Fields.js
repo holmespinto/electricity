@@ -3,7 +3,6 @@ import React, { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Redirect } from 'react-router-dom';
 import { Button, Alert, Form, Col, Row } from 'react-bootstrap';
-import Select from 'react-select';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { queryFormSend } from '../../../../../redux/actions';
@@ -104,7 +103,8 @@ const Register = (props): React$Element<React$FragmentType> => {
                                 required
                                 type="number"
                                 name="Cantidad"
-                                placeholder="Digite la Cantidad"
+                                max={'1'}
+                                placeholder="1"
                                 value={items[0]?.Cantidad}
                                 onChange={(e) => setItems([{ ...items[0], Cantidad: e.target.value }])}
                             />
@@ -129,27 +129,7 @@ const Register = (props): React$Element<React$FragmentType> => {
                     </Col>
                 </Row>
                 <Row>
-                    <Col sm={12}>
-                        <Form.Group className="mb-3">
-                            <Form.Label>Tipo Capítulo</Form.Label>
-                            <Select
-                                type="select"
-                                name="TipoCategoria"
-                                className="react-select"
-                                classNamePrefix="react-select"
-                                onChange={(e) =>
-                                    setItems([
-                                        {
-                                            ...items[0],
-                                            TipoCategoria: e.value,
-                                        },
-                                    ])
-                                }
-                                options={props?.Padres}
-                                placeholder={props?.Padres[`${props?.ItemsUpdate[0]?.idCategoria}`]?.label}
-                            />
-                        </Form.Group>
-                    </Col>
+                    <Col sm={12}></Col>
                 </Row>
                 <Row>
                     <Col sm={9}></Col>

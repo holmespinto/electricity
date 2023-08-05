@@ -49,8 +49,8 @@ const ActionColumn = ({ row }) => {
             </Modal>
             <Row>
                 <Pagination className="pagination-rounded mx-auto" size="sm">
-                    <Pagination.Item>
-                        {estado === 0 ? (
+                    {estado === 0 ? (
+                        <Pagination.Item>
                             <BtnLink
                                 permisos={'S'}
                                 key={`1_${row.cells[0].value}`}
@@ -60,50 +60,49 @@ const ActionColumn = ({ row }) => {
                                 descripcion={'Asignar APU'}
                                 icon={'mdi mdi-layers-plus'}
                             />
-                        ) : (
-                            <BtnLinkFalse
-                                permisos={'S'}
-                                key={`1_${row.cells[0].value}`}
-                                row={row.cells[0].value}
-                                titulo={'CERRADO'}
-                                descripcion={'Cerrado'}
-                                icon={'mdi mdi-layers-plus'}
-                            />
-                        )}
-                    </Pagination.Item>
-                    <Pagination.Item>
-                        <BtnLink
-                            permisos={'S'}
-                            key={`2_${row.cells[0].value}`}
-                            row={row.cells[0].value}
-                            url={'/dashboard/GestionProyecto/LiquidarImportes?'}
-                            titulo={'EDITAR'}
-                            descripcion={'Liquidar AIU'}
-                            icon={'mdi mdi-account-cash'}
-                        />
-                    </Pagination.Item>
-                    <Pagination.Item>
-                        <BtnLink
-                            permisos={'S'}
-                            key={`3_${row.cells[0].value}`}
-                            row={row.cells[0].value}
-                            url={'/dashboard/GestionProyecto/LiquidarProyecto?'}
-                            titulo={'LIQUIDAR'}
-                            descripcion={'Liquidar'}
-                            icon={'uil uil-usd-square'}
-                        />
-                    </Pagination.Item>
-                    <Pagination.Item>
-                        <BtnLink
-                            permisos={'S'}
-                            key={`4_${row.cells[0].value}`}
-                            row={row.cells[0].value}
-                            url={'/dashboard/GestionProyecto/ConsultarLiquidaciones?'}
-                            titulo={'CONSULTAR LIQUIDACIONES'}
-                            descripcion={'Liquidar'}
-                            icon={'mdi mdi-calendar-check'}
-                        />
-                    </Pagination.Item>
+                        </Pagination.Item>
+                    ) : (
+                        ''
+                    )}
+                    {row.cells[3].value > 0 ? (
+                        <>
+                            <Pagination.Item>
+                                <BtnLink
+                                    permisos={'S'}
+                                    key={`2_${row.cells[0].value}`}
+                                    row={row.cells[0].value}
+                                    url={'/dashboard/GestionProyecto/LiquidarImportes?'}
+                                    titulo={'EDITAR'}
+                                    descripcion={'Liquidar AIU'}
+                                    icon={'mdi mdi-account-cash'}
+                                />
+                            </Pagination.Item>
+                            <Pagination.Item>
+                                <BtnLink
+                                    permisos={'S'}
+                                    key={`3_${row.cells[0].value}`}
+                                    row={row.cells[0].value}
+                                    url={'/dashboard/GestionProyecto/LiquidarProyecto?'}
+                                    titulo={'LIQUIDAR'}
+                                    descripcion={'Liquidar'}
+                                    icon={'uil uil-usd-square'}
+                                />
+                            </Pagination.Item>
+                            <Pagination.Item>
+                                <BtnLink
+                                    permisos={'S'}
+                                    key={`4_${row.cells[0].value}`}
+                                    row={row.cells[0].value}
+                                    url={'/dashboard/GestionProyecto/ConsultarLiquidaciones?'}
+                                    titulo={'CONSULTAR LIQUIDACIONES'}
+                                    descripcion={'Liquidar'}
+                                    icon={'mdi mdi-calendar-check'}
+                                />
+                            </Pagination.Item>
+                        </>
+                    ) : (
+                        ''
+                    )}
                 </Pagination>
             </Row>
         </React.Fragment>
@@ -112,7 +111,7 @@ const ActionColumn = ({ row }) => {
 const Proyecto = (props) => {
     const permisos = props.permisos || {};
     const { itemsProyectos, query } = useGestionBasica();
-    const { validated, itemsmenuprincipal, signUpModalAdd, setSignUpModalAdd, sizePerPageList, StatusColumn } =
+    const { validated, itemsmenuprincipal, signUpModalAdd, setSignUpModalAdd, sizePerPageList } =
         useContext(DashboardContext);
 
     const datos = itemsProyectos?.data?.Proyecto || [{}];
@@ -151,12 +150,6 @@ const Proyecto = (props) => {
             classes: 'table-action',
             Cell: ActionColumn,
         },
-        {
-            Header: 'Status',
-            accessor: 'status',
-            sort: true,
-            Cell: StatusColumn,
-        },
     ];
     const toggleSignUp = () => {
         {
@@ -166,7 +159,7 @@ const Proyecto = (props) => {
         }
     };
     useEffect(() => {
-        query('GestionProyecto', 'consultaProyecto', [{ opcion: 'consultaProyecto', obj: 'Proyecto' }]);
+        query('GestionProyecto', 'LiquidarProyecto', [{ opcion: 'GestionarProyecto', obj: 'Proyecto' }]);
     }, [query]);
 
     return (
