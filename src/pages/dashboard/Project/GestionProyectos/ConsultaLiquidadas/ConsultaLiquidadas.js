@@ -14,7 +14,9 @@ export const ConsultaLiquidadas = (props) => {
     const [idLiquidacion, setIidLiquidacion] = useState(0);
     const { pagesInSearch, sizePerPageList } = useContext(DashboardContext);
     const { isLoading, itemsGestionarProyecto, query } = useGestionProyecto();
-
+    const [Liquidadas, setLiquidadas] = useState([]);
+    const [Proyecto, setProyecto] = useState([]);
+    const [Principal, setPrincipal] = useState([]);
     useEffect(() => {
         const id = pagesInSearch();
         let str = '#/dashboard/GestionProyecto/ConsultaLiquidadas?p=';
@@ -28,9 +30,17 @@ export const ConsultaLiquidadas = (props) => {
         ]);
     }, []);
 
-    const Proyecto = itemsGestionarProyecto?.data?.Proyecto[0] || [{}];
-    const Principal = itemsGestionarProyecto?.data?.Principal[0] || [{}];
-    const Liquidadas = itemsGestionarProyecto?.data?.Liquidadas || [{}];
+    useEffect(() => {
+        setTimeout(function () {
+            const Proyecto = itemsGestionarProyecto?.data?.Proyecto || [{}];
+            const Principal = itemsGestionarProyecto?.data?.Principal || [{}];
+            const Liquidadas = itemsGestionarProyecto?.data?.Liquidadas || [{}];
+            setProyecto(Proyecto);
+            setPrincipal(Principal);
+            setLiquidadas(Liquidadas);
+        }, 1000);
+    }, [itemsGestionarProyecto]);
+
     const permisos = props?.permisos || {};
     const columns = [
         {
@@ -73,7 +83,7 @@ export const ConsultaLiquidadas = (props) => {
         localStorage.removeItem('Ids');
         localStorage.setItem('Ids', JSON.stringify({ p: idProyecto, q: idLiquidacion }));
     }, [idProyecto, idLiquidacion]);
-
+    console.log('💕💕', itemsGestionarProyecto);
     return (
         <>
             <Row>

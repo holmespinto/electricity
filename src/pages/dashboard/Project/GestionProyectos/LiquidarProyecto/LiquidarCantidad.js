@@ -8,7 +8,7 @@ import { Button, Alert, Form, Col, Row } from 'react-bootstrap';
 import { DashboardContext } from '../../../../../layouts/context/DashboardContext';
 
 const LiquidarCantidad = (props): React$Element<React$FragmentType> => {
-    const { setOpen, open, setCantidad, setRow } = useContext(DashboardContext);
+    const { setOpen, open, setCantidad, setRow, max } = useContext(DashboardContext);
 
     const [items, setItems] = useState([
         {
@@ -20,7 +20,7 @@ const LiquidarCantidad = (props): React$Element<React$FragmentType> => {
             tipo: props?.obj?.tipo,
             id: props?.obj?.id,
             idApu: props?.obj?.idItems,
-            max: props?.obj?.max,
+            max: max,
         },
     ]);
 
@@ -82,7 +82,7 @@ const LiquidarCantidad = (props): React$Element<React$FragmentType> => {
                             max={items[0].max}
                             type="number"
                             name="Cantidad"
-                            placeholder="Digite la Cantidad"
+                            placeholder={max}
                             value={items[0]?.Cantidad}
                             onChange={(e) => setItems([{ ...items[0], Cantidad: e.target.value }])}
                         />

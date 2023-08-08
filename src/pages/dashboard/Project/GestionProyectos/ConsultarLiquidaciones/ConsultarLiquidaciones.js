@@ -66,7 +66,7 @@ const ConsultarLiquidaciones = (props) => {
             sort: true,
         },
         {
-            Header: 'Liquidadas',
+            Header: '#Liquidaciones',
             accessor: 'Liquidadas',
             sort: true,
         },

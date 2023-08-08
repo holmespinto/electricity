@@ -324,7 +324,7 @@ const Table = (props: TableProps): React$Element<React$FragmentType> => {
                     <tbody {...dataTable.getTableBodyProps()}>
                         {(rows || []).map((row, i) => {
                             dataTable.prepareRow(row);
-                            console.log(i);
+                            //console.log(i);
 
                             return (
                                 <tr

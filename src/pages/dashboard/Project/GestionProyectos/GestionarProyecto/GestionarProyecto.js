@@ -11,7 +11,6 @@ import Swal from 'sweetalert2';
 import { useGestionBasica } from '../../../../../hooks/useGestionBasica';
 import Table from '../../../../../components/Table';
 import BtnLink from '../../../components/BtnLink';
-import BtnLinkFalse from '../../../components/BtnLinkFalse';
 
 const ActionColumn = ({ row }) => {
     const { validated, setOpen, toggle, setItemsUpdate, open, itemsmenuprincipal, itemsProyecto } =
@@ -189,7 +188,7 @@ const Proyecto = (props) => {
                                 <Table
                                     columns={columns}
                                     data={datos}
-                                    pageSize={5}
+                                    pageSize={25}
                                     sizePerPageList={sizePerPageList}
                                     isVisible={true}
                                     isSortable={true}

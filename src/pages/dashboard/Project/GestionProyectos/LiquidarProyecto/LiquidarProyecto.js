@@ -13,7 +13,8 @@ import Forms from './Forms';
 import BtnSeccionAction from '../../../components/BtnSeccionAction/BtnSeccionAction';
 
 const ActionColumn = ({ row }) => {
-    const { eliminar, validated, toggle, setOpen, setItemsUpdate, open, setTypeActions } = useContext(DashboardContext);
+    const { eliminar, validated, toggle, setOpen, setItemsUpdate, open, setTypeActions, setMax } =
+        useContext(DashboardContext);
 
     const toggleSignUp = (id) => {
         let permiso = sessionStorage.getItem('PERMISO');
@@ -23,6 +24,7 @@ const ActionColumn = ({ row }) => {
             setOpen(open);
             toggle();
             setTypeActions('UPDATE');
+            setMax(row.cells[3].value);
         } else {
             Swal.fire('USTED NO TIENE PERMISOS HABILITADOS PARA ESTA OPCION');
         }
@@ -40,17 +42,19 @@ const ActionColumn = ({ row }) => {
         eliminar,
     };
     // Obtener los datos actuales del localStorage si existen
+    /*
     let dataInLocalStorage = localStorage.getItem('LiquidarCantidad');
     let data = dataInLocalStorage ? JSON.parse(dataInLocalStorage) : [];
     let filteredLocal = data.filter((item) => {
         return item.idApu === row.cells[0].value;
     });
     let cantidad = !filteredLocal[0]?.Cantidad ? 0 : filteredLocal[0]?.Cantidad;
+    */
     return (
         <React.Fragment>
             {row.cells[0].value === 0 ||
-            Number(row.cells[4].value - cantidad) === 0 ||
-            Number(row.cells[3].value - row.cells[4].value) === 0 ? (
+            //Number(row.cells[4].value - cantidad) === 0 ||
+            Number(row.cells[5].value) === 0 ? (
                 ''
             ) : (
                 <BtnSeccionAction obj={obj}>

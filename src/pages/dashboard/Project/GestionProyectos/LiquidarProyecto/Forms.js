@@ -22,7 +22,6 @@ const Forms = (props) => {
         title: props?.title,
         importes: props?.importes,
         idApu: props?.idApu,
-        max: props?.max,
     };
 
     return (

@@ -28,6 +28,7 @@ const DashboardProvider = ({ children }) => {
     const [itemsAdd, setItemsAdd] = useState([]);
     const [cantidad, setCantidad] = useState(0);
     const [idRow, setRow] = useState(0);
+    const [max, setMax] = useState(0);
 
     // función para obtener el valor de una cookie
     function getCookie(name) {
@@ -315,6 +316,8 @@ const DashboardProvider = ({ children }) => {
         setCantidad,
         idRow,
         setRow,
+        max,
+        setMax,
     };
     return (
         <>
